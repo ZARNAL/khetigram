@@ -1,230 +1,219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="gu">
 <head>
-<meta charset="UTF-8">
-<title>Gujarat Market Rates</title>
-<style>
-body {
-font-family: Arial, sans-serif;
-margin: 0;
-padding: 0;
-background-color: #f7f7f7;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Gujarat Market Rates</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f7f7;
+    }
 
-.loader {
-display: flex;
-justify-content: center;
-align-items: center;
-height: 300px;
-}
+    .full-width {
+      padding: 16px;
+    }
 
-.ball {
-width: 30px;
-height: 30px;
-background-color: #4CAF50;
-border-radius: 50%;
-margin: 0 5px;
-animation: bounce 0.6s ease infinite alternate;
-}
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
 
-@keyframes bounce {
-0% { transform: translateY(0); }
-100% { transform: translateY(-20px); }
-}
+    .ball {
+      width: 26px;
+      height: 26px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      margin: 0 4px;
+      animation: bounce 0.6s ease infinite alternate;
+    }
 
-.hide {
-display: none;
-}
+    .ball:nth-child(2) { animation-delay: 0.2s; }
+    .ball:nth-child(3) { animation-delay: 0.4s; }
 
-button {
-margin-right: 10px;
-margin-bottom: 10px;
-padding: 14px 30px;
-cursor: pointer;
-background-color: #4CAF50;
-color: white;
-border: none;
-border-radius: 5px;
-font-size: 18px;
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-20px); }
+    }
 
-}
+    .hide { display: none; }
 
-.today-btn {
-background-color: #007AFF;
-}
+    button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 14px;
+      font-size: 17px;
+      background-color: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
 
-.yesterday-btn {
-background-color: #148f77;
-}
+    .yesterday-btn { background-color: #148f77; }
 
-table {
-border-collapse: collapse;
-width: 100%;
-display: none;
-font-size: 16px;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      display: none;
+      font-size: 14px;
+      margin-top: 10px;
+    }
 
-th, td {
-border: 1px solid #ddd;
-padding: 12px;
-text-align: left;
-}
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
 
-th {
-background-color: #f2f2f2;
-}
+    th {
+      background-color: #f2f2f2;
+    }
 
-.filter-value {
-margin: 10px 0;
-font-weight: bold;
-font-size: 16px;
-color: #333;
-}
-
-#filterButtons > div {
-margin-top: 20px;
-font-size: 18px;
-color: #333;
-}
-
-.full-width {
-width: 100%;
-padding: 10px;
-}
-</style>
+    #filterButtons > div {
+      margin-top: 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-<div class="full-width">
-<div id="filter-buttons-container" class="hide">
-<button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
-<button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
-</div>
+  <script>
+    if (window.innerWidth > 768) {
+      document.body.innerHTML = '<div style="text-align:center;padding:50px;font-size:20px;">📱 કૃપા કરીને મોબાઇલ ઉપકરણનો ઉપયોગ કરો.<br>Mobile only version.</div>';
+    }
+  </script>
 
-<div class="loader" id="loader">
-<div class="ball"></div>
-<div class="ball"></div>
-<div class="ball"></div>
-</div>
+  <div class="full-width">
+    <div id="filter-buttons-container" class="hide">
+      <button onclick="loadData('today')">📊 આજ ના બજાર ભાવ</button>
+      <button class="yesterday-btn" onclick="loadData('yesterday')">📆 ગઈકાલ ના બજાર ભાવ</button>
+    </div>
 
-<div class="hide" id="backBtn">
-<button onclick="showAll()">Back</button>
-</div>
+    <div class="loader" id="loader">
+      <div class="ball"></div>
+      <div class="ball"></div>
+      <div class="ball"></div>
+    </div>
 
-<div class="hide" id="filterButtons"></div>
-<table id="data-table"></table>
-</div>
+    <div class="hide" id="backBtn">
+      <button onclick="showAll()">◀ પાછા જાવ</button>
+    </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-<script>
-let originalData = [];
+    <div class="hide" id="filterButtons"></div>
+    <table id="data-table"></table>
+  </div>
 
-const urls = {
-today: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1022601887&single=true&output=csv',
-yesterday: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1935662053&single=true&output=csv'
-};
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+    let originalData = [];
 
-function loadData(day) {
-const url = urls[day];
-const table = document.getElementById('data-table');
-const loader = document.getElementById('loader');
-const filterButtons = document.getElementById('filterButtons');
-const backBtn = document.getElementById('backBtn');
-const filterBtnsContainer = document.getElementById('filter-buttons-container');
+    const urls = {
+      today: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1022601887&single=true&output=csv',
+      yesterday: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1935662053&single=true&output=csv'
+    };
 
-// Reset
-table.innerHTML = '';
-filterButtons.innerHTML = '';
-loader.style.display = 'flex';
-filterButtons.classList.add('hide');
-table.style.display = 'none';
-backBtn.classList.add('hide');
-filterBtnsContainer.style.display = 'none';
+    function loadData(day) {
+      const url = urls[day];
+      const table = document.getElementById('data-table');
+      const loader = document.getElementById('loader');
+      const filterButtons = document.getElementById('filterButtons');
+      const backBtn = document.getElementById('backBtn');
+      const filterBtnsContainer = document.getElementById('filter-buttons-container');
 
-Papa.parse(url, {
-download: true,
-header: true,
-complete: function(results) {
-originalData = results.data;
+      table.innerHTML = '';
+      filterButtons.innerHTML = '';
+      loader.style.display = 'flex';
+      filterButtons.classList.add('hide');
+      table.style.display = 'none';
+      backBtn.classList.add('hide');
+      filterBtnsContainer.style.display = 'none';
 
-// Group buttons by region and district
-const keys = Object.keys(originalData[0]);
-const secondLastKey = keys[keys.length - 2];
-const thirdLastKey = keys[keys.length - 3];
+      Papa.parse(url, {
+        download: true,
+        header: true,
+        complete: function(results) {
+          originalData = results.data;
 
-const grouped = {};
-originalData.forEach(row => {
-const region = row[thirdLastKey];
-const district = row[secondLastKey];
-if (!grouped[region]) {
-grouped[region] = new Set();
-}
-grouped[region].add(district);
-});
+          const keys = Object.keys(originalData[0]);
+          const secondLastKey = keys[keys.length - 2];
+          const thirdLastKey = keys[keys.length - 3];
 
-for (const region in grouped) {
-const title = document.createElement('div');
-title.textContent = region;
-filterButtons.appendChild(title);
+          const grouped = {};
+          originalData.forEach(row => {
+            const region = row[thirdLastKey];
+            const district = row[secondLastKey];
+            if (!grouped[region]) grouped[region] = new Set();
+            grouped[region].add(district);
+          });
 
-grouped[region].forEach(district => {
-const button = document.createElement('button');
-button.textContent = district;
-button.onclick = () => filterTable(district);
-filterButtons.appendChild(button);
-});
-}
+          for (const region in grouped) {
+            const title = document.createElement('div');
+            title.textContent = region;
+            filterButtons.appendChild(title);
 
-loader.style.display = 'none';
-filterButtons.classList.remove('hide');
-filterBtnsContainer.style.display = 'block'; // Now show Today/Yesterday buttons
-}
-});
-}
+            grouped[region].forEach(district => {
+              const button = document.createElement('button');
+              button.textContent = district;
+              button.onclick = () => filterTable(district);
+              filterButtons.appendChild(button);
+            });
+          }
 
-function filterTable(filterValue) {
-const table = document.getElementById('data-table');
-const filterBtnsContainer = document.getElementById('filter-buttons-container');
-const backBtn = document.getElementById('backBtn');
+          loader.style.display = 'none';
+          filterButtons.classList.remove('hide');
+          filterBtnsContainer.style.display = 'block';
+        }
+      });
+    }
 
-table.innerHTML = '';
+    function filterTable(filterValue) {
+      const table = document.getElementById('data-table');
+      const filterBtnsContainer = document.getElementById('filter-buttons-container');
+      const backBtn = document.getElementById('backBtn');
 
-const headerRow = document.createElement('tr');
-Object.keys(originalData[0]).forEach(key => {
-const th = document.createElement('th');
-th.textContent = key;
-headerRow.appendChild(th);
-});
-table.appendChild(headerRow);
+      table.innerHTML = '';
 
-originalData.forEach(row => {
-if (row[Object.keys(row)[Object.keys(row).length - 2]] === filterValue) {
-const tr = document.createElement('tr');
-Object.values(row).forEach(val => {
-const td = document.createElement('td');
-td.textContent = val;
-tr.appendChild(td);
-});
-table.appendChild(tr);
-}
-});
+      const headerRow = document.createElement('tr');
+      Object.keys(originalData[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
 
-table.style.display = 'table';
-document.getElementById('filterButtons').style.display = 'none';
-backBtn.classList.remove('hide');
-filterBtnsContainer.style.display = 'none';
-}
+      originalData.forEach(row => {
+        if (row[Object.keys(row)[Object.keys(row).length - 2]] === filterValue) {
+          const tr = document.createElement('tr');
+          Object.values(row).forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        }
+      });
 
-function showAll() {
-document.getElementById('filterButtons').style.display = 'block';
-document.getElementById('backBtn').classList.add('hide');
-document.getElementById('data-table').style.display = 'none';
-document.getElementById('filter-buttons-container').style.display = 'block';
-}
+      table.style.display = 'table';
+      document.getElementById('filterButtons').style.display = 'none';
+      backBtn.classList.remove('hide');
+      filterBtnsContainer.style.display = 'none';
+    }
 
-// Load today by default, but show nothing until filtered
-window.onload = () => {
-loadData('today');
-};
-</script>
+    function showAll() {
+      document.getElementById('filterButtons').style.display = 'block';
+      document.getElementById('backBtn').classList.add('hide');
+      document.getElementById('data-table').style.display = 'none';
+      document.getElementById('filter-buttons-container').style.display = 'block';
+    }
+
+    window.onload = () => {
+      loadData('today');
+    };
+  </script>
 </body>
 </html>
