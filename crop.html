@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gujarat Market Rates</title>
+<style>
+body {
+font-family: Arial, sans-serif;
+margin: 0;
+padding: 0;
+background-color: #f7f7f7;
+}
+
+.loader {
+display: flex;
+justify-content: center;
+align-items: center;
+height: 300px;
+}
+
+.ball {
+width: 30px;
+height: 30px;
+background-color: #4CAF50;
+border-radius: 50%;
+margin: 0 5px;
+animation: bounce 0.6s ease infinite alternate;
+}
+
+@keyframes bounce {
+0% { transform: translateY(0); }
+100% { transform: translateY(-20px); }
+}
+
+.hide {
+display: none;
+}
+
+button {
+margin-right: 10px;
+margin-bottom: 10px;
+padding: 14px 30px;
+cursor: pointer;
+background-color: #4CAF50;
+color: white;
+border: none;
+border-radius: 5px;
+font-size: 18px;
+
+}
+
+.today-btn {
+background-color: #007AFF;
+}
+
+.yesterday-btn {
+background-color: #148f77;
+}
+
+table {
+border-collapse: collapse;
+width: 100%;
+display: none;
+font-size: 16px;
+}
+
+th, td {
+border: 1px solid #ddd;
+padding: 12px;
+text-align: left;
+}
+
+th {
+background-color: #f2f2f2;
+}
+
+.filter-value {
+margin: 10px 0;
+font-weight: bold;
+font-size: 16px;
+color: #333;
+}
+
+#filterButtons > div {
+margin-top: 20px;
+font-size: 18px;
+color: #333;
+}
+
+.full-width {
+width: 100%;
+padding: 10px;
+}
+</style>
+</head>
+<body>
+<div class="full-width">
+<div id="filter-buttons-container" class="hide">
+<button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
+<button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
+</div>
+
+<div class="loader" id="loader">
+<div class="ball"></div>
+<div class="ball"></div>
+<div class="ball"></div>
+</div>
+
+<div class="hide" id="backBtn">
+<button onclick="showAll()">Back</button>
+</div>
+
+<div class="hide" id="filterButtons"></div>
+<table id="data-table"></table>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script>
+let originalData = [];
+
+const urls = {
+today: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1022601887&single=true&output=csv',
+yesterday: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1935662053&single=true&output=csv'
+};
+
+function loadData(day) {
+const url = urls[day];
+const table = document.getElementById('data-table');
+const loader = document.getElementById('loader');
+const filterButtons = document.getElementById('filterButtons');
+const backBtn = document.getElementById('backBtn');
+const filterBtnsContainer = document.getElementById('filter-buttons-container');
+
+// Reset
+table.innerHTML = '';
+filterButtons.innerHTML = '';
+loader.style.display = 'flex';
+filterButtons.classList.add('hide');
+table.style.display = 'none';
+backBtn.classList.add('hide');
+filterBtnsContainer.style.display = 'none';
+
+Papa.parse(url, {
+download: true,
+header: true,
+complete: function(results) {
+originalData = results.data;
+
+// Group buttons by region and district
+const keys = Object.keys(originalData[0]);
+const secondLastKey = keys[keys.length - 2];
+const thirdLastKey = keys[keys.length - 3];
+
+const grouped = {};
+originalData.forEach(row => {
+const region = row[thirdLastKey];
+const district = row[secondLastKey];
+if (!grouped[region]) {
+grouped[region] = new Set();
+}
+grouped[region].add(district);
+});
+
+for (const region in grouped) {
+const title = document.createElement('div');
+title.textContent = region;
+filterButtons.appendChild(title);
+
+grouped[region].forEach(district => {
+const button = document.createElement('button');
+button.textContent = district;
+button.onclick = () => filterTable(district);
+filterButtons.appendChild(button);
+});
+}
+
+loader.style.display = 'none';
+filterButtons.classList.remove('hide');
+filterBtnsContainer.style.display = 'block'; // Now show Today/Yesterday buttons
+}
+});
+}
+
+function filterTable(filterValue) {
+const table = document.getElementById('data-table');
+const filterBtnsContainer = document.getElementById('filter-buttons-container');
+const backBtn = document.getElementById('backBtn');
+
+table.innerHTML = '';
+
+const headerRow = document.createElement('tr');
+Object.keys(originalData[0]).forEach(key => {
+const th = document.createElement('th');
+th.textContent = key;
+headerRow.appendChild(th);
+});
+table.appendChild(headerRow);
+
+originalData.forEach(row => {
+if (row[Object.keys(row)[Object.keys(row).length - 2]] === filterValue) {
+const tr = document.createElement('tr');
+Object.values(row).forEach(val => {
+const td = document.createElement('td');
+td.textContent = val;
+tr.appendChild(td);
+});
+table.appendChild(tr);
+}
+});
+
+table.style.display = 'table';
+document.getElementById('filterButtons').style.display = 'none';
+backBtn.classList.remove('hide');
+filterBtnsContainer.style.display = 'none';
+}
+
+function showAll() {
+document.getElementById('filterButtons').style.display = 'block';
+document.getElementById('backBtn').classList.add('hide');
+document.getElementById('data-table').style.display = 'none';
+document.getElementById('filter-buttons-container').style.display = 'block';
+}
+
+// Load today by default, but show nothing until filtered
+window.onload = () => {
+loadData('today');
+};
+</script>
+</body>
+</html>
