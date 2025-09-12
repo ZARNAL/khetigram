@@ -1,8 +1,7 @@
 <!DOCTYPE html>
-<html lang="gu">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8">
   <title>Gujarat Market Rates</title>
   <style>
     body {
@@ -12,61 +11,62 @@
       background-color: #f7f7f7;
     }
 
-    .full-width {
-      padding: 16px;
-    }
-
     .loader {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 200px;
+      height: 300px;
     }
 
     .ball {
-      width: 26px;
-      height: 26px;
+      width: 30px;
+      height: 30px;
       background-color: #4CAF50;
       border-radius: 50%;
-      margin: 0 4px;
+      margin: 0 5px;
       animation: bounce 0.6s ease infinite alternate;
     }
-
-    .ball:nth-child(2) { animation-delay: 0.2s; }
-    .ball:nth-child(3) { animation-delay: 0.4s; }
 
     @keyframes bounce {
       0% { transform: translateY(0); }
       100% { transform: translateY(-20px); }
     }
 
-    .hide { display: none; }
-
-    button {
-      width: 100%;
-      margin: 6px 0;
-      padding: 14px;
-      font-size: 17px;
-      background-color: #007AFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    .hide {
+      display: none;
     }
 
-    .yesterday-btn { background-color: #148f77; }
+    button {
+      margin-right: 10px;
+      margin-bottom: 10px;
+      padding: 14px 30px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+     
+    }
+
+    .today-btn {
+      background-color: #007AFF;
+    }
+
+    .yesterday-btn {
+      background-color: #148f77;
+    }
 
     table {
-      width: 100%;
       border-collapse: collapse;
+      width: 100%;
       display: none;
-      font-size: 14px;
-      margin-top: 10px;
+      font-size: 16px;
     }
 
     th, td {
       border: 1px solid #ddd;
-      padding: 8px;
+      padding: 12px;
       text-align: left;
     }
 
@@ -74,24 +74,30 @@
       background-color: #f2f2f2;
     }
 
+    .filter-value {
+      margin: 10px 0;
+      font-weight: bold;
+      font-size: 16px;
+      color: #333;
+    }
+
     #filterButtons > div {
       margin-top: 20px;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .full-width {
+      width: 100%;
+      padding: 10px;
     }
   </style>
 </head>
 <body>
-  <script>
-    if (window.innerWidth > 768) {
-      document.body.innerHTML = '<div style="text-align:center;padding:50px;font-size:20px;">📱 કૃપા કરીને મોબાઇલ ઉપકરણનો ઉપયોગ કરો.<br>Mobile only version.</div>';
-    }
-  </script>
-
   <div class="full-width">
     <div id="filter-buttons-container" class="hide">
-      <button onclick="loadData('today')">📊 આજ ના બજાર ભાવ</button>
-      <button class="yesterday-btn" onclick="loadData('yesterday')">📆 ગઈકાલ ના બજાર ભાવ</button>
+      <button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
+      <button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
     </div>
 
     <div class="loader" id="loader">
@@ -101,7 +107,7 @@
     </div>
 
     <div class="hide" id="backBtn">
-      <button onclick="showAll()">◀ પાછા જાવ</button>
+      <button onclick="showAll()">Back</button>
     </div>
 
     <div class="hide" id="filterButtons"></div>
@@ -125,6 +131,7 @@
       const backBtn = document.getElementById('backBtn');
       const filterBtnsContainer = document.getElementById('filter-buttons-container');
 
+      // Reset
       table.innerHTML = '';
       filterButtons.innerHTML = '';
       loader.style.display = 'flex';
@@ -139,6 +146,7 @@
         complete: function(results) {
           originalData = results.data;
 
+          // Group buttons by region and district
           const keys = Object.keys(originalData[0]);
           const secondLastKey = keys[keys.length - 2];
           const thirdLastKey = keys[keys.length - 3];
@@ -147,7 +155,9 @@
           originalData.forEach(row => {
             const region = row[thirdLastKey];
             const district = row[secondLastKey];
-            if (!grouped[region]) grouped[region] = new Set();
+            if (!grouped[region]) {
+              grouped[region] = new Set();
+            }
             grouped[region].add(district);
           });
 
@@ -166,7 +176,7 @@
 
           loader.style.display = 'none';
           filterButtons.classList.remove('hide');
-          filterBtnsContainer.style.display = 'block';
+          filterBtnsContainer.style.display = 'block'; // Now show Today/Yesterday buttons
         }
       });
     }
@@ -211,6 +221,7 @@
       document.getElementById('filter-buttons-container').style.display = 'block';
     }
 
+    // Load today by default, but show nothing until filtered
     window.onload = () => {
       loadData('today');
     };
