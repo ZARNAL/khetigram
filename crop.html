@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Viewport meta tag -->
-  <title>Data Display with Filter</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Market Rates with Categories</title>
   <style>
-    /* CSS styles */
     body {
       font-family: Arial, sans-serif;
       margin: 2px;
@@ -13,11 +12,11 @@
     }
 
     .container {
-      margin-bottom: 20px;
+      margin: 10px;
       background-color: #fff;
       border-radius: 8px;
-      box-shadow: 0 0 0px rgba(0, 0, 0, 0.1);
-      padding: 3px;
+      box-shadow: 0 0 2px rgba(0,0,0,0.1);
+      padding: 10px;
       overflow-x: auto;
     }
 
@@ -25,12 +24,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 300px;
+      height: 200px;
     }
 
     .ball {
-      width: 30px;
-      height: 30px;
+      width: 25px;
+      height: 25px;
       background-color: #4CAF50;
       border-radius: 50%;
       margin: 0 5px;
@@ -38,30 +37,26 @@
     }
 
     @keyframes bounce {
-      0% {
-        transform: translateY(0);
-      }
-      100% {
-        transform: translateY(-20px);
-      }
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-20px); }
     }
 
-    .hide {
-      display: none;
-    }
+    .hide { display: none; }
 
     button {
-      margin-right: 10px; /* This adds space to the right of each button */
-      margin-bottom: 10px; /* This adds space below each button */
-      padding: 12px 30px;
+      margin: 5px;
+      padding: 12px 25px;
       cursor: pointer;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 5px;
-      outline: none;
-      font-size: 20px;
+      font-size: 16px;
     }
+
+    .today-btn { background-color: #007AFF; }
+    .yesterday-btn { background-color: #148f77; }
+    .back-btn { background-color: #FF5733; }
 
     table {
       border-collapse: collapse;
@@ -72,190 +67,174 @@
 
     th, td {
       border: 1px solid #ddd;
-      padding: 12px;
+      padding: 10px;
       text-align: left;
     }
 
-    th {
-      background-color: #f2f2f2;
-    }
+    th { background-color: #f2f2f2; }
 
     .filter-value {
-      margin-bottom: 10px;
+      margin: 10px 0;
       font-weight: bold;
+      font-size: 16px;
+      color: #333;
+    }
+
+    #filterButtons > div {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
     }
 
     /* Mobile responsiveness */
     @media (max-width: 600px) {
-      /* Adjust the table font size for smaller screens */
-      table {
-        font-size: 16px;
-      }
-
-      /* Adjust button size and layout for small screens */
       button {
-        padding: 10px 20px; /* Make buttons smaller */
-        font-size: 20px; /* Adjust font size */
+        padding: 10px 18px;
+        font-size: 14px;
       }
-
-      /* Adjust the loader size */
-      .loader {
-        height: 200px; /* Reduce loader height for smaller screens */
-      }
-
-      /* Adjust the container margin */
-      .container {
-        margin: 10px; /* Add some margin around the container */
-      }
-
-      /* Adjust padding inside the table cells for mobile */
       th, td {
-        padding: 8px;
-      }
-
-      /* Hide filter buttons if they are too big for the screen */
-      .filter-btns {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start; 
+        padding: 6px;
+        font-size: 14px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="loader">
+    <!-- Today / Yesterday buttons -->
+    <div id="filter-buttons-container">
+      <button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
+      <button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
       <div class="ball"></div>
       <div class="ball"></div>
       <div class="ball"></div>
     </div>
-    <div class="back-btn hide" id="backBtn">
-      <button onclick="showAll()">Back</button>
+
+    <!-- Back button -->
+    <div class="hide" id="backBtn">
+      <button class="back-btn" onclick="showAll()">Back</button>
     </div>
-    <div class="filter-btns hide" id="filterButtons"></div>
-    <table class="hide" id="data-table"></table>
+
+    <!-- Category filter buttons -->
+    <div class="hide" id="filterButtons"></div>
+
+    <!-- Table -->
+    <table id="data-table"></table>
   </div>
+
+  <!-- PapaParse -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script>
-    // JavaScript code
-    let allButtons;
-    let originalData;
+    let originalData = [];
 
-    Papa.parse('https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1022601887&single=true&output=csv', {
-      download: true,
-      header: true,
-      complete: function(results) {
-        originalData = results.data;
-        const table = document.getElementById('data-table');
-        const loader = document.querySelector('.loader');
-        const filterButtons = document.getElementById('filterButtons');
-        const backBtn = document.getElementById('backBtn');
+    const urls = {
+      today: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1022601887&single=true&output=csv',
+      yesterday: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=1935662053&single=true&output=csv'
+    };
 
-        // Create header row
-        const headerRow = document.createElement('tr');
-        Object.keys(originalData[0]).forEach(key => {
-          const headerCell = document.createElement('th');
-          headerCell.textContent = key;
-          headerRow.appendChild(headerCell);
-        });
-        table.appendChild(headerRow);
+    function loadData(day) {
+      const url = urls[day];
+      const table = document.getElementById('data-table');
+      const loader = document.getElementById('loader');
+      const filterButtons = document.getElementById('filterButtons');
+      const backBtn = document.getElementById('backBtn');
+      const filterBtnsContainer = document.getElementById('filter-buttons-container');
 
-        // Add data rows
-        originalData.forEach(row => {
-          const newRow = document.createElement('tr');
-          Object.values(row).forEach(value => {
-            const newCell = document.createElement('td');
-            newCell.textContent = value;
-            newRow.appendChild(newCell);
+      // Reset
+      table.innerHTML = '';
+      filterButtons.innerHTML = '';
+      loader.style.display = 'flex';
+      filterButtons.classList.add('hide');
+      table.style.display = 'none';
+      backBtn.classList.add('hide');
+      filterBtnsContainer.style.display = 'none';
+
+      Papa.parse(url, {
+        download: true,
+        header: true,
+        complete: function(results) {
+          originalData = results.data;
+
+          // Group by Region -> District
+          const keys = Object.keys(originalData[0]);
+          const secondLastKey = keys[keys.length - 2];
+          const thirdLastKey = keys[keys.length - 3];
+
+          const grouped = {};
+          originalData.forEach(row => {
+            const region = row[thirdLastKey];
+            const district = row[secondLastKey];
+            if (!grouped[region]) grouped[region] = new Set();
+            grouped[region].add(district);
           });
-          table.appendChild(newRow);
-        });
 
-        // Get unique values from the second last column
-        const lastColValues = originalData.map(row => row[Object.keys(row)[Object.keys(row).length - 2]]);
-        const uniqueValues = [...new Set(lastColValues)];
+          for (const region in grouped) {
+            const title = document.createElement('div');
+            title.textContent = region;
+            filterButtons.appendChild(title);
 
-        // Create buttons for each unique value
-        uniqueValues.forEach(value => {
-          const button = document.createElement('button');
-          button.textContent = value;
-          button.onclick = function() {
-            filterTable(value);
-          };
-          filterButtons.appendChild(button);
-        });
+            grouped[region].forEach(district => {
+              const button = document.createElement('button');
+              button.textContent = district;
+              button.onclick = () => filterTable(district);
+              filterButtons.appendChild(button);
+            });
+          }
 
-        allButtons = filterButtons.children;
-
-        // Hide loader and show content
-        loader.style.display = 'none';
-        filterButtons.classList.remove('hide');
-        table.classList.remove('hide');
-      }
-    });
+          loader.style.display = 'none';
+          filterButtons.classList.remove('hide');
+          filterBtnsContainer.style.display = 'block';
+        }
+      });
+    }
 
     function filterTable(filterValue) {
       const table = document.getElementById('data-table');
-      const rows = table.getElementsByTagName('tr');
-
-      for (let i = 1; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName('td');
-        let found = false;
-        if (cells.length > 0) {
-          if (cells[cells.length - 2].textContent.trim() === filterValue) {
-            found = true;
-          }
-        }
-        rows[i].style.display = found ? '' : 'none';
-      }
-
-      toggleButtons(filterValue);
-    }
-
-    function toggleButtons(filterValue) {
-      const filterButtons = document.getElementById('filterButtons');
-      filterButtons.style.display = 'none';
-
+      const filterBtnsContainer = document.getElementById('filter-buttons-container');
       const backBtn = document.getElementById('backBtn');
-      backBtn.style.display = 'block';
 
-      const table = document.getElementById('data-table');
-      table.style.display = 'block';
+      table.innerHTML = '';
 
-      // Display filter value at the top
-      const topFilterValue = document.querySelector('.filter-value');
-      if (topFilterValue) {
-        topFilterValue.textContent = `Filter: ${filterValue}`;
-      } else {
-        const newFilterValue = document.createElement('div');
-        newFilterValue.textContent = `Filter: ${filterValue}`;
-        newFilterValue.classList.add('filter-value');
-        document.body.insertBefore(newFilterValue, document.body.firstChild);
-      }
+      const headerRow = document.createElement('tr');
+      Object.keys(originalData[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      originalData.forEach(row => {
+        if (row[Object.keys(row)[Object.keys(row).length - 2]] === filterValue) {
+          const tr = document.createElement('tr');
+          Object.values(row).forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        }
+      });
+
+      table.style.display = 'table';
+      document.getElementById('filterButtons').style.display = 'none';
+      backBtn.classList.remove('hide');
+      filterBtnsContainer.style.display = 'none';
     }
 
     function showAll() {
-      const table = document.getElementById('data-table');
-      const rows = table.getElementsByTagName('tr');
-
-      for (let i = 0; i < rows.length; i++) {
-        rows[i].style.display = '';
-      }
-
-      const filterButtons = document.getElementById('filterButtons');
-      filterButtons.style.display = 'block';
-
-      const backBtn = document.getElementById('backBtn');
-      backBtn.style.display = 'none';
-
-      table.style.display = 'none';
-
-      // Remove the displayed filter value at the top
-      const topFilterValue = document.querySelector('.filter-value');
-      if (topFilterValue) {
-        topFilterValue.remove();
-      }
+      document.getElementById('filterButtons').style.display = 'block';
+      document.getElementById('backBtn').classList.add('hide');
+      document.getElementById('data-table').style.display = 'none';
+      document.getElementById('filter-buttons-container').style.display = 'block';
     }
+
+    // Default load today
+    window.onload = () => { loadData('today'); };
   </script>
 </body>
 </html>
