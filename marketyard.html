@@ -1,230 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Gujarat Market Rates</title>
-<style>
-body {
-font-family: Arial, sans-serif;
-margin: 0;
-padding: 0;
-background-color: #f7f7f7;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Market Rates Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 5px;
+      background-color: #f7f7f7;
+    }
 
-.loader {
-display: flex;
-justify-content: center;
-align-items: center;
-height: 300px;
-}
+    .loader {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 250px;
+    }
 
-.ball {
-width: 30px;
-height: 30px;
-background-color: #4CAF50;
-border-radius: 50%;
-margin: 0 5px;
-animation: bounce 0.6s ease infinite alternate;
-}
+    .ball {
+      width: 25px;
+      height: 25px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      margin: 0 5px;
+      animation: bounce 0.6s ease infinite alternate;
+    }
 
-@keyframes bounce {
-0% { transform: translateY(0); }
-100% { transform: translateY(-20px); }
-}
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-20px); }
+    }
 
-.hide { display: none; }
+    .hide { display: none; }
 
-button {
-margin: 6px;
-padding: 12px 25px;
-cursor: pointer;
-background-color: #4CAF50;
-color: white;
-border: none;
-border-radius: 5px;
-font-size: 16px;
-}
+    button {
+      margin: 6px;
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
 
-.today-btn { background-color: #007AFF; }
-.yesterday-btn { background-color: #148f77; }
+    .today-btn { background-color: #007AFF; }
+    .yesterday-btn { background-color: #148f77; }
 
-table {
-border-collapse: collapse;
-width: 100%;
-display: none;
-font-size: 15px;
-}
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      display: none;
+      font-size: 15px;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+    }
 
-th, td {
-border: 1px solid #ddd;
-padding: 10px;
-text-align: left;
-}
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
 
-th { background-color: #f2f2f2; }
+    th { background-color: #f2f2f2; }
 
-.filter-value {
-margin: 10px 0;
-font-weight: bold;
-font-size: 16px;
-color: #333;
-}
+    .filter-value {
+      margin: 10px 0;
+      font-weight: bold;
+      font-size: 16px;
+      color: #333;
+    }
 
-#filterButtons > div {
-margin-top: 15px;
-font-size: 17px;
-font-weight: bold;
-color: #444;
-}
+    #filterButtons > div {
+      margin-top: 12px;
+      font-size: 17px;
+      font-weight: bold;
+      color: #444;
+    }
 
-.full-width {
-width: 100%;
-padding: 10px;
-}
-</style>
+    .full-width {
+      width: 100%;
+      padding: 10px;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 600px) {
+      button {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+      th, td {
+        padding: 6px;
+        font-size: 13px;
+      }
+      .loader { height: 180px; }
+    }
+  </style>
 </head>
 <body>
-<div class="full-width">
-<!-- Top buttons -->
-<div id="filter-buttons-container" class="hide">
-<button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
-<button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
-</div>
+  <div class="full-width">
+    <!-- Top buttons -->
+    <div id="filter-buttons-container" class="hide">
+      <button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
+      <button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
+    </div>
 
-<!-- Loader -->
-<div class="loader" id="loader">
-<div class="ball"></div>
-<div class="ball"></div>
-<div class="ball"></div>
-</div>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+      <div class="ball"></div>
+      <div class="ball"></div>
+      <div class="ball"></div>
+    </div>
 
-<!-- Back button -->
-<div class="hide" id="backBtn">
-<button onclick="showAll()">Back</button>
-</div>
+    <!-- Back button -->
+    <div class="hide" id="backBtn">
+      <button onclick="showAll()">Back</button>
+    </div>
 
-<!-- Category + Subcategory buttons -->
-<div class="hide" id="filterButtons"></div>
+    <!-- Category + Subcategory buttons -->
+    <div class="hide" id="filterButtons"></div>
 
-<!-- Data table -->
-<table id="data-table"></table>
-</div>
+    <!-- Data table -->
+    <table id="data-table"></table>
+  </div>
 
-<!-- PapaParse for CSV -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-<script>
-let originalData = [];
+  <!-- PapaParse for CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+    let originalData = [];
 
-const urls = {
-today: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=635984340&single=true&output=csv',
-yesterday: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=2107047807&single=true&output=csv'
-};
+    const urls = {
+      today: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=635984340&single=true&output=csv',
+      yesterday: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQKDjtpKqBat73iPqhILwhVW12TXAl06QBOTRaKEi85IM3aS-PesrJH1xPhVIGbhofH6sNuQmWNgd-X/pub?gid=2107047807&single=true&output=csv'
+    };
 
-function loadData(day) {
-const url = urls[day];
-const table = document.getElementById('data-table');
-const loader = document.getElementById('loader');
-const filterButtons = document.getElementById('filterButtons');
-const backBtn = document.getElementById('backBtn');
-const filterBtnsContainer = document.getElementById('filter-buttons-container');
+    function loadData(day) {
+      const url = urls[day];
+      const table = document.getElementById('data-table');
+      const loader = document.getElementById('loader');
+      const filterButtons = document.getElementById('filterButtons');
+      const backBtn = document.getElementById('backBtn');
+      const filterBtnsContainer = document.getElementById('filter-buttons-container');
 
-// Reset
-table.innerHTML = '';
-filterButtons.innerHTML = '';
-loader.style.display = 'flex';
-filterButtons.classList.add('hide');
-table.style.display = 'none';
-backBtn.classList.add('hide');
-filterBtnsContainer.style.display = 'none';
+      // Reset
+      table.innerHTML = '';
+      filterButtons.innerHTML = '';
+      loader.style.display = 'flex';
+      filterButtons.classList.add('hide');
+      table.style.display = 'none';
+      backBtn.classList.add('hide');
+      filterBtnsContainer.style.display = 'none';
 
-Papa.parse(url, {
-download: true,
-header: true,
-complete: function(results) {
-originalData = results.data;
+      Papa.parse(url, {
+        download: true,
+        header: true,
+        complete: function(results) {
+          originalData = results.data;
 
-// Collect category (region) + subcategory (district)
-const keys = Object.keys(originalData[0]);
-const secondLastKey = keys[keys.length - 2];
-const thirdLastKey = keys[keys.length - 3];
+          // Collect category (region) + subcategory (district)
+          const keys = Object.keys(originalData[0]);
+          const secondLastKey = keys[keys.length - 2];
+          const thirdLastKey = keys[keys.length - 3];
 
-const grouped = {};
-originalData.forEach(row => {
-const region = row[thirdLastKey];
-const district = row[secondLastKey];
-if (!grouped[region]) {
-grouped[region] = new Set();
-}
-grouped[region].add(district);
-});
+          const grouped = {};
+          originalData.forEach(row => {
+            const region = row[thirdLastKey];
+            const district = row[secondLastKey];
+            if (!grouped[region]) {
+              grouped[region] = new Set();
+            }
+            grouped[region].add(district);
+          });
 
-// Build buttons
-for (const region in grouped) {
-const title = document.createElement('div');
-title.textContent = region;
-filterButtons.appendChild(title);
+          // Build buttons
+          for (const region in grouped) {
+            const title = document.createElement('div');
+            title.textContent = region;
+            filterButtons.appendChild(title);
 
-grouped[region].forEach(district => {
-const button = document.createElement('button');
-button.textContent = district;
-button.onclick = () => filterTable(district);
-filterButtons.appendChild(button);
-});
-}
+            grouped[region].forEach(district => {
+              const button = document.createElement('button');
+              button.textContent = district;
+              button.onclick = () => filterTable(district);
+              filterButtons.appendChild(button);
+            });
+          }
 
-loader.style.display = 'none';
-filterButtons.classList.remove('hide');
-filterBtnsContainer.style.display = 'block'; // Show Today/Yesterday buttons
-}
-});
-}
+          loader.style.display = 'none';
+          filterButtons.classList.remove('hide');
+          filterBtnsContainer.style.display = 'block'; // Show Today/Yesterday buttons
+        }
+      });
+    }
 
-function filterTable(filterValue) {
-const table = document.getElementById('data-table');
-const filterBtnsContainer = document.getElementById('filter-buttons-container');
-const backBtn = document.getElementById('backBtn');
+    function filterTable(filterValue) {
+      const table = document.getElementById('data-table');
+      const filterBtnsContainer = document.getElementById('filter-buttons-container');
+      const backBtn = document.getElementById('backBtn');
 
-table.innerHTML = '';
+      table.innerHTML = '';
 
-// Table header
-const headerRow = document.createElement('tr');
-Object.keys(originalData[0]).forEach(key => {
-const th = document.createElement('th');
-th.textContent = key;
-headerRow.appendChild(th);
-});
-table.appendChild(headerRow);
+      // Table header
+      const headerRow = document.createElement('tr');
+      Object.keys(originalData[0]).forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
 
-// Rows
-originalData.forEach(row => {
-if (row[Object.keys(row)[Object.keys(row).length - 2]] === filterValue) {
-const tr = document.createElement('tr');
-Object.values(row).forEach(val => {
-const td = document.createElement('td');
-td.textContent = val;
-tr.appendChild(td);
-});
-table.appendChild(tr);
-}
-});
+      // Rows
+      originalData.forEach(row => {
+        if (row[Object.keys(row)[Object.keys(row).length - 2]] === filterValue) {
+          const tr = document.createElement('tr');
+          Object.values(row).forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        }
+      });
 
-table.style.display = 'table';
-document.getElementById('filterButtons').style.display = 'none';
-backBtn.classList.remove('hide');
-filterBtnsContainer.style.display = 'none';
-}
+      table.style.display = 'table';
+      document.getElementById('filterButtons').style.display = 'none';
+      backBtn.classList.remove('hide');
+      filterBtnsContainer.style.display = 'none';
+    }
 
-function showAll() {
-document.getElementById('filterButtons').style.display = 'block';
-document.getElementById('backBtn').classList.add('hide');
-document.getElementById('data-table').style.display = 'none';
-document.getElementById('filter-buttons-container').style.display = 'block';
-}
+    function showAll() {
+      document.getElementById('filterButtons').style.display = 'block';
+      document.getElementById('backBtn').classList.add('hide');
+      document.getElementById('data-table').style.display = 'none';
+      document.getElementById('filter-buttons-container').style.display = 'block';
+    }
 
-// Load Today by default
-window.onload = () => {
-loadData('today');
-};
-</script>
+    // Load Today by default
+    window.onload = () => {
+      loadData('today');
+    };
+  </script>
 </body>
 </html>
