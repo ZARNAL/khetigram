@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="gu">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Gujarat Market Rates</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -16,21 +15,21 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 250px;
+      height: 300px;
     }
 
     .ball {
-      width: 20px;
-      height: 20px;
+      width: 30px;
+      height: 30px;
       background-color: #4CAF50;
       border-radius: 50%;
-      margin: 0 4px;
+      margin: 0 5px;
       animation: bounce 0.6s ease infinite alternate;
     }
 
     @keyframes bounce {
       0% { transform: translateY(0); }
-      100% { transform: translateY(-18px); }
+      100% { transform: translateY(-20px); }
     }
 
     .hide {
@@ -38,17 +37,16 @@
     }
 
     button {
-      margin: 6px 4px;
-      padding: 12px 20px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      padding: 14px 30px;
       cursor: pointer;
       background-color: #4CAF50;
       color: white;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      width: 100%;
-      max-width: 320px;
-      display: block;
+      border-radius: 5px;
+      font-size: 18px;
+     
     }
 
     .today-btn {
@@ -63,50 +61,35 @@
       border-collapse: collapse;
       width: 100%;
       display: none;
-      font-size: 14px;
-      margin-top: 12px;
-      background: white;
+      font-size: 16px;
     }
 
     th, td {
       border: 1px solid #ddd;
-      padding: 8px;
+      padding: 12px;
       text-align: left;
     }
 
     th {
       background-color: #f2f2f2;
-      font-size: 15px;
     }
 
     .filter-value {
-      margin: 8px 0;
+      margin: 10px 0;
       font-weight: bold;
-      font-size: 15px;
+      font-size: 16px;
       color: #333;
     }
 
     #filterButtons > div {
-      margin-top: 15px;
-      font-size: 16px;
+      margin-top: 20px;
+      font-size: 18px;
       color: #333;
     }
 
     .full-width {
       width: 100%;
       padding: 10px;
-      box-sizing: border-box;
-    }
-
-    /* Larger screens (tablet/desktop) */
-    @media (min-width: 600px) {
-      button {
-        display: inline-block;
-        width: auto;
-      }
-      table {
-        font-size: 16px;
-      }
     }
   </style>
 </head>
@@ -124,7 +107,7 @@
     </div>
 
     <div class="hide" id="backBtn">
-      <button onclick="showAll()">🔙 પાછું જાઓ</button>
+      <button onclick="showAll()">Back</button>
     </div>
 
     <div class="hide" id="filterButtons"></div>
@@ -238,7 +221,7 @@
       document.getElementById('filter-buttons-container').style.display = 'block';
     }
 
-    // Load today by default
+    // Load today by default, but show nothing until filtered
     window.onload = () => {
       loadData('today');
     };
