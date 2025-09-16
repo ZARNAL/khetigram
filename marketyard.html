@@ -7,16 +7,24 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 5px;
+      margin: 2px;
       background-color: #f7f7f7;
+    }
+
+    .container {
+      margin: 10px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 2px rgba(0,0,0,0.1);
+      padding: 10px;
+      overflow-x: auto;
     }
 
     .loader {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 250px;
+      height: 200px;
     }
 
     .ball {
@@ -36,27 +44,25 @@
     .hide { display: none; }
 
     button {
-      margin: 6px;
-      padding: 10px 20px;
+      margin: 5px;
+      padding: 12px 25px;
       cursor: pointer;
       background-color: #4CAF50;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
       font-size: 16px;
     }
 
     .today-btn { background-color: #007AFF; }
     .yesterday-btn { background-color: #148f77; }
+    .back-btn { background-color: #FF5733; }
 
     table {
       border-collapse: collapse;
       width: 100%;
       display: none;
-      font-size: 15px;
-      background: #fff;
-      border-radius: 6px;
-      overflow: hidden;
+      font-size: 16px;
     }
 
     th, td {
@@ -75,35 +81,29 @@
     }
 
     #filterButtons > div {
-      margin-top: 12px;
-      font-size: 17px;
+      margin-top: 15px;
+      font-size: 18px;
       font-weight: bold;
-      color: #444;
-    }
-
-    .full-width {
-      width: 100%;
-      padding: 10px;
+      color: #333;
     }
 
     /* Mobile responsiveness */
     @media (max-width: 600px) {
       button {
-        padding: 8px 16px;
+        padding: 10px 18px;
         font-size: 14px;
       }
       th, td {
         padding: 6px;
-        font-size: 13px;
+        font-size: 14px;
       }
-      .loader { height: 180px; }
     }
   </style>
 </head>
 <body>
-  <div class="full-width">
-    <!-- Top buttons -->
-    <div id="filter-buttons-container" class="hide">
+  <div class="container">
+    <!-- Today / Yesterday buttons -->
+    <div id="filter-buttons-container">
       <button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
       <button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
     </div>
@@ -117,17 +117,17 @@
 
     <!-- Back button -->
     <div class="hide" id="backBtn">
-      <button onclick="showAll()">Back</button>
+      <button class="back-btn" onclick="showAll()">Back</button>
     </div>
 
-    <!-- Category + Subcategory buttons -->
+    <!-- Category filter buttons -->
     <div class="hide" id="filterButtons"></div>
 
-    <!-- Data table -->
+    <!-- Table -->
     <table id="data-table"></table>
   </div>
 
-  <!-- PapaParse for CSV -->
+  <!-- PapaParse -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <script>
     let originalData = [];
@@ -160,7 +160,7 @@
         complete: function(results) {
           originalData = results.data;
 
-          // Collect category (region) + subcategory (district)
+          // Group by Region -> District
           const keys = Object.keys(originalData[0]);
           const secondLastKey = keys[keys.length - 2];
           const thirdLastKey = keys[keys.length - 3];
@@ -169,13 +169,10 @@
           originalData.forEach(row => {
             const region = row[thirdLastKey];
             const district = row[secondLastKey];
-            if (!grouped[region]) {
-              grouped[region] = new Set();
-            }
+            if (!grouped[region]) grouped[region] = new Set();
             grouped[region].add(district);
           });
 
-          // Build buttons
           for (const region in grouped) {
             const title = document.createElement('div');
             title.textContent = region;
@@ -191,7 +188,7 @@
 
           loader.style.display = 'none';
           filterButtons.classList.remove('hide');
-          filterBtnsContainer.style.display = 'block'; // Show Today/Yesterday buttons
+          filterBtnsContainer.style.display = 'block';
         }
       });
     }
@@ -203,7 +200,6 @@
 
       table.innerHTML = '';
 
-      // Table header
       const headerRow = document.createElement('tr');
       Object.keys(originalData[0]).forEach(key => {
         const th = document.createElement('th');
@@ -212,7 +208,6 @@
       });
       table.appendChild(headerRow);
 
-      // Rows
       originalData.forEach(row => {
         if (row[Object.keys(row)[Object.keys(row).length - 2]] === filterValue) {
           const tr = document.createElement('tr');
@@ -238,10 +233,8 @@
       document.getElementById('filter-buttons-container').style.display = 'block';
     }
 
-    // Load Today by default
-    window.onload = () => {
-      loadData('today');
-    };
+    // Default load today
+    window.onload = () => { loadData('today'); };
   </script>
 </body>
 </html>
