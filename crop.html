@@ -56,8 +56,8 @@
 
     .today-btn { background-color: #007AFF; }
     .yesterday-btn { background-color: #148f77; }
+    .home-btn { background-color: #FF9500; } /* Added for Home button */
     .back-btn { background-color: #FF5733; }
-    .home-btn { background-color: #FF5733; }
 
     table {
       border-collapse: collapse;
@@ -96,12 +96,11 @@
 </head>
 <body>
   <div class="container">
-    <!-- Today / Yesterday + Home button always visible -->
+    <!-- Today / Yesterday + Home button -->
     <div id="mainButtons">
       <button class="home-btn" onclick="goHome()"> < back</button>
       <button class="today-btn" onclick="loadData('today')">આજ ના બજાર ભાવ</button>
       <button class="yesterday-btn" onclick="loadData('yesterday')">ગઈકાલ ના બજાર ભાવ</button>
-      
     </div>
 
     <!-- Loader -->
@@ -139,6 +138,7 @@
       const loader = document.getElementById('loader');
       const filterButtons = document.getElementById('filterButtons');
       const backBtn = document.getElementById('backBtn');
+      const mainButtons = document.getElementById('mainButtons');
 
       // Reset
       table.innerHTML = '';
@@ -147,6 +147,7 @@
       filterButtons.classList.add('hide');
       table.style.display = 'none';
       backBtn.classList.add('hide');
+      mainButtons.classList.add('hide'); // Hide Home/Today/Yesterday during loading
 
       Papa.parse(url, {
         download: true,
@@ -182,6 +183,7 @@
 
           loader.style.display = 'none';
           filterButtons.classList.remove('hide');
+          mainButtons.classList.remove('hide'); // Show Home/Today/Yesterday after loading
         }
       });
     }
@@ -215,15 +217,15 @@
 
       table.style.display = 'table';
       document.getElementById('filterButtons').style.display = 'none';
-      backBtn.classList.remove('hide'); 
-      mainButtons.classList.add('hide'); // hide Today/Yesterday/Home
+      backBtn.classList.remove('hide');
+      mainButtons.classList.add('hide'); // Hide Home/Today/Yesterday
     }
 
     function showAll() {
       document.getElementById('filterButtons').style.display = 'block';
       document.getElementById('backBtn').classList.add('hide');
       document.getElementById('data-table').style.display = 'none';
-      document.getElementById('mainButtons').classList.remove('hide'); // show Today/Yesterday/Home again
+      document.getElementById('mainButtons').classList.remove('hide'); // Show Home/Today/Yesterday
     }
 
     function goHome() {
