@@ -1768,19 +1768,22 @@
                 counts[c] = (counts[c] || 0) + 1;
             });
 
-            els.categoryPillStrip.innerHTML = CROP_CATEGORIES.map(cat => {
+            const categoryButtons = CROP_CATEGORIES.map(cat => {
                 const cnt = counts[cat.id] || 0;
                 if (cat.id !== 'all' && cnt === 0) return '';
-                const isActive = state.filters.category === cat.id;
+                const isActive = state.cropFavoriteMode !== 'fav' && state.filters.category === cat.id;
                 return `
                     <button type="button" data-cat="${cat.id}" class="cat-pill tap-spring ${isActive ? 'pill-blue' : 'pill-cat-inactive'}">
                         ${cat.label} <span class="tabular-nums" style="opacity:0.75;">(${cnt})</span>
                     </button>
                 `;
             }).join('');
+            const favoritesButton = `<button type="button" id="cropCategoryFavoritesBtn" class="cat-pill tap-spring ${state.cropFavoriteMode === 'fav' ? 'pill-blue' : 'pill-cat-inactive'}">⭐ મનપસંદ</button>`;
+            els.categoryPillStrip.innerHTML = categoryButtons + favoritesButton;
 
-            els.categoryPillStrip.querySelectorAll('.cat-pill').forEach(btn => {
+            els.categoryPillStrip.querySelectorAll('.cat-pill[data-cat]').forEach(btn => {
                 btn.addEventListener('click', () => {
+                    state.cropFavoriteMode = 'all';
                     state.filters.category = btn.dataset.cat;
                     state.filters.cropKeyword = '';
                     state.currentPage = 1;
@@ -1788,6 +1791,16 @@
                     renderCropCollage();
                     applyFiltersAndRender();
                 });
+            });
+            const favBtn = document.getElementById('cropCategoryFavoritesBtn');
+            if (favBtn) favBtn.addEventListener('click', () => {
+                state.cropFavoriteMode = 'fav';
+                state.filters.category = 'all';
+                state.filters.cropKeyword = '';
+                state.currentPage = 1;
+                renderCategoryPills();
+                renderCropCollage();
+                applyFiltersAndRender();
             });
         }
 
