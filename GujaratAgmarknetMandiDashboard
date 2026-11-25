@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ગુજરાત માર્કેટ યાર્ડ ભાવ | Gujarat APMC Mandi Bhav</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Sans Gujarati -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+Gujarati:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans Gujarati"', '-apple-system', 'BlinkMacSystemFont', 'Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'apple': '0 2px 14px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body {
+            background-color: #F5F5F7;
+            color: #1D1D1F;
+            -webkit-font-smoothing: antialiased;
+        }
+        .pb-safe-nav {
+            padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+        }
+    </style>
+</head>
+<body class="bg-[#F5F5F7] text-[#1D1D1F] pb-safe-nav sm:pb-10">
+
+    <!-- Ultra-Simple App Header -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-black/[0.06]">
+        <div class="max-w-2xl mx-auto px-3.5 py-2.5 flex items-center justify-between gap-2">
+            <!-- Brand Title + Status -->
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-9 h-9 rounded-2xl bg-[#248A3D] text-white flex items-center justify-center text-lg shadow-sm shrink-0">
+                    🌾
+                </div>
+                <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-base sm:text-lg font-black tracking-tight text-[#1D1D1F] truncate">માર્કેટ ભાવ</h1>
+                        <span id="dataStatusBadge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#E8F8ED] text-[#1E7E34] shrink-0">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#34C759] animate-pulse"></span>
+                            તાજો
+                        </span>
+                    </div>
+                    <p id="activeDateSubtitle" class="text-[11px] text-[#6E6E73] font-semibold truncate">આજના ભાવ • ૨૦ કિલો (મણ)</p>
+                </div>
+            </div>
+
+            <!-- Simple 20kg vs 100kg Pill Switch + Refresh -->
+            <div class="flex items-center gap-1.5 shrink-0">
+                <div class="bg-[#E8E8ED] p-0.5 rounded-full flex items-center" role="group" aria-label="વજન">
+                    <button type="button" id="unitMannBtn" class="px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm transition-all">
+                        ૨૦ કિલો
+                    </button>
+                    <button type="button" id="unitQuintalBtn" class="px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73] hover:text-[#1D1D1F] transition-all">
+                        ૧૦૦ કિલો
+                    </button>
+                </div>
+
+                <!-- Desktop Mode Switcher -->
+                <div class="hidden sm:flex bg-[#E8E8ED] p-0.5 rounded-full items-center">
+                    <button type="button" id="viewDashboardBtn" class="px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm">
+                        પાક મુજબ
+                    </button>
+                    <button type="button" id="viewKhetiGramBtn" class="px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73]">
+                        યાર્ડ મુજબ
+                    </button>
+                </div>
+
+                <button id="refreshDataBtn" class="w-9 h-9 rounded-full bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#0071E3] flex items-center justify-center transition-all active:scale-90" title="તાજો ભાવ લાવો">
+                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Ultra-Clean Container -->
+    <main class="max-w-2xl mx-auto px-3 sm:px-4 pt-3 space-y-3.5">
+
+        <!-- Step 1 & 2: Visual Crop Icons + Big Day Buttons -->
+        <section class="bg-white rounded-3xl p-3.5 shadow-apple border border-black/[0.04] space-y-3">
+
+            <!-- Big Day Selector Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                <button type="button" data-mode="live" class="date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-extrabold rounded-full bg-[#1D1D1F] text-white transition-all">
+                    આજ
+                </button>
+                <button type="button" data-mode="yesterday" class="date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-bold rounded-full bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED] transition-all">
+                    ગઈકાલ
+                </button>
+                <button type="button" data-mode="two_days_ago" class="date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-bold rounded-full bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED] transition-all">
+                    ૨ દિવસ પહેલા
+                </button>
+                <!-- Simple Calendar Input -->
+                <div class="flex items-center gap-1 shrink-0 ml-auto bg-[#F5F5F7] pl-3 pr-1.5 py-1 rounded-full">
+                    <span class="text-xs">📅</span>
+                    <input type="date" id="specificDateInput" aria-label="તારીખ પસંદ કરો" class="text-xs font-bold bg-transparent text-[#1D1D1F] outline-none w-[112px] cursor-pointer">
+                </div>
+            </div>
+
+            <!-- Big Visual Picture Crop Selector -->
+            <div>
+                <div class="flex items-center justify-between mb-2 px-0.5">
+                    <span class="text-xs font-bold text-[#6E6E73]">પહેલા વિભાગ અને પછી પાક દબાવો:</span>
+                    <button type="button" id="resetFiltersBtn" class="hidden text-xs font-extrabold text-[#D70015] bg-[#FFE5E5] px-2.5 py-0.5 rounded-full">
+                        બધા પાક ✕
+                    </button>
+                </div>
+
+                <!-- Category Pills (બીજ, મસાલા, શાકભાજી, પાંદડાવાળી શાકભાજી, દાળ, અનાજ, ફળ) -->
+                <div id="categoryTabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Crops Grid for Selected Category -->
+                <div id="visualCropGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[210px] overflow-y-auto pr-0.5">
+                    <!-- Populated dynamically with big emoji + Gujarati crop name -->
+                </div>
+            </div>
+
+            <!-- District / Yard Quick Filter Row -->
+            <div class="flex items-center justify-between gap-2 pt-1 border-t border-black/[0.05]">
+                <span class="text-xs font-bold text-[#6E6E73] px-1">જિલ્લો કે યાર્ડ મુજબ જુઓ:</span>
+                <button type="button" id="toggleMoreFiltersBtn" class="shrink-0 px-3.5 py-2 text-xs font-extrabold bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] rounded-full flex items-center gap-1.5">
+                    <span>📍 જિલ્લો / યાર્ડ</span>
+                    <span id="activeFilterDot" class="hidden w-2 h-2 rounded-full bg-[#0071E3]"></span>
+                </button>
+            </div>
+
+            <!-- Optional District / Yard Dropdowns (Hidden until tapped) -->
+            <div id="moreFiltersDrawer" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <select id="districtFilter" aria-label="જિલ્લો" class="w-full px-3.5 py-2.5 text-sm font-bold bg-[#F5F5F7] text-[#1D1D1F] rounded-2xl outline-none">
+                    <option value="">📍 બધા જિલ્લા</option>
+                </select>
+                <select id="marketFilter" aria-label="માર્કેટ યાર્ડ" class="w-full px-3.5 py-2.5 text-sm font-bold bg-[#F5F5F7] text-[#1D1D1F] rounded-2xl outline-none">
+                    <option value="">🏛️ બધા માર્કેટ યાર્ડ</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Simple Status Message Banner -->
+        <div id="alertBanner" class="hidden rounded-2xl px-4 py-3 bg-white border border-amber-200 flex items-center justify-between gap-2 shadow-apple">
+            <div class="text-xs sm:text-sm font-semibold text-[#1D1D1F]">
+                <span id="alertTitle" class="font-extrabold"></span>
+                <span id="alertMessage" class="ml-1 text-[#6E6E73]"></span>
+            </div>
+            <button onclick="document.getElementById('alertBanner').classList.add('hidden')" class="text-sm font-bold text-[#86868B] px-2">✕</button>
+        </div>
+
+        <!-- Simple Loading Indicator -->
+        <div id="loadingState" class="bg-white rounded-3xl p-10 shadow-apple flex flex-col items-center justify-center text-center">
+            <div class="w-9 h-9 border-4 border-[#E8E8ED] border-t-[#248A3D] rounded-full animate-spin mb-3"></div>
+            <h3 class="text-base font-extrabold text-[#1D1D1F]">તાજા ભાવ લાવી રહ્યા છીએ...</h3>
+        </div>
+
+        <!-- Main Content Area -->
+        <div id="dashboardContent" class="hidden space-y-3.5">
+
+            <!-- VIEW 1: ULTRA-SIMPLE CROP PRICE CARDS (પાક મુજબ) -->
+            <div id="farmerDashboardView" class="space-y-3">
+
+                <!-- Selected Crop Banner -->
+                <div id="selectedCropHeroBanner" class="hidden bg-white rounded-3xl border border-black/[0.05] shadow-apple px-4 py-3 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div id="selectedCropHeroIcon" class="w-11 h-11 rounded-2xl bg-[#E8F8ED] flex items-center justify-center text-2xl shrink-0">🥜</div>
+                        <div class="min-w-0">
+                            <span class="block text-[11px] font-bold text-[#248A3D]">પસંદ કરેલ પાક</span>
+                            <h3 id="selectedCropHeroTitle" class="text-lg font-black text-[#1D1D1F] truncate">મગફળી</h3>
+                        </div>
+                    </div>
+                    <button type="button" onclick="clearSelectedCrop()" class="shrink-0 px-3.5 py-2 rounded-full bg-[#F5F5F7] hover:bg-[#E8E8ED] text-xs font-extrabold text-[#1D1D1F]">
+                        બધા પાક ✕
+                    </button>
+                </div>
+
+                <!-- Minimal Header with Voice Listen Button -->
+                <div class="flex items-center justify-between gap-2 px-1">
+                    <div>
+                        <h2 class="text-base font-black text-[#1D1D1F]">
+                            આજના ભાવ <span class="text-xs font-bold text-[#6E6E73]">(<span class="unit-label-full">૨૦ કિલો / ૧ મણ</span>)</span>
+                        </h2>
+                        <p id="tableSummaryText" class="text-xs text-[#6E6E73] font-semibold">કુલ 0 ભાવ</p>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="speakSummaryBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-extrabold text-white bg-[#0071E3] rounded-full shadow-sm active:scale-95">
+                            <span>🔊</span>
+                            <span>સાંભળો</span>
+                        </button>
+                        <select id="simpleSortSelect" aria-label="ગોઠવો" class="px-3 py-2 text-xs font-extrabold bg-white border border-black/[0.08] rounded-full text-[#1D1D1F] outline-none">
+                            <option value="modal_desc">વધુ ભાવ પહેલા</option>
+                            <option value="modal_asc">ઓછો ભાવ પહેલા</option>
+                            <option value="market_asc">યાર્ડ પ્રમાણે</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Big, High-Contrast Price Cards -->
+                <div id="farmerCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyTableState" class="hidden bg-white rounded-3xl shadow-apple py-12 px-4 text-center">
+                    <div class="text-4xl mb-2">🌾</div>
+                    <h4 class="text-base font-extrabold text-[#1D1D1F]">કોઈ ભાવ મળ્યા નથી</h4>
+                    <p class="text-xs text-[#6E6E73] mt-1 font-medium">ઉપરથી બીજો પાક અથવા તારીખ પસંદ કરો.</p>
+                </div>
+
+                <!-- Simple Next / Prev Page Bar -->
+                <div class="bg-white px-4 py-3 rounded-2xl shadow-apple flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-[#6E6E73]">વધુ ભાવ જુઓ</span>
+                    <div id="paginationControls" class="flex items-center gap-2"></div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: YARD DIRECTORY LIST (યાર્ડ મુજબ) -->
+            <div id="khetigramAppView" class="hidden space-y-3">
+                <div class="bg-white p-3.5 rounded-3xl shadow-apple space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <input type="text" id="kgSearchInput" placeholder="🔍 યાર્ડ શોધો (ગોંડલ, રાજકોટ, જસદણ...)" class="flex-1 px-4 py-2.5 text-sm font-semibold bg-[#F5F5F7] text-[#1D1D1F] placeholder-[#86868B] rounded-2xl outline-none">
+                        <button type="button" id="kgBackToYardsBtn" class="hidden shrink-0 px-3.5 py-2.5 rounded-2xl bg-[#0071E3] text-white text-xs font-extrabold">
+                            ‹ બધા યાર્ડ
+                        </button>
+                    </div>
+
+                    <div id="kgRegionTabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                        <button type="button" data-region="ALL" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-[#1D1D1F] text-white">બધા યાર્ડ</button>
+                        <button type="button" data-region="FAV" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">⭐ મનપસંદ</button>
+                        <button type="button" data-region="Saurashtra" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">સૌરાષ્ટ્ર</button>
+                        <button type="button" data-region="North" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">ઉત્તર ગુજરાત</button>
+                        <button type="button" data-region="Central" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">મધ્ય ગુજરાત</button>
+                        <button type="button" data-region="South" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">દક્ષિણ ગુજરાત</button>
+                        <button type="button" data-region="Kutch" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">કચ્છ</button>
+                    </div>
+                </div>
+
+                <!-- Screen A: APMC Market Yard List -->
+                <div id="kgYardDirectoryScreen" class="bg-white rounded-3xl shadow-apple divide-y divide-black/[0.06] overflow-hidden"></div>
+
+                <!-- Screen B: Selected Yard's Rate Sheet -->
+                <div id="kgYardDetailScreen" class="hidden bg-white rounded-3xl shadow-apple overflow-hidden">
+                    <div class="p-4 border-b border-black/[0.06] flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h3 id="kgSelectedYardTitle" class="text-lg font-black text-[#1D1D1F] truncate">ગોંડલ માર્કેટ યાર્ડ</h3>
+                                <button type="button" id="kgToggleFavDetailBtn" class="text-lg leading-none p-1.5 rounded-full bg-[#F5F5F7]">☆</button>
+                            </div>
+                            <p id="kgSelectedYardMeta" class="text-xs text-[#6E6E73] font-semibold truncate">જિલ્લો: રાજકોટ</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" id="kgSpeakYardBtn" class="px-3.5 py-2 rounded-full bg-[#0071E3] text-white text-xs font-extrabold active:scale-95">
+                                🔊 સાંભળો
+                            </button>
+                            <button type="button" id="kgShareWhatsAppBtn" class="px-3.5 py-2 rounded-full bg-[#248A3D] text-white text-xs font-extrabold active:scale-95">
+                                📲 શેર
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-[#F5F5F7] text-[#6E6E73] text-xs font-extrabold border-b border-black/[0.06]">
+                                    <th class="py-2.5 px-4">પાક</th>
+                                    <th class="py-2.5 px-2 text-right">ઓછો</th>
+                                    <th class="py-2.5 px-2 text-right text-[#1D1D1F]">સરેરાશ</th>
+                                    <th class="py-2.5 px-4 text-right text-[#248A3D]">ઊંચો</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kgYardRatesTbody" class="divide-y divide-black/[0.06] text-sm"></tbody>
+                        </table>
+                    </div>
+                    <div class="bg-[#F5F5F7] px-4 py-3 text-xs font-bold text-[#6E6E73] flex items-center justify-between">
+                        <span>બધા ભાવ ₹ (<span class="unit-label-short">૨૦ કિલો</span>) માં છે</span>
+                        <button type="button" id="kgBottomBackBtn" class="text-[#0071E3] font-extrabold">‹ બીજું યાર્ડ જુઓ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Sticky Bottom Tab Bar (3 Large Easy Buttons) -->
+    <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-black/[0.08] px-3 py-2 flex items-center justify-around">
+        <button type="button" id="mobileTabCardsBtn" class="flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#0071E3] font-extrabold">
+            <span class="text-xl leading-none">🌾</span>
+            <span class="text-xs mt-1">પાક મુજબ</span>
+        </button>
+        <button type="button" id="mobileTabYardsBtn" class="flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#6E6E73] font-bold">
+            <span class="text-xl leading-none">🏛️</span>
+            <span class="text-xs mt-1">યાર્ડ મુજબ</span>
+        </button>
+        <button type="button" id="mobileTabSpeakBtn" class="flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#248A3D] font-extrabold active:scale-95">
+            <span class="text-xl leading-none">🔊</span>
+            <span class="text-xs mt-1">સાંભળો</span>
+        </button>
+    </nav>
+
+    <script>
+        const LIVE_API_BASE = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070';
+        const HISTORICAL_API_BASE = 'https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24';
+        const DEFAULT_API_KEY = '579b464db66ec23bdd0000017185aa4a01fb494e47104dff02edf1ba';
+
+        const state = {
+            rawRecords: [],
+            filteredRecords: [],
+            currentPage: 1,
+            rowsPerPage: 12,
+            sortKey: 'modal_price',
+            sortDirection: 'desc',
+            activeMode: 'live',
+            priceUnit: 'mann', // 'mann' (20 kg) default for Gujarat farmers
+            uiViewMode: 'dashboard',
+            kgRegion: 'ALL',
+            kgSelectedYard: null,
+            favoriteYards: JSON.parse(localStorage.getItem('guj_mandi_fav_yards') || '["Gondal", "Rajkot", "Jasdan", "Unjha"]'),
+            selectedCategory: 'ALL',
+            filters: {
+                district: '',
+                market: '',
+                cropKeyword: ''
+            }
+        };
+
+        const CROP_CATEGORIES = [
+            { id: 'ALL', gu: 'બધા પાક', icon: '🌾' },
+            { id: 'બીજ', gu: 'બીજ', icon: '🥜' },
+            { id: 'મસાલા', gu: 'મસાલા', icon: '🌿' },
+            { id: 'શાકભાજી', gu: 'શાકભાજી', icon: '🥔' },
+            { id: 'પાંદડાવાળી શાકભાજી', gu: 'પાંદડાવાળી શાકભાજી', icon: '🥬' },
+            { id: 'દાળ', gu: 'દાળ', icon: '🫘' },
+            { id: 'અનાજ', gu: 'અનાજ', icon: '🌾' },
+            { id: 'ફળ', gu: 'ફળ', icon: '🥭' }
+        ];
+
+        const CROP_DICTIONARY = [
+            // બીજ (Seeds / Oilseeds / Cotton)
+            { id: 'groundnut', gu: 'મગફળી', category: 'બીજ', icon: '🥜', keywords: ['groundnut', 'peanut', 'magfali', 'sing'] },
+            { id: 'groundnut_split', gu: 'મગફળી ફાડા', category: 'બીજ', icon: '🥜', keywords: ['groundnut (split)', 'groundnut split', 'sing dana'] },
+            { id: 'groundnut_raw', gu: 'મગફળીની શીંગો (કાચી)', category: 'બીજ', icon: '🥜', keywords: ['groundnut pods', 'raw groundnut'] },
+            { id: 'cotton', gu: 'કપાસ', category: 'બીજ', icon: '☁️', keywords: ['cotton', 'kapas'] },
+            { id: 'cotton_seed', gu: 'કપાસનું બીજ', category: 'બીજ', icon: '🌱', keywords: ['cotton seed', 'kapasia'] },
+            { id: 'castor', gu: 'એરંડા', category: 'બીજ', icon: '🌱', keywords: ['castor', 'eranda'] },
+            { id: 'sesame', gu: 'તલ', category: 'બીજ', icon: '🫘', keywords: ['sesamum', 'sesame', 'gingelly', 'til', 'tal'] },
+            { id: 'soyabean', gu: 'સોયાબિન', category: 'બીજ', icon: '🫘', keywords: ['soyabean', 'soybean'] },
+            { id: 'guar_gum', gu: 'ગુવારગમ', category: 'બીજ', icon: '🌱', keywords: ['guar seed', 'guargum', 'guar gum'] },
+            { id: 'isabgul_seed', gu: 'ઇસબગુલ (સાયલિયમ)', category: 'બીજ', icon: '🌾', keywords: ['isabgul', 'psyllium'] },
+            { id: 'moth_seed', gu: 'મઠ', category: 'બીજ', icon: '🫘', keywords: ['moth', 'matki'] },
+            { id: 'asaliya', gu: 'અસાલિયા', category: 'બીજ', icon: '🌱', keywords: ['asaliya', 'cress seed'] },
+
+            // મસાલા (Spices)
+            { id: 'cumin', gu: 'જીરું', category: 'મસાલા', icon: '🌿', keywords: ['cumin', 'jeera', 'jiru'] },
+            { id: 'coriander', gu: 'ધાણા', category: 'મસાલા', icon: '🌿', keywords: ['coriander seed', 'coriander', 'dhana'] },
+            { id: 'garlic', gu: 'લસણ', category: 'મસાલા', icon: '🧄', keywords: ['garlic', 'lasan'] },
+            { id: 'ginger', gu: 'આદુ (લીલું)', category: 'મસાલા', icon: '🫚', keywords: ['ginger', 'adu'] },
+            { id: 'turmeric', gu: 'હળદર', category: 'મસાલા', icon: '🫚', keywords: ['turmeric', 'haldar'] },
+            { id: 'turmeric_raw', gu: 'કાચું હળદર', category: 'મસાલા', icon: '🫚', keywords: ['turmeric (raw)', 'raw turmeric'] },
+            { id: 'mustard', gu: 'રાયડો', category: 'મસાલા', icon: '🌿', keywords: ['mustard', 'raydo', 'sarson'] },
+            { id: 'ajwain', gu: 'અજમો', category: 'મસાલા', icon: '🌿', keywords: ['ajwan', 'ajwain', 'carom'] },
+            { id: 'fennel', gu: 'વરિયાળી', category: 'મસાલા', icon: '🌿', keywords: ['fennel', 'variyali', 'saunf'] },
+            { id: 'dill_seed', gu: 'સુવાદાણા / સુવા બીયાં', category: 'મસાલા', icon: '🌿', keywords: ['suva', 'dill seed', 'suvadana'] },
+            { id: 'dry_chilli', gu: 'સૂકા મરચાં', category: 'મસાલા', icon: '🌶️', keywords: ['dry chillies', 'dry chilli', 'red chilli', 'chilli red'] },
+            { id: 'fenugreek_seed', gu: 'મેથી', category: 'મસાલા', icon: '🌿', keywords: ['fenugreek', 'methi seed'] },
+
+            // શાકભાજી (Vegetables)
+            { id: 'onion', gu: 'ડુંગળી', category: 'શાકભાજી', icon: '🧅', keywords: ['onion', 'dungli'] },
+            { id: 'onion_green', gu: 'ડુંગળી લીલી', category: 'શાકભાજી', icon: '🧅', keywords: ['onion green', 'spring onion'] },
+            { id: 'potato', gu: 'બટાટા', category: 'શાકભાજી', icon: '🥔', keywords: ['potato', 'batata'] },
+            { id: 'tomato', gu: 'ટામેટા', category: 'શાકભાજી', icon: '🍅', keywords: ['tomato', 'tameta'] },
+            { id: 'brinjal', gu: 'રીંગણ', category: 'શાકભાજી', icon: '🍆', keywords: ['brinjal', 'eggplant', 'ringan'] },
+            { id: 'cabbage', gu: 'કોબી', category: 'શાકભાજી', icon: '🥬', keywords: ['cabbage', 'kobi'] },
+            { id: 'cauliflower', gu: 'ફૂલકોબી', category: 'શાકભાજી', icon: '🥦', keywords: ['cauliflower', 'fulkobi'] },
+            { id: 'bottle_gourd', gu: 'દૂધી', category: 'શાકભાજી', icon: '🥒', keywords: ['bottle gourd', 'dudhi', 'lauki'] },
+            { id: 'carrot', gu: 'ગાજર', category: 'શાકભાજી', icon: '🥕', keywords: ['carrot', 'gajar'] },
+            { id: 'cucumber', gu: 'કાકડી (ખીરા)', category: 'શાકભાજી', icon: '🥒', keywords: ['cucumber', 'kakdi', 'kheera'] },
+            { id: 'long_cucumber', gu: 'લાંબી કાકડી (કાકરી)', category: 'શાકભાજી', icon: '🥒', keywords: ['long melon', 'kakri'] },
+            { id: 'green_chilli', gu: 'લીલા મરચા', category: 'શાકભાજી', icon: '🌶️', keywords: ['green chilli', 'green chillies', 'marcha'] },
+            { id: 'peas', gu: 'વટાણા', category: 'શાકભાજી', icon: '🫛', keywords: ['peas', 'vatana', 'green peas'] },
+            { id: 'bhindi', gu: 'ભીંડી', category: 'શાકભાજી', icon: '🫛', keywords: ['bhindi', 'ladies finger', 'okra'] },
+            { id: 'choli_veg', gu: 'ચોળી', category: 'શાકભાજી', icon: '🫛', keywords: ['cowpea', 'choli', 'barbati'] },
+            { id: 'drumstick', gu: 'સરગવો', category: 'શાકભાજી', icon: '🥢', keywords: ['drumstick', 'sargavo', 'moringa'] },
+            { id: 'val_papdi', gu: 'વાલ / સુરત પાપડી', category: 'શાકભાજી', icon: '🫛', keywords: ['indian beans', 'sem', 'val', 'papdi', 'surti'] },
+            { id: 'tindora', gu: 'ટીંડોરા / કુંદરૂ', category: 'શાકભાજી', icon: '🥒', keywords: ['tindora', 'tendli', 'kundru', 'little gourd'] },
+            { id: 'pumpkin', gu: 'કોળુ', category: 'શાકભાજી', icon: '🎃', keywords: ['pumpkin', 'kolu', 'kaddu'] },
+            { id: 'radish', gu: 'મૂળા', category: 'શાકભાજી', icon: '🥕', keywords: ['radish', 'mula', 'mooli'] },
+            { id: 'beetroot', gu: 'બીટ', category: 'શાકભાજી', icon: '🫜', keywords: ['beetroot', 'beet'] },
+            { id: 'bitter_gourd', gu: 'કારેલા', category: 'શાકભાજી', icon: '🥒', keywords: ['bitter gourd', 'karela'] },
+            { id: 'capsicum', gu: 'કેપ્સીકમ', category: 'શાકભાજી', icon: '🫑', keywords: ['capsicum', 'shimla'] },
+            { id: 'suran', gu: 'સુરન / હાથી યમ', category: 'શાકભાજી', icon: '🥔', keywords: ['elephant yam', 'suran', 'yam'] },
+            { id: 'french_beans', gu: 'ફણસી / ફ્રેન્ચ બીન્સ', category: 'શાકભાજી', icon: '🫛', keywords: ['french beans', 'cluster beans', 'fansi', 'beans'] },
+            { id: 'guar', gu: 'ગુવાર', category: 'શાકભાજી', icon: '🫛', keywords: ['guar', 'cluster beans', 'guvar'] },
+            { id: 'tinda', gu: 'તિંડા / ટીંડા', category: 'શાકભાજી', icon: '🍈', keywords: ['tinda', 'round gourd'] },
+            { id: 'sweet_potato', gu: 'શક્કરિયા', category: 'શાકભાજી', icon: '🍠', keywords: ['sweet potato', 'shakkariya'] },
+            { id: 'ratalu', gu: 'રતાળુ', category: 'શાકભાજી', icon: '🥔', keywords: ['ratalu', 'purple yam'] },
+            { id: 'parwal', gu: 'પરવળ', category: 'શાકભાજી', icon: '🥒', keywords: ['pointed gourd', 'parwal', 'parval'] },
+            { id: 'mogri', gu: 'મોગરી', category: 'શાકભાજી', icon: '🌱', keywords: ['mogri', 'rat tail radish'] },
+            { id: 'sponge_gourd', gu: 'ઘીસોડા / ગલકા', category: 'શાકભાજી', icon: '🥒', keywords: ['sponge gourd', 'galka', 'ghisoda'] },
+            { id: 'ridge_gourd', gu: 'તૂરિયા', category: 'શાકભાજી', icon: '🥒', keywords: ['ridge gourd', 'tori', 'turiya'] },
+            { id: 'kantola', gu: 'કંટોલા', category: 'શાકભાજી', icon: '🍈', keywords: ['spine gourd', 'kantola', 'kakoda'] },
+            { id: 'arbi', gu: 'અરબી (કચાળુ)', category: 'શાકભાજી', icon: '🥔', keywords: ['colocasia', 'arbi', 'kachalu'] },
+            { id: 'turnip', gu: 'શલગમ', category: 'શાકભાજી', icon: '🥬', keywords: ['turnip', 'shalgam'] },
+            { id: 'papaya_veg', gu: 'પપૈયું (શાકભાજી)', category: 'શાકભાજી', icon: '🍈', keywords: ['papaya (raw)', 'papaya'] },
+
+            // પાંદડાવાળી શાકભાજી (Leafy Vegetables)
+            { id: 'coriander_leaves', gu: 'કોથમીર (પાંદડા)', category: 'પાંદડાવાળી શાકભાજી', icon: '🌿', keywords: ['coriander(leaves)', 'coriander leaves', 'kothmir'] },
+            { id: 'methi_leaves', gu: 'મેથી (પાંદડા)', category: 'પાંદડાવાળી શાકભાજી', icon: '🥬', keywords: ['methi(leaves)', 'fenugreek leaves', 'methi leaves'] },
+            { id: 'spinach', gu: 'પાલક', category: 'પાંદડાવાળી શાકભાજી', icon: '🥬', keywords: ['spinach', 'palak'] },
+            { id: 'mint', gu: 'ફુદીના', category: 'પાંદડાવાળી શાકભાજી', icon: '🌿', keywords: ['mint', 'pudina'] },
+            { id: 'leafy_veg', gu: 'પાંદડાવાળી શાકભાજી', category: 'પાંદડાવાળી શાકભાજી', icon: '🥬', keywords: ['leafy vegetable', 'bhaji'] },
+
+            // દાળ (Pulses / Dal)
+            { id: 'gram', gu: 'ચણા', category: 'દાળ', icon: '🟡', keywords: ['bengal gram', 'gram', 'chana', 'chickpea'] },
+            { id: 'kabuli_chana', gu: 'કાબુલી ચણા', category: 'દાળ', icon: '⚪', keywords: ['kabuli chana', 'white gram'] },
+            { id: 'tuvar', gu: 'તુવેર / અરહર દાળ', category: 'દાળ', icon: '🟠', keywords: ['arhar', 'tur', 'tuvar', 'pigeon pea'] },
+            { id: 'moong', gu: 'મગ / મૂંગ દાળ', category: 'દાળ', icon: '🟢', keywords: ['green gram', 'moong', 'mug'] },
+            { id: 'urad', gu: 'અડદ / ઉડદ દાળ', category: 'દાળ', icon: '⚫', keywords: ['black gram', 'urad', 'adad'] },
+            { id: 'math_dal', gu: 'મઠ દાળ', category: 'દાળ', icon: '🟤', keywords: ['math', 'moth dal'] },
+            { id: 'kulthi', gu: 'કળથી', category: 'દાળ', icon: '🟤', keywords: ['kulthi', 'horse gram'] },
+            { id: 'pulses', gu: 'કઠોળ', category: 'દાળ', icon: '🫘', keywords: ['pulses', 'kathol'] },
+
+            // અનાજ (Grains / Cereals)
+            { id: 'wheat', gu: 'ઘઉં', category: 'અનાજ', icon: '🌾', keywords: ['wheat', 'ghau'] },
+            { id: 'bajra', gu: 'બાજરી', category: 'અનાજ', icon: '🌾', keywords: ['bajra', 'pearl millet', 'bajri'] },
+            { id: 'paddy', gu: 'ડાંગર / ધાન', category: 'અનાજ', icon: '🌾', keywords: ['paddy', 'dhan', 'dangar'] },
+            { id: 'rice', gu: 'ચોખા', category: 'અનાજ', icon: '🍚', keywords: ['rice', 'chokha'] },
+            { id: 'jowar', gu: 'જુવાર', category: 'અનાજ', icon: '🌾', keywords: ['jowar', 'sorghum', 'juvar'] },
+            { id: 'maize', gu: 'મકાઈ', category: 'અનાજ', icon: '🌽', keywords: ['maize', 'corn', 'makai'] },
+            { id: 'barley', gu: 'જવ (જૌ)', category: 'અનાજ', icon: '🌾', keywords: ['barley', 'jau', 'jav'] },
+            { id: 'rajgira', gu: 'રાજગરા / રાજગરો', category: 'અનાજ', icon: '🌾', keywords: ['rajgira', 'amaranth'] },
+
+            // ફળ (Fruits)
+            { id: 'mango', gu: 'કેરી', category: 'ફળ', icon: '🥭', keywords: ['mango', 'keri'] },
+            { id: 'mango_raw', gu: 'કેરી (કાચી-પાકેલી)', category: 'ફળ', icon: '🫒', keywords: ['mango (raw-ripe)', 'raw mango'] },
+            { id: 'banana', gu: 'કેળા', category: 'ફળ', icon: '🍌', keywords: ['banana', 'kela'] },
+            { id: 'apple', gu: 'સફરજન', category: 'ફળ', icon: '🍎', keywords: ['apple', 'safarjan'] },
+            { id: 'ber', gu: 'બોર', category: 'ફળ', icon: '🍒', keywords: ['ber', 'bor', 'jujube'] },
+            { id: 'chikoo', gu: 'ચીકુ', category: 'ફળ', icon: '🥔', keywords: ['sapota', 'chikoo', 'chiku'] },
+            { id: 'grapes', gu: 'દ્રાક્ષ', category: 'ફળ', icon: '🍇', keywords: ['grapes', 'draksh'] },
+            { id: 'guava', gu: 'જામફળ', category: 'ફળ', icon: '🍐', keywords: ['guava', 'jamfal'] },
+            { id: 'lemon', gu: 'લીંબુ', category: 'ફળ', icon: '🍋', keywords: ['lemon', 'lime', 'limbu'] },
+            { id: 'mosambi', gu: 'મોસંબી', category: 'ફળ', icon: '🍊', keywords: ['sweet lime', 'mosambi'] },
+            { id: 'orange', gu: 'નારંગી', category: 'ફળ', icon: '🍊', keywords: ['orange', 'narangi'] },
+            { id: 'papaya', gu: 'પપૈયા', category: 'ફળ', icon: '🍈', keywords: ['papaya', 'papaiya'] },
+            { id: 'pineapple', gu: 'અનાનસ', category: 'ફળ', icon: '🍍', keywords: ['pineapple', 'ananas'] },
+            { id: 'pomegranate', gu: 'દાડમ', category: 'ફળ', icon: '🍎', keywords: ['pomegranate', 'dadam'] },
+            { id: 'amla', gu: 'આમલા', category: 'ફળ', icon: '🫒', keywords: ['amla', 'gooseberry'] },
+            { id: 'watermelon', gu: 'તરબૂચ', category: 'ફળ', icon: '🍉', keywords: ['water melon', 'watermelon', 'tarbuch'] },
+            { id: 'custard_apple', gu: 'સીતાફળ', category: 'ફળ', icon: '🍈', keywords: ['custard apple', 'sitafal'] }
+        ];
+
+        const EN_TO_GU = {
+            'groundnut': 'મગફળી',
+            'groundnut (split)': 'મગફળી ફાડા',
+            'groundnut pods (raw)': 'મગફળીની શીંગો (કાચી)',
+            'cotton': 'કપાસ',
+            'cotton seed': 'કપાસનું બીજ',
+            'cumin seed(jeera)': 'જીરું',
+            'cumin': 'જીરું',
+            'onion': 'ડુંગળી',
+            'onion green': 'ડુંગળી લીલી',
+            'potato': 'બટાટા',
+            'wheat': 'ઘઉં',
+            'castor seed': 'એરંડા',
+            'sesamum(sesame,gingelly,til)': 'તલ',
+            'coriander(leaves)': 'કોથમીર (પાંદડા)',
+            'coriander seed': 'ધાણા',
+            'tomato': 'ટામેટા',
+            'bengal gram(gram)(whole)': 'ચણા',
+            'bengal gram dal (chana dal)': 'ચણા દાળ',
+            'kabuli chana(chickpeas-white)': 'કાબુલી ચણા',
+            'arhar (tur/red gram)(whole)': 'તુવેર',
+            'arhar dal(tur dal)': 'તુવર દાળ',
+            'green gram (moong)(whole)': 'મગ',
+            'green gram dal (moong dal)': 'મૂંગ દાળ',
+            'black gram (urd beans)(whole)': 'અડદ',
+            'black gram dal (urd dal)': 'અરદ દાળ',
+            'garlic': 'લસણ',
+            'bajra(pearl millet/cumbu)': 'બાજરી',
+            'paddy(dhan)(common)': 'ડાંગર',
+            'rice': 'ચોખા',
+            'jowar(sorghum)': 'જુવાર',
+            'maize': 'મકાઈ',
+            'barley (jau)': 'જવ (જૌ)',
+            'green chilli': 'લીલા મરચા',
+            'dry chillies': 'સૂકા મરચાં',
+            'chilli red': 'લાલ મરચા',
+            'lemon': 'લીંબુ',
+            'lime': 'લીંબુ',
+            'mango': 'કેરી',
+            'mango (raw-ripe)': 'કેરી (કાચી-પાકેલી)',
+            'banana': 'કેળા',
+            'banana - green': 'કેળા - લીલોતરી',
+            'apple': 'સફરજન',
+            'ber(zizyphus/borehannu)': 'બોર',
+            'sapota': 'ચીકુ',
+            'grapes': 'દ્રાક્ષ',
+            'guava': 'જામફળ',
+            'mosambi': 'મોસંબી',
+            'orange': 'નારંગી',
+            'papaya': 'પપૈયા',
+            'papaya (raw)': 'કાચું પપૈયું',
+            'pineapple': 'અનાનસ',
+            'pomegranate': 'દાડમ',
+            'amla(nelli kai)': 'આમલા',
+            'water melon': 'તરબૂચ',
+            'custard apple': 'સીતાફળ',
+            'brinjal': 'રીંગણ',
+            'cabbage': 'કોબી',
+            'cauliflower': 'ફૂલકોબી',
+            'bottle gourd': 'દૂધી',
+            'carrot': 'ગાજર',
+            'cucumbar(kheera)': 'કાકડી (ખીરા)',
+            'long melon(kakri)': 'લાંબી કાકડી (કાકરી)',
+            'ginger(green)': 'આદુ (લીલું)',
+            'turmeric': 'હળદર',
+            'turmeric (raw)': 'કાચું હળદર',
+            'peas wet': 'વટાણા',
+            'peas(dry)': 'વટાણા',
+            'bhindi(ladies finger)': 'ભીંડી',
+            'cowpea(veg)': 'ચોળી',
+            'drumstick': 'સરગવો',
+            'indian beans (seam)': 'વાલ / સીમ',
+            'surat beans (papadi)': 'સુરત કઠોળ (પાપડી)',
+            'tindora': 'ટીંડોરા',
+            'little gourd (kundru)': 'કુંદરૂ',
+            'methi(leaves)': 'મેથી (પાંદડા)',
+            'fenugreek': 'મેથી',
+            'pumpkin': 'કોળુ',
+            'radish': 'મૂળા',
+            'spinach': 'પાલક',
+            'beetroot': 'બીટ',
+            'bitter gourd': 'કારેલા',
+            'capsicum': 'કેપ્સીકમ',
+            'elephant yam (suran)': 'હાથી યમ (સુરન)',
+            'french beans (frasbean)': 'ફ્રેન્ચ બીન્સ',
+            'cluster beans': 'ગુવાર',
+            'guar seed(cluster beans seed)': 'ગુવારગમ',
+            'mint(pudina)': 'ફુદીના',
+            'tinda': 'તિંડા',
+            'sweet potato': 'શક્કરિયા',
+            'ratalu': 'રતાળુ',
+            'pointed gourd (parval)': 'પરવળ',
+            'sponge gourd': 'ઘીસોડા',
+            'ridgeguard(tori)': 'તૂરિયા',
+            'spine gourd (kantola)': 'કંટોલા',
+            'colocasia': 'અરબી (કચાળુ)',
+            'turnip': 'શલગમ',
+            'soyabean': 'સોયાબિન',
+            'mustard': 'રાયડો',
+            'ajwan': 'અજમો',
+            'isabgul (psyllium)': 'ઇસબગુલ (સાયલિયમ)',
+            'fennel': 'વરિયાળી',
+            'suva (dill seed)': 'સુવાદાણા',
+            'rajkot': 'રાજકોટ',
+            'gondal': 'ગોંડલ',
+            'jasdan': 'જસદણ',
+            'jetpur': 'જેતપુર',
+            'jamnagar': 'જામનગર',
+            'junagadh': 'જૂનાગઢ',
+            'amreli': 'અમરેલી',
+            'bhavnagar': 'ભાવનગર',
+            'mahuva': 'મહુવા',
+            'morbi': 'મોરબી',
+            'surendranagar': 'સુરેન્દ્રનગર',
+            'porbandar': 'પોરબંદર',
+            'gir somnath': 'ગીર સોમનાથ',
+            'veraval': 'વેરાવળ',
+            'botad': 'બોટાદ',
+            'devbhumi dwarka': 'દેવભૂમિ દ્વારકા',
+            'mehsana': 'મહેસાણા',
+            'unjha': 'ઊંઝા',
+            'banaskantha': 'બનાસકાંઠા',
+            'deesa': 'ડીસા',
+            'palanpur': 'પાલનપુર',
+            'patan': 'પાટણ',
+            'sabarkantha': 'સાબરકાંઠા',
+            'himatnagar': 'હિંમતનગર',
+            'gandhinagar': 'ગાંધીનગર',
+            'ahmedabad': 'અમદાવાદ',
+            'anand': 'આણંદ',
+            'kheda': 'ખેડા',
+            'nadiad': 'નડિયાદ',
+            'vadodara': 'વડોદરા',
+            'bharuch': 'ભરૂચ',
+            'surat': 'સુરત',
+            'navsari': 'નવસારી',
+            'valsad': 'વલસાડ',
+            'kachchh': 'કચ્છ',
+            'bhuj': 'ભુજ',
+            'anjar': 'અંજાર'
+        };
+
+        const DISTRICT_REGION_MAP = {
+            'Rajkot': 'Saurashtra', 'Jamnagar': 'Saurashtra', 'Junagadh': 'Saurashtra',
+            'Amreli': 'Saurashtra', 'Bhavnagar': 'Saurashtra', 'Morbi': 'Saurashtra',
+            'Surendranagar': 'Saurashtra', 'Porbandar': 'Saurashtra', 'Gir Somnath': 'Saurashtra',
+            'Botad': 'Saurashtra', 'Devbhumi Dwarka': 'Saurashtra',
+            'Mehsana': 'North', 'Banaskantha': 'North', 'Patan': 'North',
+            'Sabarkantha': 'North', 'Gandhinagar': 'North', 'Aravalli': 'North',
+            'Ahmedabad': 'Central', 'Anand': 'Central', 'Kheda': 'Central',
+            'Vadodara': 'Central', 'Panchmahal': 'Central', 'Dahod': 'Central',
+            'Surat': 'South', 'Bharuch': 'South', 'Navsari': 'South',
+            'Valsad': 'South', 'Tapi': 'South', 'Narmada': 'South',
+            'Kachchh': 'Kutch'
+        };
+
+        const els = {
+            refreshDataBtn: document.getElementById('refreshDataBtn'),
+            refreshIcon: document.getElementById('refreshIcon'),
+            dataStatusBadge: document.getElementById('dataStatusBadge'),
+            activeDateSubtitle: document.getElementById('activeDateSubtitle'),
+            unitMannBtn: document.getElementById('unitMannBtn'),
+            unitQuintalBtn: document.getElementById('unitQuintalBtn'),
+            viewDashboardBtn: document.getElementById('viewDashboardBtn'),
+            viewKhetiGramBtn: document.getElementById('viewKhetiGramBtn'),
+            mobileTabCardsBtn: document.getElementById('mobileTabCardsBtn'),
+            mobileTabYardsBtn: document.getElementById('mobileTabYardsBtn'),
+            mobileTabSpeakBtn: document.getElementById('mobileTabSpeakBtn'),
+            farmerDashboardView: document.getElementById('farmerDashboardView'),
+            khetigramAppView: document.getElementById('khetigramAppView'),
+            datePills: document.querySelectorAll('.date-pill'),
+            specificDateInput: document.getElementById('specificDateInput'),
+            alertBanner: document.getElementById('alertBanner'),
+            alertTitle: document.getElementById('alertTitle'),
+            alertMessage: document.getElementById('alertMessage'),
+            loadingState: document.getElementById('loadingState'),
+            dashboardContent: document.getElementById('dashboardContent'),
+            categoryTabs: document.getElementById('categoryTabs'),
+            visualCropGrid: document.getElementById('visualCropGrid'),
+            districtFilter: document.getElementById('districtFilter'),
+            marketFilter: document.getElementById('marketFilter'),
+            resetFiltersBtn: document.getElementById('resetFiltersBtn'),
+            toggleMoreFiltersBtn: document.getElementById('toggleMoreFiltersBtn'),
+            moreFiltersDrawer: document.getElementById('moreFiltersDrawer'),
+            activeFilterDot: document.getElementById('activeFilterDot'),
+            selectedCropHeroBanner: document.getElementById('selectedCropHeroBanner'),
+            selectedCropHeroIcon: document.getElementById('selectedCropHeroIcon'),
+            selectedCropHeroTitle: document.getElementById('selectedCropHeroTitle'),
+            simpleSortSelect: document.getElementById('simpleSortSelect'),
+            speakSummaryBtn: document.getElementById('speakSummaryBtn'),
+            tableSummaryText: document.getElementById('tableSummaryText'),
+            farmerCardsGrid: document.getElementById('farmerCardsGrid'),
+            emptyTableState: document.getElementById('emptyTableState'),
+            paginationControls: document.getElementById('paginationControls'),
+            kgSearchInput: document.getElementById('kgSearchInput'),
+            kgBackToYardsBtn: document.getElementById('kgBackToYardsBtn'),
+            kgRegionTabs: document.getElementById('kgRegionTabs'),
+            kgYardDirectoryScreen: document.getElementById('kgYardDirectoryScreen'),
+            kgYardDetailScreen: document.getElementById('kgYardDetailScreen'),
+            kgSelectedYardTitle: document.getElementById('kgSelectedYardTitle'),
+            kgSelectedYardMeta: document.getElementById('kgSelectedYardMeta'),
+            kgToggleFavDetailBtn: document.getElementById('kgToggleFavDetailBtn'),
+            kgSpeakYardBtn: document.getElementById('kgSpeakYardBtn'),
+            kgShareWhatsAppBtn: document.getElementById('kgShareWhatsAppBtn'),
+            kgYardRatesTbody: document.getElementById('kgYardRatesTbody'),
+            kgBottomBackBtn: document.getElementById('kgBottomBackBtn')
+        };
+
+        function getGujaratiName(text) {
+            if (!text) return '';
+            const lower = text.toLowerCase().trim();
+            if (EN_TO_GU[lower]) return EN_TO_GU[lower];
+            for (const [key, gu] of Object.entries(EN_TO_GU)) {
+                if (lower.includes(key)) return gu;
+            }
+            return text;
+        }
+
+        function getCropIcon(commodity) {
+            const lower = (commodity || '').toLowerCase();
+            const match = CROP_DICTIONARY.find(c => c.keywords.some(k => lower.includes(k)));
+            return match ? match.icon : '🌾';
+        }
+
+        function formatPrice(quintalPrice) {
+            const val = Number(quintalPrice) || 0;
+            const converted = state.priceUnit === 'mann' ? Math.round(val / 5) : Math.round(val);
+            return converted.toLocaleString('en-IN');
+        }
+
+        function rawConvertedPrice(quintalPrice) {
+            const val = Number(quintalPrice) || 0;
+            return state.priceUnit === 'mann' ? Math.round(val / 5) : Math.round(val);
+        }
+
+        function setPriceUnit(unit) {
+            state.priceUnit = unit;
+            const isMann = unit === 'mann';
+
+            els.unitMannBtn.className = isMann
+                ? 'px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm transition-all'
+                : 'px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73] hover:text-[#1D1D1F] transition-all';
+
+            els.unitQuintalBtn.className = !isMann
+                ? 'px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm transition-all'
+                : 'px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73] hover:text-[#1D1D1F] transition-all';
+
+            document.querySelectorAll('.unit-label-short').forEach(el => el.textContent = isMann ? '૨૦ કિલો' : '૧૦૦ કિલો');
+            document.querySelectorAll('.unit-label-full').forEach(el => el.textContent = isMann ? '૨૦ કિલો / ૧ મણ' : '૧૦૦ કિલો / ૧ ક્વિન્ટલ');
+
+            updateDateSubtitle();
+            renderCards();
+            if (state.uiViewMode === 'khetigram') renderKhetiGramView();
+        }
+
+        function setUiViewMode(mode) {
+            state.uiViewMode = mode;
+            const isKg = mode === 'khetigram';
+
+            if (els.viewDashboardBtn && els.viewKhetiGramBtn) {
+                els.viewDashboardBtn.className = !isKg
+                    ? 'px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm'
+                    : 'px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73]';
+                els.viewKhetiGramBtn.className = isKg
+                    ? 'px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm'
+                    : 'px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73]';
+            }
+
+            if (els.mobileTabCardsBtn && els.mobileTabYardsBtn) {
+                els.mobileTabCardsBtn.className = !isKg
+                    ? 'flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#0071E3] font-extrabold'
+                    : 'flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#6E6E73] font-bold';
+                els.mobileTabYardsBtn.className = isKg
+                    ? 'flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#0071E3] font-extrabold'
+                    : 'flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#6E6E73] font-bold';
+            }
+
+            els.farmerDashboardView.classList.toggle('hidden', isKg);
+            els.khetigramAppView.classList.toggle('hidden', !isKg);
+
+            if (isKg) renderKhetiGramView();
+        }
+
+        function speakGujarati(text) {
+            if (!('speechSynthesis' in window)) {
+                showBanner('માહિતી:', 'તમારા મોબાઈલમાં અવાજની સુવિધા ઉપલબ્ધ નથી.');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            const guVoice = voices.find(v => v.lang.includes('gu')) || voices.find(v => v.lang.includes('hi')) || voices.find(v => v.lang.includes('IN'));
+            if (guVoice) utterance.voice = guVoice;
+            utterance.lang = guVoice ? guVoice.lang : 'gu-IN';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        window.speakSingleRecord = function(idx) {
+            const rec = state.filteredRecords[idx];
+            if (!rec) return;
+            const unitText = state.priceUnit === 'mann' ? '૨૦ કિલોના' : '૧૦૦ કિલોના';
+            const guMarket = getGujaratiName(rec.market);
+            const guCrop = getGujaratiName(rec.commodity);
+            const minP = rawConvertedPrice(rec.min_price);
+            const modalP = rawConvertedPrice(rec.modal_price);
+            const maxP = rawConvertedPrice(rec.max_price);
+
+            const speech = `${guMarket} માર્કેટ યાર્ડમાં ${guCrop} નો ${unitText} ભાવ: ઓછો ભાવ ${minP} રૂપિયા, સરેરાશ ભાવ ${modalP} રૂપિયા, અને ઊંચો ભાવ ${maxP} રૂપિયા છે.`;
+            speakGujarati(speech);
+        };
+
+        function speakTopSummary() {
+            if (!state.filteredRecords.length) {
+                speakGujarati('હાલમાં કોઈ ભાવ ઉપલબ્ધ નથી.');
+                return;
+            }
+            const unitText = state.priceUnit === 'mann' ? '૨૦ કિલોના' : '૧૦૦ કિલોના';
+            const topThree = state.filteredRecords.slice(0, 3).map(r => {
+                return `${getGujaratiName(r.market)} યાર્ડમાં ${getGujaratiName(r.commodity)} ${rawConvertedPrice(r.modal_price)} રૂપિયા`;
+            }).join(', ');
+            speakGujarati(`ગુજરાત માર્કેટ યાર્ડના ${unitText} મુખ્ય ભાવ: ${topThree}.`);
+        }
+
+        function renderVisualCropButtons() {
+            if (els.categoryTabs) {
+                els.categoryTabs.innerHTML = CROP_CATEGORIES.map(cat => {
+                    const isCatActive = state.selectedCategory === cat.id;
+                    const catClasses = isCatActive
+                        ? 'bg-[#248A3D] text-white shadow-sm font-extrabold'
+                        : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] font-bold';
+                    return `
+                        <button type="button" onclick="selectCropCategory('${cat.id}')" class="shrink-0 px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-all active:scale-95 ${catClasses}">
+                            <span>${cat.icon}</span>
+                            <span>${cat.gu}</span>
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            const visibleCrops = state.selectedCategory === 'ALL'
+                ? CROP_DICTIONARY
+                : CROP_DICTIONARY.filter(c => c.category === state.selectedCategory);
+
+            els.visualCropGrid.innerHTML = visibleCrops.map(crop => {
+                const isSelected = state.filters.cropKeyword === crop.id;
+                const activeClasses = isSelected
+                    ? 'bg-[#1D1D1F] text-white shadow-sm ring-2 ring-[#1D1D1F]'
+                    : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F]';
+                return `
+                    <button type="button" onclick="toggleVisualCrop('${crop.id}')" class="py-2 px-1.5 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${activeClasses}">
+                        <span class="text-2xl leading-none">${crop.icon}</span>
+                        <span class="text-[11px] font-extrabold text-center leading-tight line-clamp-2">${crop.gu}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        window.selectCropCategory = function(categoryId) {
+            state.selectedCategory = categoryId;
+            state.filters.cropKeyword = '';
+            state.currentPage = 1;
+            renderVisualCropButtons();
+            applyFiltersAndRender();
+        };
+
+        window.toggleVisualCrop = function(cropId) {
+            state.filters.cropKeyword = state.filters.cropKeyword === cropId ? '' : cropId;
+            state.currentPage = 1;
+            renderVisualCropButtons();
+            applyFiltersAndRender();
+        };
+
+        window.clearSelectedCrop = function() {
+            state.filters.cropKeyword = '';
+            state.selectedCategory = 'ALL';
+            state.currentPage = 1;
+            renderVisualCropButtons();
+            applyFiltersAndRender();
+        };
+
+        function getDateDaysAgo(daysAgo) {
+            const d = new Date();
+            d.setDate(d.getDate() - daysAgo);
+            return d;
+        }
+
+        function formatDateDDMMYYYY(dateObj) {
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const yyyy = dateObj.getFullYear();
+            return `${dd}/${mm}/${yyyy}`;
+        }
+
+        function formatDateYYYYMMDD(dateObj) {
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const yyyy = dateObj.getFullYear();
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function isoToDDMMYYYY(isoStr) {
+            if (!isoStr || !isoStr.includes('-')) return isoStr;
+            const [y, m, d] = isoStr.split('-');
+            return `${d}/${m}/${y}`;
+        }
+
+        function normalizeArrivalDate(rawDate) {
+            if (!rawDate) return 'આજ';
+            const str = String(rawDate).trim();
+            if (/^\d{4}-\d{2}-\d{2}/.test(str)) {
+                const [y, m, d] = str.slice(0, 10).split('-');
+                return `${d}/${m}/${y}`;
+            }
+            return str;
+        }
+
+        function normalizeRecord(rec, index = 0) {
+            const minP = parseFloat(rec.min_price ?? rec.Min_Price) || 0;
+            const maxP = parseFloat(rec.max_price ?? rec.Max_Price) || 0;
+            const modalP = parseFloat(rec.modal_price ?? rec.Modal_Price) || Math.round((minP + maxP) / 2);
+
+            return {
+                id: index + 1,
+                state: String(rec.state ?? rec.State ?? 'Gujarat').trim(),
+                district: String(rec.district ?? rec.District ?? 'Unknown').trim(),
+                market: String(rec.market ?? rec.Market ?? 'Unknown').trim(),
+                commodity: String(rec.commodity ?? rec.Commodity ?? 'Unknown').trim(),
+                variety: String(rec.variety ?? rec.Variety ?? 'સામાન્ય').trim(),
+                arrival_date: normalizeArrivalDate(rec.arrival_date ?? rec.Arrival_Date),
+                min_price: minP,
+                max_price: maxP,
+                modal_price: modalP
+            };
+        }
+
+        function buildMultiDayFallbackData(customCenterDate = null) {
+            const baseTemplates = [
+                { district: "Rajkot", market: "Gondal", commodity: "Groundnut", variety: "Bold (G-20)", min: 5200, max: 6650, modal: 6150 },
+                { district: "Rajkot", market: "Rajkot", commodity: "Cotton", variety: "Shankar-6", min: 6900, max: 7850, modal: 7480 },
+                { district: "Rajkot", market: "Jasdan", commodity: "Groundnut", variety: "G-20", min: 5150, max: 6500, modal: 6020 },
+                { district: "Mehsana", market: "Unjha", commodity: "Cumin Seed(Jeera)", variety: "Eagle", min: 21500, max: 26200, modal: 24100 },
+                { district: "Mehsana", market: "Unjha", commodity: "Fennel", variety: "Green", min: 8200, max: 11800, modal: 10200 },
+                { district: "Bhavnagar", market: "Mahuva", commodity: "Onion", variety: "Red", min: 950, max: 2150, modal: 1620 },
+                { district: "Banaskantha", market: "Deesa", commodity: "Potato", variety: "Pukhraj", min: 900, max: 1650, modal: 1320 },
+                { district: "Junagadh", market: "Junagadh", commodity: "Wheat", variety: "Lokwan", min: 2450, max: 2980, modal: 2740 },
+                { district: "Amreli", market: "Amreli", commodity: "Sesamum(Sesame,Gingelly,Til)", variety: "White", min: 10800, max: 13400, modal: 12250 },
+                { district: "Jamnagar", market: "Jamnagar", commodity: "Coriander seed", variety: "Eagle", min: 6400, max: 7900, modal: 7250 },
+                { district: "Banaskantha", market: "Palanpur", commodity: "Castor Seed", variety: "Hybrid", min: 5650, max: 6150, modal: 5940 },
+                { district: "Ahmedabad", market: "Ahmedabad", commodity: "Tomato", variety: "Hybrid", min: 1100, max: 2400, modal: 1750 },
+                { district: "Surat", market: "Surat", commodity: "Brinjal", variety: "Local", min: 1400, max: 2600, modal: 2050 },
+                { district: "Anand", market: "Anand", commodity: "Banana", variety: "Robusta", min: 1200, max: 2100, modal: 1680 },
+                { district: "Junagadh", market: "Junagadh", commodity: "Mango", variety: "Kesar", min: 4500, max: 8500, modal: 6400 },
+                { district: "Rajkot", market: "Gondal", commodity: "Bengal Gram(Gram)(Whole)", variety: "Desi", min: 5400, max: 6250, modal: 5850 },
+                { district: "Vadodara", market: "Vadodara", commodity: "Arhar (Tur/Red Gram)(Whole)", variety: "Red", min: 7600, max: 9100, modal: 8450 },
+                { district: "Surat", market: "Surat", commodity: "Coriander(Leaves)", variety: "Green", min: 1800, max: 3200, modal: 2500 },
+                { district: "Ahmedabad", market: "Ahmedabad", commodity: "Spinach", variety: "Fresh", min: 900, max: 1600, modal: 1250 },
+                { district: "Kachchh", market: "Bhuj", commodity: "Bajra(Pearl Millet/Cumbu)", variety: "Desi", min: 2200, max: 2750, modal: 2480 }
+            ];
+
+            const generated = [];
+            let idx = 1;
+            const anchorDate = customCenterDate || new Date();
+            const dayOffsets = customCenterDate ? [0] : [0, 1, 2, 3, 4, 5, 6];
+
+            dayOffsets.forEach(daysAgo => {
+                const d = new Date(anchorDate);
+                d.setDate(d.getDate() - daysAgo);
+                const dateStr = formatDateDDMMYYYY(d);
+                const seedFactor = (d.getDate() + d.getMonth() * 3) % 7;
+
+                baseTemplates.forEach((item, itemIdx) => {
+                    const wave = Math.sin(seedFactor + itemIdx * 0.7) * 0.04;
+                    const factor = 1 + wave;
+                    generated.push({
+                        id: idx++,
+                        state: 'Gujarat',
+                        district: item.district,
+                        market: item.market,
+                        commodity: item.commodity,
+                        variety: item.variety,
+                        arrival_date: dateStr,
+                        min_price: Math.round((item.min * factor) / 10) * 10,
+                        max_price: Math.round((item.max * factor) / 10) * 10,
+                        modal_price: Math.round((item.modal * factor) / 10) * 10
+                    });
+                });
+            });
+            return generated;
+        }
+
+        function setDatePillActive(mode) {
+            state.activeMode = mode;
+            els.datePills.forEach(btn => {
+                const isActive = btn.dataset.mode === mode;
+                btn.className = isActive
+                    ? 'date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-extrabold rounded-full bg-[#1D1D1F] text-white transition-all'
+                    : 'date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-bold rounded-full bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED] transition-all';
+            });
+            updateDateSubtitle();
+        }
+
+        function updateDateSubtitle() {
+            const unitTxt = state.priceUnit === 'mann' ? '૨૦ કિલો (મણ)' : '૧૦૦ કિલો (ક્વિન્ટલ)';
+            let dateTxt = 'આજના ભાવ';
+            if (state.activeMode === 'yesterday') dateTxt = `ગઈકાલ (${formatDateDDMMYYYY(getDateDaysAgo(1))})`;
+            else if (state.activeMode === 'two_days_ago') dateTxt = `૨ દિવસ પહેલા (${formatDateDDMMYYYY(getDateDaysAgo(2))})`;
+            else if (state.activeMode === 'specific_date') dateTxt = `તારીખ ${isoToDDMMYYYY(els.specificDateInput.value)}`;
+            if (els.activeDateSubtitle) {
+                els.activeDateSubtitle.textContent = `${dateTxt} • ${unitTxt}`;
+            }
+        }
+
+        function showBanner(title, message) {
+            els.alertTitle.textContent = title;
+            els.alertMessage.textContent = message;
+            els.alertBanner.classList.remove('hidden');
+        }
+
+        function hideBanner() {
+            els.alertBanner.classList.add('hidden');
+        }
+
+        async function fetchHistoricalByDate(ddmmyyyy, yyyymmdd) {
+            const buildHistUrl = (dateVal) => {
+                const u = new URL(HISTORICAL_API_BASE);
+                u.searchParams.set('api-key', DEFAULT_API_KEY);
+                u.searchParams.set('format', 'json');
+                u.searchParams.set('limit', '1000');
+                u.searchParams.set('filters[State]', 'Gujarat');
+                u.searchParams.set('filters[Arrival_Date]', dateVal);
+                return u.toString();
+            };
+
+            try {
+                const res1 = await fetch(buildHistUrl(ddmmyyyy));
+                if (res1.ok) {
+                    const data1 = await res1.json();
+                    if (Array.isArray(data1.records) && data1.records.length > 0) return data1.records;
+                }
+            } catch (e) {}
+
+            try {
+                const res2 = await fetch(buildHistUrl(yyyymmdd));
+                if (res2.ok) {
+                    const data2 = await res2.json();
+                    if (Array.isArray(data2.records) && data2.records.length > 0) return data2.records;
+                }
+            } catch (e) {}
+
+            try {
+                const liveCheckUrl = new URL(LIVE_API_BASE);
+                liveCheckUrl.searchParams.set('api-key', DEFAULT_API_KEY);
+                liveCheckUrl.searchParams.set('format', 'json');
+                liveCheckUrl.searchParams.set('limit', '1500');
+                liveCheckUrl.searchParams.set('filters[state]', 'Gujarat');
+                const resLive = await fetch(liveCheckUrl.toString());
+                if (resLive.ok) {
+                    const dataLive = await resLive.json();
+                    if (Array.isArray(dataLive.records)) {
+                        const matched = dataLive.records.filter(r => {
+                            const ad = normalizeArrivalDate(r.arrival_date ?? r.Arrival_Date);
+                            return ad === ddmmyyyy;
+                        });
+                        if (matched.length > 0) return matched;
+                    }
+                }
+            } catch (e) {}
+
+            return [];
+        }
+
+        async function loadMandiData(mode = 'live', customIsoDate = null) {
+            setDatePillActive(mode);
+            els.refreshIcon.classList.add('animate-spin');
+            els.loadingState.classList.remove('hidden');
+            els.dashboardContent.classList.add('hidden');
+            hideBanner();
+
+            let targetDateObj = new Date();
+            if (mode === 'yesterday') targetDateObj = getDateDaysAgo(1);
+            else if (mode === 'two_days_ago') targetDateObj = getDateDaysAgo(2);
+            else if (mode === 'specific_date' && customIsoDate) {
+                const [y, m, d] = customIsoDate.split('-').map(Number);
+                targetDateObj = new Date(y, m - 1, d);
+            }
+
+            if (els.specificDateInput && mode !== 'specific_date') {
+                els.specificDateInput.value = formatDateYYYYMMDD(targetDateObj);
+            }
+            updateDateSubtitle();
+
+            try {
+                let fetchedRecords = [];
+
+                if (mode === 'live') {
+                    const liveUrl = new URL(LIVE_API_BASE);
+                    liveUrl.searchParams.set('api-key', DEFAULT_API_KEY);
+                    liveUrl.searchParams.set('format', 'json');
+                    liveUrl.searchParams.set('limit', '2000');
+                    liveUrl.searchParams.set('offset', '0');
+                    liveUrl.searchParams.set('filters[state]', 'Gujarat');
+
+                    const response = await fetch(liveUrl.toString());
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    if (Array.isArray(data.records)) fetchedRecords = data.records;
+                } else {
+                    const ddmmyyyy = formatDateDDMMYYYY(targetDateObj);
+                    const yyyymmdd = formatDateYYYYMMDD(targetDateObj);
+                    fetchedRecords = await fetchHistoricalByDate(ddmmyyyy, yyyymmdd);
+                }
+
+                if (!fetchedRecords || fetchedRecords.length === 0) {
+                    throw new Error('NO_RECORDS_FOR_DATE');
+                }
+
+                state.rawRecords = fetchedRecords.map((r, i) => normalizeRecord(r, i));
+
+                els.dataStatusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#34C759] animate-pulse"></span> તાજો`;
+                els.dataStatusBadge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#E8F8ED] text-[#1E7E34] shrink-0';
+
+            } catch (err) {
+                const fallbackAll = buildMultiDayFallbackData(mode === 'live' ? null : targetDateObj);
+                const targetStr = formatDateDDMMYYYY(targetDateObj);
+                const exactDay = fallbackAll.filter(r => r.arrival_date === targetStr);
+                state.rawRecords = exactDay.length ? exactDay : fallbackAll.filter(r => r.arrival_date === fallbackAll[0].arrival_date);
+
+                els.dataStatusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> અંદાજિત`;
+                els.dataStatusBadge.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 shrink-0';
+
+                showBanner('નોંધ:', `${formatDateDDMMYYYY(targetDateObj)} ના સરકારી ભાવ હજુ અપલોડ થયા નથી, તેથી અંદાજિત ભાવ બતાવ્યા છે.`);
+            } finally {
+                els.refreshIcon.classList.remove('animate-spin');
+                els.loadingState.classList.add('hidden');
+                els.dashboardContent.classList.remove('hidden');
+
+                populateFilterDropdowns();
+                applyFiltersAndRender();
+                if (state.uiViewMode === 'khetigram') renderKhetiGramView();
+            }
+        }
+
+        function populateFilterDropdowns() {
+            const districts = [...new Set(state.rawRecords.map(r => r.district))].sort();
+            els.districtFilter.innerHTML = '<option value="">📍 બધા જિલ્લા</option>' +
+                districts.map(d => `<option value="${d}" ${state.filters.district === d ? 'selected' : ''}>${getGujaratiName(d)}</option>`).join('');
+
+            updateCascadingDropdowns();
+        }
+
+        function updateCascadingDropdowns() {
+            const dist = state.filters.district;
+            const subset = dist ? state.rawRecords.filter(r => r.district === dist) : state.rawRecords;
+
+            const markets = [...new Set(subset.map(r => r.market))].sort();
+            els.marketFilter.innerHTML = '<option value="">🏛️ બધા માર્કેટ યાર્ડ</option>' +
+                markets.map(m => `<option value="${m}" ${state.filters.market === m ? 'selected' : ''}>${getGujaratiName(m)}</option>`).join('');
+        }
+
+        function applyFiltersAndRender() {
+            const cropObj = CROP_DICTIONARY.find(c => c.id === state.filters.cropKeyword);
+            const activeCategory = state.selectedCategory;
+
+            const hasActiveFilters = Boolean(cropObj || activeCategory !== 'ALL' || state.filters.district || state.filters.market);
+            if (els.resetFiltersBtn) {
+                els.resetFiltersBtn.classList.toggle('hidden', !hasActiveFilters);
+            }
+            if (els.activeFilterDot) {
+                els.activeFilterDot.classList.toggle('hidden', !(state.filters.district || state.filters.market));
+            }
+
+            state.filteredRecords = state.rawRecords.filter(rec => {
+                if (state.filters.district && rec.district !== state.filters.district) return false;
+                if (state.filters.market && rec.market !== state.filters.market) return false;
+
+                const commLower = rec.commodity.toLowerCase();
+
+                if (cropObj) {
+                    if (!cropObj.keywords.some(k => commLower.includes(k))) return false;
+                } else if (activeCategory !== 'ALL') {
+                    const catCrops = CROP_DICTIONARY.filter(c => c.category === activeCategory);
+                    const matchesCategory = catCrops.some(c => c.keywords.some(k => commLower.includes(k)));
+                    if (!matchesCategory) return false;
+                }
+
+                return true;
+            });
+
+            const dir = state.sortDirection === 'asc' ? 1 : -1;
+            state.filteredRecords.sort((a, b) => {
+                const valA = a[state.sortKey];
+                const valB = b[state.sortKey];
+                if (typeof valA === 'number' && typeof valB === 'number') return (valA - valB) * dir;
+                return String(valA).localeCompare(String(valB)) * dir;
+            });
+
+            renderCards();
+        }
+
+        function renderCards() {
+            const totalRows = state.filteredRecords.length;
+            const totalPages = Math.max(1, Math.ceil(totalRows / state.rowsPerPage));
+            if (state.currentPage > totalPages) state.currentPage = totalPages;
+
+            const startIdx = (state.currentPage - 1) * state.rowsPerPage;
+            const pageRows = state.filteredRecords.slice(startIdx, startIdx + state.rowsPerPage);
+
+            const selectedCropObj = CROP_DICTIONARY.find(c => c.id === state.filters.cropKeyword);
+            const selectedCatObj = CROP_CATEGORIES.find(c => c.id === state.selectedCategory && c.id !== 'ALL');
+            const isSingleCropSelected = Boolean(selectedCropObj);
+
+            if (els.selectedCropHeroBanner) {
+                if (isSingleCropSelected) {
+                    els.selectedCropHeroIcon.textContent = selectedCropObj.icon;
+                    els.selectedCropHeroTitle.textContent = `${selectedCropObj.gu} ના ભાવ`;
+                    els.selectedCropHeroBanner.classList.remove('hidden');
+                } else if (selectedCatObj) {
+                    els.selectedCropHeroIcon.textContent = selectedCatObj.icon;
+                    els.selectedCropHeroTitle.textContent = `${selectedCatObj.gu} ના ભાવ`;
+                    els.selectedCropHeroBanner.classList.remove('hidden');
+                } else {
+                    els.selectedCropHeroBanner.classList.add('hidden');
+                }
+            }
+
+            els.tableSummaryText.textContent = `કુલ ${totalRows} ભાવ બતાવે છે`;
+
+            if (totalRows === 0) {
+                els.farmerCardsGrid.innerHTML = '';
+                els.emptyTableState.classList.remove('hidden');
+            } else {
+                els.emptyTableState.classList.add('hidden');
+                els.farmerCardsGrid.innerHTML = pageRows.map((rec, localIdx) => {
+                    const globalIdx = startIdx + localIdx;
+                    const icon = getCropIcon(rec.commodity);
+                    const guCrop = getGujaratiName(rec.commodity);
+                    const guMarket = getGujaratiName(rec.market);
+                    const guDistrict = getGujaratiName(rec.district);
+                    const varietyLabel = (rec.variety && rec.variety !== 'Other' && rec.variety !== 'સામાન્ય') ? rec.variety : 'સામાન્ય';
+
+                    const primaryTitle = isSingleCropSelected ? `${guMarket} યાર્ડ` : guCrop;
+                    const secondaryBadge = isSingleCropSelected
+                        ? `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold bg-[#F0F7FF] text-[#0071E3] border border-[#0071E3]/15">${varietyLabel}</span>`
+                        : `<span class="text-xs text-[#6E6E73] font-bold truncate">🏛️ ${guMarket} • ${guDistrict}</span>`;
+
+                    const subMetaText = isSingleCropSelected
+                        ? `📍 ${guDistrict} • 📅 ${rec.arrival_date}`
+                        : `જાત: ${varietyLabel} • 📅 ${rec.arrival_date}`;
+
+                    return `
+                        <article class="bg-white rounded-3xl border border-black/[0.06] shadow-apple p-4 flex flex-col justify-between gap-3 transition-transform active:scale-[0.99]">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-11 h-11 rounded-2xl bg-[#F5F5F7] flex items-center justify-center text-2xl shrink-0">
+                                        ${icon}
+                                    </div>
+                                    <div class="min-w-0 space-y-0.5">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <h3 class="text-base sm:text-lg font-black text-[#1D1D1F] leading-tight truncate">${primaryTitle}</h3>
+                                            ${isSingleCropSelected ? secondaryBadge : ''}
+                                        </div>
+                                        ${!isSingleCropSelected ? `<div class="truncate">${secondaryBadge}</div>` : ''}
+                                        <p class="text-[11px] text-[#86868B] font-semibold truncate">${subMetaText}</p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="speakSingleRecord(${globalIdx})" class="shrink-0 w-9 h-9 rounded-full bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#0071E3] flex items-center justify-center text-base active:scale-90" title="ભાવ સાંભળો">
+                                    🔊
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-1.5 bg-[#F5F5F7] p-2 rounded-2xl text-center">
+                                <div class="py-1 px-1">
+                                    <span class="block text-[11px] font-bold text-[#6E6E73]">ઓછો</span>
+                                    <span class="text-sm sm:text-base font-extrabold text-[#1D1D1F] tabular-nums">₹${formatPrice(rec.min_price)}</span>
+                                </div>
+                                <div class="py-1 px-1 bg-white rounded-xl shadow-sm">
+                                    <span class="block text-[11px] font-extrabold text-[#0071E3]">સરેરાશ</span>
+                                    <span class="text-base sm:text-lg font-black text-[#1D1D1F] tabular-nums">₹${formatPrice(rec.modal_price)}</span>
+                                </div>
+                                <div class="py-1 px-1">
+                                    <span class="block text-[11px] font-bold text-[#248A3D]">ઊંચો</span>
+                                    <span class="text-sm sm:text-base font-extrabold text-[#248A3D] tabular-nums">₹${formatPrice(rec.max_price)}</span>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+            }
+
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            if (totalPages <= 1) {
+                els.paginationControls.innerHTML = `<span class="text-xs font-bold text-[#6E6E73]">પાનું ૧ / ૧</span>`;
+                return;
+            }
+            const prevDisabled = state.currentPage === 1 ? 'opacity-40 pointer-events-none' : '';
+            const nextDisabled = state.currentPage === totalPages ? 'opacity-40 pointer-events-none' : '';
+
+            els.paginationControls.innerHTML = `
+                <button onclick="goToPage(${state.currentPage - 1})" class="px-3.5 py-1.5 text-xs font-extrabold rounded-full bg-[#F5F5F7] text-[#1D1D1F] ${prevDisabled}">‹ પાછળ</button>
+                <span class="text-xs font-extrabold text-[#1D1D1F] px-1">${state.currentPage} / ${totalPages}</span>
+                <button onclick="goToPage(${state.currentPage + 1})" class="px-3.5 py-1.5 text-xs font-extrabold rounded-full bg-[#1D1D1F] text-white ${nextDisabled}">આગળ ›</button>
+            `;
+        }
+
+        window.goToPage = function(page) {
+            state.currentPage = page;
+            renderCards();
+            window.scrollTo({ top: 180, behavior: 'smooth' });
+        };
+
+        /* =====================================================================
+           YARD DIRECTORY VIEW (યાર્ડ મુજબ)
+           ===================================================================== */
+        function getMarketRegion(district) {
+            return DISTRICT_REGION_MAP[district] || 'Saurashtra';
+        }
+
+        function toggleFavoriteYard(marketName) {
+            const idx = state.favoriteYards.indexOf(marketName);
+            if (idx >= 0) state.favoriteYards.splice(idx, 1);
+            else state.favoriteYards.push(marketName);
+            localStorage.setItem('guj_mandi_fav_yards', JSON.stringify(state.favoriteYards));
+            renderKhetiGramView();
+        }
+
+        window.openKhetiGramYard = function(marketName) {
+            state.kgSelectedYard = marketName;
+            renderKhetiGramView();
+        };
+
+        window.toggleKgFav = function(e, marketName) {
+            e.stopPropagation();
+            toggleFavoriteYard(marketName);
+        };
+
+        function renderKhetiGramView() {
+            const searchQ = (els.kgSearchInput?.value || '').trim().toLowerCase();
+
+            document.querySelectorAll('.kg-region-pill').forEach(btn => {
+                const isActive = btn.dataset.region === state.kgRegion;
+                btn.className = isActive
+                    ? 'kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-[#1D1D1F] text-white'
+                    : 'kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]';
+            });
+
+            if (state.kgSelectedYard) {
+                els.kgYardDirectoryScreen.classList.add('hidden');
+                els.kgYardDetailScreen.classList.remove('hidden');
+                els.kgBackToYardsBtn.classList.remove('hidden');
+
+                const yardRecords = state.rawRecords.filter(r => r.market === state.kgSelectedYard);
+                const firstRec = yardRecords[0] || { market: state.kgSelectedYard, district: 'Gujarat', arrival_date: '' };
+                const isFav = state.favoriteYards.includes(state.kgSelectedYard);
+
+                els.kgSelectedYardTitle.textContent = `${getGujaratiName(firstRec.market)} માર્કેટ યાર્ડ`;
+                els.kgSelectedYardMeta.textContent = `જિલ્લો: ${getGujaratiName(firstRec.district)} • ${firstRec.arrival_date}`;
+                els.kgToggleFavDetailBtn.textContent = isFav ? '⭐' : '☆';
+
+                els.kgYardRatesTbody.innerHTML = yardRecords.map(r => `
+                    <tr class="hover:bg-[#F5F5F7]/60">
+                        <td class="py-3 px-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">${getCropIcon(r.commodity)}</span>
+                                <span class="font-extrabold text-[#1D1D1F] text-sm">${getGujaratiName(r.commodity)}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-2 text-right font-bold text-[#6E6E73]">₹${formatPrice(r.min_price)}</td>
+                        <td class="py-3 px-2 text-right font-black text-[#1D1D1F] text-base">₹${formatPrice(r.modal_price)}</td>
+                        <td class="py-3 px-4 text-right font-extrabold text-[#248A3D]">₹${formatPrice(r.max_price)}</td>
+                    </tr>
+                `).join('');
+                return;
+            }
+
+            els.kgYardDirectoryScreen.classList.remove('hidden');
+            els.kgYardDetailScreen.classList.add('hidden');
+            els.kgBackToYardsBtn.classList.add('hidden');
+
+            const yardMap = new Map();
+            state.rawRecords.forEach(r => {
+                if (!yardMap.has(r.market)) {
+                    yardMap.set(r.market, {
+                        market: r.market,
+                        district: r.district,
+                        region: getMarketRegion(r.district),
+                        commodities: new Set()
+                    });
+                }
+                yardMap.get(r.market).commodities.add(r.commodity);
+            });
+
+            let yards = Array.from(yardMap.values()).filter(y => {
+                if (state.kgRegion === 'FAV' && !state.favoriteYards.includes(y.market)) return false;
+                if (state.kgRegion !== 'ALL' && state.kgRegion !== 'FAV' && y.region !== state.kgRegion) return false;
+                if (searchQ) {
+                    const guM = getGujaratiName(y.market).toLowerCase();
+                    const guD = getGujaratiName(y.district).toLowerCase();
+                    if (!y.market.toLowerCase().includes(searchQ) && !y.district.toLowerCase().includes(searchQ) && !guM.includes(searchQ) && !guD.includes(searchQ)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            yards.sort((a, b) => {
+                const aFav = state.favoriteYards.includes(a.market) ? 0 : 1;
+                const bFav = state.favoriteYards.includes(b.market) ? 0 : 1;
+                if (aFav !== bFav) return aFav - bFav;
+                return a.market.localeCompare(b.market);
+            });
+
+            if (yards.length === 0) {
+                els.kgYardDirectoryScreen.innerHTML = `<div class="p-10 text-center text-sm font-bold text-[#6E6E73]">કોઈ યાર્ડ મળ્યું નથી.</div>`;
+                return;
+            }
+
+            els.kgYardDirectoryScreen.innerHTML = yards.map(y => {
+                const isFav = state.favoriteYards.includes(y.market);
+                return `
+                    <div onclick="openKhetiGramYard('${y.market.replace(/'/g, "\\'")}')" class="p-4 hover:bg-[#F5F5F7] cursor-pointer flex items-center justify-between gap-3 active:bg-[#E8E8ED]">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-11 h-11 rounded-2xl bg-[#E8F8ED] text-[#248A3D] font-black text-base flex items-center justify-center shrink-0">
+                                🏛️
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="text-base font-black text-[#1D1D1F] truncate">${getGujaratiName(y.market)} યાર્ડ</h4>
+                                <p class="text-xs text-[#6E6E73] font-semibold truncate">જિલ્લો: ${getGujaratiName(y.district)} • ${y.commodities.size} પાક</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" onclick="toggleKgFav(event, '${y.market.replace(/'/g, "\\'")}')" class="text-xl p-1.5 rounded-full">
+                                ${isFav ? '⭐' : '☆'}
+                            </button>
+                            <span class="text-[#86868B] font-bold text-xl">›</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function initEventListeners() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+                window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+            }
+
+            if (els.unitMannBtn) els.unitMannBtn.addEventListener('click', () => setPriceUnit('mann'));
+            if (els.unitQuintalBtn) els.unitQuintalBtn.addEventListener('click', () => setPriceUnit('quintal'));
+
+            if (els.viewDashboardBtn) els.viewDashboardBtn.addEventListener('click', () => setUiViewMode('dashboard'));
+            if (els.viewKhetiGramBtn) els.viewKhetiGramBtn.addEventListener('click', () => setUiViewMode('khetigram'));
+
+            if (els.mobileTabCardsBtn) {
+                els.mobileTabCardsBtn.addEventListener('click', () => {
+                    setUiViewMode('dashboard');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+            if (els.mobileTabYardsBtn) {
+                els.mobileTabYardsBtn.addEventListener('click', () => {
+                    setUiViewMode('khetigram');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+            if (els.mobileTabSpeakBtn) {
+                els.mobileTabSpeakBtn.addEventListener('click', speakTopSummary);
+            }
+
+            if (els.toggleMoreFiltersBtn) {
+                els.toggleMoreFiltersBtn.addEventListener('click', () => {
+                    els.moreFiltersDrawer.classList.toggle('hidden');
+                });
+            }
+
+            if (els.speakSummaryBtn) els.speakSummaryBtn.addEventListener('click', speakTopSummary);
+
+            els.datePills.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const mode = btn.dataset.mode;
+                    loadMandiData(mode);
+                });
+            });
+
+            if (els.specificDateInput) {
+                els.specificDateInput.value = formatDateYYYYMMDD(getDateDaysAgo(1));
+                els.specificDateInput.addEventListener('change', () => {
+                    if (els.specificDateInput.value) {
+                        loadMandiData('specific_date', els.specificDateInput.value);
+                    }
+                });
+            }
+
+            if (els.districtFilter) {
+                els.districtFilter.addEventListener('change', () => {
+                    state.filters.district = els.districtFilter.value;
+                    state.filters.market = '';
+                    state.currentPage = 1;
+                    updateCascadingDropdowns();
+                    applyFiltersAndRender();
+                });
+            }
+
+            if (els.marketFilter) {
+                els.marketFilter.addEventListener('change', () => {
+                    state.filters.market = els.marketFilter.value;
+                    state.currentPage = 1;
+                    applyFiltersAndRender();
+                });
+            }
+
+            if (els.resetFiltersBtn) {
+                els.resetFiltersBtn.addEventListener('click', () => {
+                    state.selectedCategory = 'ALL';
+                    state.filters = { district: '', market: '', cropKeyword: '' };
+                    state.currentPage = 1;
+                    populateFilterDropdowns();
+                    renderVisualCropButtons();
+                    applyFiltersAndRender();
+                });
+            }
+
+            if (els.simpleSortSelect) {
+                els.simpleSortSelect.addEventListener('change', () => {
+                    const val = els.simpleSortSelect.value;
+                    if (val === 'modal_desc') { state.sortKey = 'modal_price'; state.sortDirection = 'desc'; }
+                    else if (val === 'modal_asc') { state.sortKey = 'modal_price'; state.sortDirection = 'asc'; }
+                    else if (val === 'market_asc') { state.sortKey = 'market'; state.sortDirection = 'asc'; }
+                    state.currentPage = 1;
+                    applyFiltersAndRender();
+                });
+            }
+
+            if (els.refreshDataBtn) {
+                els.refreshDataBtn.addEventListener('click', () => {
+                    loadMandiData(state.activeMode, els.specificDateInput?.value || null);
+                });
+            }
+
+            if (els.kgSearchInput) els.kgSearchInput.addEventListener('input', renderKhetiGramView);
+            document.querySelectorAll('.kg-region-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.kgRegion = btn.dataset.region;
+                    state.kgSelectedYard = null;
+                    renderKhetiGramView();
+                });
+            });
+
+            const closeYardDetail = () => { state.kgSelectedYard = null; renderKhetiGramView(); };
+            if (els.kgBackToYardsBtn) els.kgBackToYardsBtn.addEventListener('click', closeYardDetail);
+            if (els.kgBottomBackBtn) els.kgBottomBackBtn.addEventListener('click', closeYardDetail);
+
+            if (els.kgToggleFavDetailBtn) {
+                els.kgToggleFavDetailBtn.addEventListener('click', () => {
+                    if (state.kgSelectedYard) toggleFavoriteYard(state.kgSelectedYard);
+                });
+            }
+
+            if (els.kgSpeakYardBtn) {
+                els.kgSpeakYardBtn.addEventListener('click', () => {
+                    if (!state.kgSelectedYard) return;
+                    const yardRecs = state.rawRecords.filter(r => r.market === state.kgSelectedYard).slice(0, 4);
+                    const unitTxt = state.priceUnit === 'mann' ? '૨૦ કિલોના' : '૧૦૦ કિલોના';
+                    const details = yardRecs.map(r => `${getGujaratiName(r.commodity)} ${rawConvertedPrice(r.modal_price)} રૂપિયા`).join(', ');
+                    speakGujarati(`${getGujaratiName(state.kgSelectedYard)} માર્કેટ યાર્ડના ${unitTxt} ભાવ: ${details}`);
+                });
+            }
+
+            if (els.kgShareWhatsAppBtn) {
+                els.kgShareWhatsAppBtn.addEventListener('click', () => {
+                    if (!state.kgSelectedYard) return;
+                    const yardRecs = state.rawRecords.filter(r => r.market === state.kgSelectedYard);
+                    const unitTxt = state.priceUnit === 'mann' ? '૨૦ કિલો (મણ)' : '૧૦૦ કિલો';
+                    const lines = yardRecs.map(r => `• ${getGujaratiName(r.commodity)}: ₹${formatPrice(r.min_price)} થી ₹${formatPrice(r.max_price)}`).join('\n');
+                    const shareText = `🌾 *${getGujaratiName(state.kgSelectedYard)} માર્કેટ યાર્ડ ભાવ* (${unitTxt})\n\n${lines}`;
+                    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderVisualCropButtons();
+            initEventListeners();
+            loadMandiData('live');
+        });
+    </script>
+</body>
+</html>
