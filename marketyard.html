@@ -1007,6 +1007,7 @@
             rawRecords: [],
             liveCacheRecords: [],
             isFallbackData: false,
+            isCachedData: false,
             actualFeedDateISO: '',
             lastFetchDurationMs: 0,
             lastFetchTimestamp: '',
@@ -1612,6 +1613,7 @@
 
             let records = [];
             let usedFallback = false;
+            let usedCache = false;
             let fetchError = false;
             const targetISO = mode === 'custom' && customISO
                 ? customISO
@@ -1662,6 +1664,11 @@
             if (records.length === 0) {
                 if (state.liveCacheRecords.length > 0 && mode === 'latest') {
                     records = state.liveCacheRecords;
+                    usedCache = true;
+                    if (els.statusBanner && els.statusBannerText) {
+                        els.statusBannerText.textContent = 'લાઈવ API ઉપલબ્ધ નથી — અગાઉ લોડ કરેલા ભાવ બતાવી રહ્યા છીએ.';
+                        els.statusBanner.classList.remove('hidden');
+                    }
                 } else {
                     usedFallback = true;
                     records = getFallbackRecords(ddmmyyyy || isoToDDMMYYYY(getOffsetDateISO(0)));
@@ -1676,6 +1683,7 @@
 
             state.rawRecords = records;
             state.isFallbackData = usedFallback;
+            state.isCachedData = usedCache;
             state.lastFetchDurationMs = Math.max(1, Math.round(performance.now() - fetchStart));
             const now = new Date();
             state.lastFetchTimestamp = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -2116,7 +2124,10 @@ return;
 
             if (els.statsFetchStatusText) {
                 if (state.isFallbackData) {
-                    els.statsFetchStatusText.textContent = '● અંદાજિત બેકઅપ ડેટા (API ઉપલબ્ધ નથી)';
+                    els.statsFetchStatusText.textContent = '● અંદાજિત નમૂના ડેટા (API ઉપલબ્ધ નથી)';
+                    els.statsFetchStatusText.style.color = '#B45309';
+                } else if (state.isCachedData) {
+                    els.statsFetchStatusText.textContent = '● અગાઉ લોડ કરેલો ડેટા (હાલ API ઉપલબ્ધ નથી)';
                     els.statsFetchStatusText.style.color = '#B45309';
                 } else {
                     els.statsFetchStatusText.textContent = '● લાઈવ સરકારી API સફળતાપૂર્વક ફેચ થયો';
