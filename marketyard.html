@@ -2167,7 +2167,34 @@ return;
             if (state.uiViewMode === 'khetigram') renderKhetiGramView();
         }
 
+        function resetMarketViewSelections() {
+            state.filters.category = 'all';
+            state.filters.cropKeyword = '';
+            state.currentPage = 1;
+            state.khetiGram.region = 'all';
+            state.khetiGram.selectedYardKey = null;
+
+            // Synchronize controls and restore the full-list states.
+            document.querySelectorAll('.kg-region-tab').forEach(btn => {
+                btn.className = btn.dataset.region === 'all'
+                    ? 'kg-region-tab tap-spring pill-dark'
+                    : 'kg-region-tab tap-spring pill-light';
+            });
+            if (els.kgYardDetailSheet) els.kgYardDetailSheet.classList.add('hidden');
+            if (els.kgYardDirectoryList) els.kgYardDirectoryList.classList.remove('hidden');
+            if (els.selectedCropDetailView) els.selectedCropDetailView.classList.add('hidden');
+            if (els.cropCollageContainer) els.cropCollageContainer.classList.remove('hidden');
+            if (els.clearSelectedCropBtn) els.clearSelectedCropBtn.classList.add('hidden');
+
+            renderCategoryPills();
+            renderCropCollage();
+            applyFiltersAndRender();
+            renderKhetiGramView();
+        }
+
         function setUiViewMode(mode) {
+            const previousMode = state.uiViewMode;
+            if (previousMode !== mode) resetMarketViewSelections();
             state.uiViewMode = mode;
             const isDash = mode === 'dashboard';
 
@@ -2197,13 +2224,9 @@ return;
         // 12. EVENT LISTENERS & INIT
         // ==========================================
         function initEventListeners() {
-            // Every mode-tab tap resets its view to the full/default list and fetches fresh data.
+            // Every tab tap—even the active tab—clears selections and reloads data.
             const handleModeTabClick = (mode) => {
-                state.filters.category = 'all';
-                state.filters.cropKeyword = '';
-                state.currentPage = 1;
-                state.khetiGram.region = 'all';
-                state.khetiGram.selectedYardKey = null;
+                resetMarketViewSelections();
                 setUiViewMode(mode);
                 loadMandiData(state.dateMode, state.selectedDateISO);
             };
