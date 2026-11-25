@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f6f3;--card:#fff;--ink:#1c241e;--muted:#6c766e;--line:#e8ece7;--green:#218448;--green2:#e8f5eb;--blue:#1675d1;--shadow:0 3px 14px rgba(31,50,36,.055}
+:root{--bg:#f4f6f3;--card:#fff;--ink:#1c241e;--muted:#6c766e;--line:#e8ece7;--green:#218448;--green2:#e8f5eb;--blue:#1675d1;--shadow:0 3px 14px rgba(31,50,36,.055);
 *{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Gujarati",Inter,-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:calc(75px + env(safe-area-inset-bottom));font-size:14px}
 button,input,select{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:active{transform:scale(.97)}.hidden{display:none!important}.no-scrollbar{scrollbar-width:none}.no-scrollbar::-webkit-scrollbar{display:none}
 header{position:sticky;top:0;z-index:20;background:rgba(247,249,246,.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid rgba(30,45,30,.06)}
@@ -48,7 +48,7 @@ main{max-width:850px;margin:0 auto;padding:10px 10px 14px;display:flex;flex-dire
 </head>
 <body>
 <header><div class="topbar">
-<div class="brand"><div class="brand-icon">🌾</div><div><h1>ખેતીગ્રામ <span style="color:#218448">· બજાર ભાવ</span></h1><small id="activeDateSubtitle">આજના ભાવ</small></div></div>
+<div class="brand"><div class="brand-icon">🌾</div><div><h1>ખેતીગ્રામ <span style="color:#218448">· બજાર ભાવ</span></h1><small id="activeDateSubtitle">આજના ભાવ</small><small id="dataStatusBadge" style="display:inline-block;margin-top:3px;padding:2px 6px;border-radius:99px;background:#e8f5eb;color:#267342;font-size:9px">લાઈવ</small></div></div>
 <div class="header-actions"><div class="unit-toggle"><button id="unitMannBtn" class="active" type="button">મણ</button><button id="unitQuintalBtn" type="button">ક્વિન્ટલ</button></div><button id="refreshDataBtn" class="icon-btn" type="button" title="ફરી ભાવ લાવો"><svg id="refreshIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 7v5h-5M4 17v-5h5M5.6 9A7 7 0 0 1 18 5.5L20 7M4 17l2 1.5A7 7 0 0 0 18.4 15"/></svg></button></div>
 </div></header>
 <main>
