@@ -1855,14 +1855,13 @@
         function renderCards() {
             if (!els.compactPriceListContainer) return;
 
-            if (!state.filters.cropKeyword) {
-                if (els.selectedCropDetailView) els.selectedCropDetailView.classList.add('hidden');
-                if (els.cropCollageContainer) els.cropCollageContainer.classList.remove('hidden');
-                return;
-            }
+            // Crop navigation visibility is derived only from the active crop selection.
+            const cropDetailActive = Boolean(state.filters.cropKeyword);
+            if (els.selectedCropDetailView) els.selectedCropDetailView.classList.toggle('hidden', !cropDetailActive);
+            if (els.cropCollageContainer) els.cropCollageContainer.classList.toggle('hidden', cropDetailActive);
+            if (els.clearSelectedCropBtn) els.clearSelectedCropBtn.classList.toggle('hidden', !cropDetailActive);
 
-            if (els.cropCollageContainer) els.cropCollageContainer.classList.add('hidden');
-            if (els.selectedCropDetailView) els.selectedCropDetailView.classList.remove('hidden');
+            if (!cropDetailActive) return;
 
             const total = state.filteredRecords.length;
             const totalPages = Math.max(1, Math.ceil(total / state.rowsPerPage));
@@ -1995,10 +1994,12 @@
 
             const allYards = Array.from(yardMap.values()).sort((a, b) => a.display.localeCompare(b.display, 'gu'));
 
-            if (state.khetiGram.selectedYardKey && yardMap.has(state.khetiGram.selectedYardKey)) {
+            const yardDetailActive = Boolean(state.khetiGram.selectedYardKey && yardMap.has(state.khetiGram.selectedYardKey));
+            if (yardDetailActive) {
                 const yard = yardMap.get(state.khetiGram.selectedYardKey);
                 if (els.kgYardDirectoryList) els.kgYardDirectoryList.classList.add('hidden');
                 if (els.kgYardDetailSheet) els.kgYardDetailSheet.classList.remove('hidden');
+                if (els.kgBackToYardsBtn) els.kgBackToYardsBtn.classList.remove('hidden');
 
                 const isFav = state.khetiGram.favoriteYards.includes(yard.display);
                 const sheetDate = yard.records[0]?.arrival_date || isoToDDMMYYYY(state.selectedDateISO);
@@ -2038,6 +2039,7 @@ return;
             }
 
             state.khetiGram.selectedYardKey = null;
+            if (els.kgBackToYardsBtn) els.kgBackToYardsBtn.classList.add('hidden');
             if (els.kgYardDetailSheet) els.kgYardDetailSheet.classList.add('hidden');
             if (els.kgYardDirectoryList) els.kgYardDirectoryList.classList.remove('hidden');
 
@@ -2258,6 +2260,7 @@ return;
             if (els.selectedCropDetailView) els.selectedCropDetailView.classList.add('hidden');
             if (els.cropCollageContainer) els.cropCollageContainer.classList.remove('hidden');
             if (els.clearSelectedCropBtn) els.clearSelectedCropBtn.classList.add('hidden');
+            if (els.kgBackToYardsBtn) els.kgBackToYardsBtn.classList.add('hidden');
 
             // Avoid rebuilding the UI multiple times here; loadMandiData performs the final render.
         }
