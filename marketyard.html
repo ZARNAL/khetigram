@@ -572,6 +572,15 @@
 
         .price-list-row:hover { background: #F9F9FB; }
 
+        /* Allow full yard/market names to wrap instead of truncating on phones. */
+        .crop-price-primary, .crop-price-secondary { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; line-height: 1.35; }
+        @media (max-width: 420px) {
+            .price-list-row { padding: 8px 8px; gap: 2px; }
+            .price-min { font-size: 10px; }
+            .price-modal { font-size: 11.5px; }
+            .price-max { font-size: 10px; }
+        }
+
         .variety-badge {
             flex-shrink: 0;
             padding: 1px 6px;
@@ -1913,10 +1922,10 @@
                             ${isSingleCrop ? '' : getCropIconHtml(rec.commodity, false)}
                             <div class="min-w-0">
                                 <div style="display:flex; align-items:center; gap:6px; min-width:0;">
-                                    <span class="truncate" style="font-size:13.5px; font-weight:700; color:#1C1C1E;">${primaryTitle}</span>
+                                    <span class="crop-price-primary" style="font-size:13.5px; font-weight:700; color:#1C1C1E;">${primaryTitle}</span>
                                     <span class="variety-badge">${guVariety}</span>
                                 </div>
-                                <div class="truncate" style="font-size:11px; font-weight:500; color:#8E8E93; margin-top:2px;">${secondarySub}</div>
+                                <div class="crop-price-secondary" style="font-size:11px; font-weight:500; color:#8E8E93; margin-top:2px;">${secondarySub}</div>
                             </div>
                         </div>
                         <div class="col-span-2 text-right price-min tabular-nums">
