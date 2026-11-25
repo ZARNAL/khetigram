@@ -24,10 +24,6 @@
             --apple-separator: rgba(60, 60, 67, 0.1);
             --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
-        html, body {
-            max-width: 100%;
-            overflow-x: hidden;
-        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Noto Sans Gujarati', 'Inter', sans-serif;
             background-color: var(--apple-bg);
@@ -104,24 +100,24 @@
 
     <!-- STICKY APPLE FROSTED GLASS HEADER -->
     <header class="sticky top-0 z-40 apple-glass border-b border-black/[0.06]">
-        <div class="max-w-3xl mx-auto px-2.5 sm:px-3 py-1.5 flex items-center justify-between gap-1.5">
+        <div class="max-w-3xl mx-auto px-3 py-1.5 flex items-center justify-between gap-2">
             <!-- App Brand -->
-            <div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
-                <div class="w-7 h-7 rounded-[8px] bg-gradient-to-b from-[#38BDF8] to-[#0284C7] text-white flex items-center justify-center text-[13px] font-black shrink-0 shadow-xs ring-1 ring-black/5">
+            <div class="flex items-center gap-2 min-w-0">
+                <div class="w-7 h-7 rounded-[8px] bg-gradient-to-b from-[#38BDF8] to-[#0284C7] text-white flex items-center justify-center text-[14px] font-black shrink-0 shadow-xs ring-1 ring-black/5">
                     ખ
                 </div>
                 <div class="min-w-0 flex flex-col justify-center">
-                    <h1 class="text-[13px] sm:text-[15px] font-extrabold text-[#1C1C1E] tracking-tight truncate leading-tight">
+                    <h1 class="text-[14px] sm:text-[15px] font-extrabold text-[#1C1C1E] tracking-tight truncate leading-tight">
                         ખેતીગ્રામ
                     </h1>
-                    <p id="headerSubtitleText" class="text-[9.5px] sm:text-[10px] font-medium text-[#8E8E93] truncate leading-tight">
-                        આજના તાજા ભાવ • ૨૦ કિલો
+                    <p id="headerSubtitleText" class="text-[10px] font-medium text-[#8E8E93] truncate leading-tight">
+                        આજના તાજા ભાવ • ૨૦ કિલો (મણ)
                     </p>
                 </div>
             </div>
 
             <!-- Desktop iOS Segmented View Switcher -->
-            <div class="hidden sm:flex items-center bg-[#767680]/[0.12] p-[2px] rounded-[9px] shrink-0">
+            <div class="hidden sm:flex items-center bg-[#767680]/[0.12] p-[2px] rounded-[9px]">
                 <button type="button" id="btnModeDashboard" class="tap-spring px-2.5 py-0.5 rounded-[7px] text-[11px] font-bold bg-white text-[#1C1C1E] shadow-xs">
                     🌱 પાક મુજબ
                 </button>
@@ -132,19 +128,19 @@
 
             <!-- iOS Weight Segmented Control + Stats + Refresh -->
             <div class="flex items-center gap-1 shrink-0">
-                <div class="flex items-center bg-[#767680]/[0.12] p-[2px] rounded-[8px]">
-                    <button type="button" id="btnUnitMann" class="tap-spring px-1.5 sm:px-2 py-0.5 rounded-[6px] text-[9.5px] sm:text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs whitespace-nowrap">
+                <div class="flex items-center bg-[#767680]/[0.12] p-[2px] rounded-[9px]">
+                    <button type="button" id="btnUnitMann" class="tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs">
                         ૨૦ કિલો
                     </button>
-                    <button type="button" id="btnUnitQuintal" class="tap-spring px-1.5 sm:px-2 py-0.5 rounded-[6px] text-[9.5px] sm:text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E] whitespace-nowrap">
+                    <button type="button" id="btnUnitQuintal" class="tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E]">
                         ૧૦૦ કિલો
                     </button>
                 </div>
-                <button type="button" id="openStatsBtn" title="ડેટા આંકડા (Statistics)" class="tap-spring px-1.5 sm:px-2 h-6 rounded-full bg-[#007AFF]/[0.1] hover:bg-[#007AFF]/[0.16] flex items-center gap-0.5 text-[9.5px] sm:text-[10px] font-bold text-[#007AFF] shrink-0">
+                <button type="button" id="openStatsBtn" title="ડેટા આંકડા (Statistics)" class="tap-spring px-2 h-6 rounded-full bg-[#007AFF]/[0.1] hover:bg-[#007AFF]/[0.16] flex items-center gap-1 text-[10px] font-bold text-[#007AFF]">
                     <span>📊</span>
                     <span id="headerStatsBadgeCount" class="tabular-nums">૦</span>
                 </button>
-                <button type="button" id="refreshDataBtn" title="તાજા ભાવ લોડ કરો" class="tap-spring w-6 h-6 rounded-full bg-[#767680]/[0.12] hover:bg-[#767680]/[0.2] flex items-center justify-center text-[10px] text-[#1C1C1E] shrink-0">
+                <button type="button" id="refreshDataBtn" title="તાજા ભાવ લોડ કરો" class="tap-spring w-6 h-6 rounded-full bg-[#767680]/[0.12] hover:bg-[#767680]/[0.2] flex items-center justify-center text-[11px] text-[#1C1C1E]">
                     🔄
                 </button>
             </div>
@@ -152,33 +148,35 @@
     </header>
 
     <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-3xl mx-auto px-2.5 sm:px-3.5 pt-2.5 sm:pt-3 space-y-2.5 sm:space-y-3">
+    <main class="max-w-3xl mx-auto px-3.5 pt-3 space-y-3">
 
         <!-- TOP INTEGRATED APPLE CONTROL CARD -->
-        <section class="apple-card p-2.5 sm:p-3 space-y-2">
+        <section class="apple-card p-3 space-y-2.5">
             <!-- Mobile Top Segmented Switcher (🌱 પાક મુજબ | 🏛️ યાર્ડ મુજબ) -->
             <div class="sm:hidden grid grid-cols-2 bg-[#767680]/[0.12] p-[2px] rounded-[10px]">
-                <button type="button" id="mobileTabDashboard" class="tap-spring py-1.5 rounded-[8px] bg-white text-[#1C1C1E] text-xs font-bold flex items-center justify-center gap-1 shadow-xs">
+                <button type="button" id="mobileTabDashboard" class="tap-spring py-1 rounded-[8px] bg-white text-[#1C1C1E] text-xs font-bold flex items-center justify-center gap-1 shadow-xs">
                     <span>🌱 પાક મુજબ</span>
                 </button>
-                <button type="button" id="mobileTabKhetiGram" class="tap-spring py-1.5 rounded-[8px] text-[#636366] text-xs font-semibold flex items-center justify-center gap-1">
+                <button type="button" id="mobileTabKhetiGram" class="tap-spring py-1 rounded-[8px] text-[#636366] text-xs font-semibold flex items-center justify-center gap-1">
                     <span>🏛️ યાર્ડ મુજબ</span>
                 </button>
             </div>
 
-            <!-- Row 1: Date Controls (Wraps cleanly on mobile without clipping) -->
-            <div id="navDateControlsBar" class="flex flex-wrap items-center gap-1.5">
-                <button type="button" data-mode="latest" class="date-pill tap-spring px-2.5 sm:px-3 py-1 rounded-full text-[11px] font-bold bg-[#1C1C1E] text-white shadow-xs">
-                    આજ
-                </button>
-                <button type="button" data-mode="yesterday" class="date-pill tap-spring px-2.5 sm:px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F2F2F7] text-[#636366] hover:text-[#1C1C1E]">
-                    ગઈકાલ
-                </button>
-                <button type="button" data-mode="2days" class="date-pill tap-spring px-2.5 sm:px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F2F2F7] text-[#636366] hover:text-[#1C1C1E]">
-                    ૨ દિવસ પહેલા
-                </button>
-                <div id="customDatePillWrap" class="flex items-center bg-[#F2F2F7] px-2 py-0.5 rounded-full border border-transparent transition-all">
-                    <input type="date" id="customDateInput" aria-label="તારીખ પસંદ કરો" class="bg-transparent text-[11px] font-semibold text-[#1C1C1E] focus:outline-none w-[104px]">
+            <!-- Row 1: Date Controls -->
+            <div class="flex items-center justify-between gap-1.5">
+                <div id="navDateControlsBar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                    <button type="button" data-mode="latest" class="date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-bold bg-[#1C1C1E] text-white shadow-xs">
+                        આજ
+                    </button>
+                    <button type="button" data-mode="yesterday" class="date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F2F2F7] text-[#636366] hover:text-[#1C1C1E]">
+                        ગઈકાલ
+                    </button>
+                    <button type="button" data-mode="2days" class="date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F2F2F7] text-[#636366] hover:text-[#1C1C1E]">
+                        ૨ દિવસ પહેલા
+                    </button>
+                    <div id="customDatePillWrap" class="shrink-0 flex items-center bg-[#F2F2F7] px-2.5 py-0.5 rounded-full border border-transparent transition-all">
+                        <input type="date" id="customDateInput" aria-label="તારીખ પસંદ કરો" class="bg-transparent text-[11px] font-semibold text-[#1C1C1E] focus:outline-none w-[108px]">
+                    </div>
                 </div>
             </div>
 
@@ -186,7 +184,7 @@
             <div id="categoryStripDivider" class="h-[0.5px] bg-black/[0.06]"></div>
 
             <!-- Row 2: Gujarati Crop Category Tabs -->
-            <div id="categoryPillStrip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5"></div>
+            <div id="categoryPillStrip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar"></div>
         </section>
 
         <!-- STATUS / INFO BANNER -->
@@ -216,16 +214,16 @@
             <!-- Selected Crop Yard-by-Yard Price Sheet -->
             <div id="selectedCropDetailView" class="hidden space-y-2.5 animate-row-in">
                 <!-- Selected Crop Summary Hero Banner -->
-                <div id="selectedCropHeroBanner" class="apple-card px-3 sm:px-3.5 py-2.5 sm:py-3 flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div id="selectedCropHeroBanner" class="apple-card px-3.5 py-3 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-3 min-w-0">
                         <div id="selectedCropHeroIcon"></div>
                         <div class="min-w-0">
-                            <h2 id="selectedCropHeroTitle" class="text-[14px] sm:text-base font-extrabold text-[#1C1C1E] tracking-tight truncate">મગફળી</h2>
-                            <p id="selectedCropHeroMeta" class="text-[10.5px] sm:text-[11px] font-medium text-[#8E8E93] truncate mt-0.5">વિવિધ યાર્ડના ભાવ</p>
+                            <h2 id="selectedCropHeroTitle" class="text-[15px] sm:text-base font-extrabold text-[#1C1C1E] tracking-tight truncate">મગફળી</h2>
+                            <p id="selectedCropHeroMeta" class="text-[11px] font-medium text-[#8E8E93] truncate mt-0.5">વિવિધ યાર્ડના ભાવ</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button type="button" id="clearSelectedCropBtn" class="tap-spring px-3 py-1.5 rounded-full bg-[#007AFF]/[0.1] hover:bg-[#007AFF]/[0.18] text-[#007AFF] text-[11px] sm:text-xs font-bold whitespace-nowrap">
+                        <button type="button" id="clearSelectedCropBtn" class="tap-spring px-3.5 py-1.5 rounded-full bg-[#007AFF]/[0.1] hover:bg-[#007AFF]/[0.18] text-[#007AFF] text-xs font-bold">
                             ‹ બધા પાક
                         </button>
                     </div>
@@ -234,10 +232,10 @@
                 <!-- Compact Grouped List Container -->
                 <div class="apple-card overflow-hidden">
                     <!-- Sticky Column Header -->
-                    <div class="bg-[#F9F9FB] px-2.5 sm:px-3.5 py-2 border-b border-black/[0.06] grid grid-cols-12 items-center text-[10px] sm:text-[11px] font-bold text-[#8E8E93] tracking-tight">
-                        <div id="listPrimaryColHeader" class="col-span-5 sm:col-span-6">માર્કેટ યાર્ડ / જાત</div>
+                    <div class="bg-[#F9F9FB] px-3.5 py-2.5 border-b border-black/[0.06] grid grid-cols-12 items-center text-[11px] font-bold text-[#8E8E93] tracking-tight">
+                        <div id="listPrimaryColHeader" class="col-span-6">માર્કેટ યાર્ડ / જાત</div>
                         <div class="col-span-2 text-right">ઓછો</div>
-                        <div class="col-span-3 sm:col-span-2 text-right text-[#007AFF]">સરેરાશ</div>
+                        <div class="col-span-2 text-right text-[#007AFF]">સરેરાશ</div>
                         <div class="col-span-2 text-right text-[#28A745]">ઊંચો</div>
                     </div>
 
@@ -1336,24 +1334,24 @@
                 const delayMs = Math.min(idx * 15, 240);
 
                 return `
-                    <div data-yard-key="${yardBaseKey.replace(/"/g, '&quot;')}" style="animation-delay: ${delayMs}ms;" class="price-list-row animate-row-in px-2.5 sm:px-3.5 py-2.5 grid grid-cols-12 items-center gap-1 hover:bg-[#F9F9FB] active:bg-[#F2F2F7] cursor-pointer transition-colors">
-                        <div class="col-span-5 sm:col-span-6 flex items-center gap-2 min-w-0">
-                            ${isSingleCrop ? '' : getCropIconHtml(rec.commodity, 'w-8 h-8 text-sm')}
+                    <div data-yard-key="${yardBaseKey.replace(/"/g, '&quot;')}" style="animation-delay: ${delayMs}ms;" class="price-list-row animate-row-in px-3.5 py-2.5 grid grid-cols-12 items-center gap-1 hover:bg-[#F9F9FB] active:bg-[#F2F2F7] cursor-pointer transition-colors">
+                        <div class="col-span-6 flex items-center gap-2.5 min-w-0">
+                            ${isSingleCrop ? '' : getCropIconHtml(rec.commodity, 'w-9 h-9 text-base')}
                             <div class="min-w-0">
-                                <div class="flex flex-wrap items-center gap-1 min-w-0">
-                                    <span class="text-[12px] sm:text-sm font-bold text-[#1C1C1E] tracking-tight truncate max-w-full">${primaryTitle}</span>
-                                    <span class="shrink-0 px-1 py-[0.5px] rounded bg-[#007AFF]/[0.1] text-[#007AFF] text-[9px] sm:text-[10px] font-bold">${guVariety}</span>
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="text-[13px] sm:text-sm font-bold text-[#1C1C1E] tracking-tight truncate">${primaryTitle}</span>
+                                    <span class="shrink-0 px-1.5 py-[1px] rounded-md bg-[#007AFF]/[0.1] text-[#007AFF] text-[10px] font-bold">${guVariety}</span>
                                 </div>
-                                <div class="text-[10px] sm:text-[11px] font-medium text-[#8E8E93] truncate mt-0.5">${secondarySub}</div>
+                                <div class="text-[11px] font-medium text-[#8E8E93] truncate mt-0.5">${secondarySub}</div>
                             </div>
                         </div>
-                        <div class="col-span-2 text-right text-[11px] sm:text-xs font-semibold text-[#8E8E93] tabular-nums">
+                        <div class="col-span-2 text-right text-xs font-semibold text-[#8E8E93] tabular-nums">
                             ₹${formatPrice(rec.min_price)}
                         </div>
-                        <div class="col-span-3 sm:col-span-2 text-right text-[12px] sm:text-sm font-extrabold text-[#007AFF] tabular-nums">
+                        <div class="col-span-2 text-right text-[13px] sm:text-sm font-extrabold text-[#007AFF] tabular-nums">
                             ₹${formatPrice(rec.modal_price)}
                         </div>
-                        <div class="col-span-2 text-right text-[11px] sm:text-xs font-bold text-[#28A745] tabular-nums">
+                        <div class="col-span-2 text-right text-xs font-bold text-[#28A745] tabular-nums">
                             ₹${formatPrice(rec.max_price)}
                         </div>
                     </div>
@@ -1665,13 +1663,13 @@
             const isMann = divisor === 5;
             if (els.btnUnitMann) {
                 els.btnUnitMann.className = isMann
-                    ? 'tap-spring px-1.5 sm:px-2 py-0.5 rounded-[6px] text-[9.5px] sm:text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs whitespace-nowrap'
-                    : 'tap-spring px-1.5 sm:px-2 py-0.5 rounded-[6px] text-[9.5px] sm:text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E] whitespace-nowrap';
+                    ? 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs'
+                    : 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E]';
             }
             if (els.btnUnitQuintal) {
                 els.btnUnitQuintal.className = !isMann
-                    ? 'tap-spring px-1.5 sm:px-2 py-0.5 rounded-[6px] text-[9.5px] sm:text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs whitespace-nowrap'
-                    : 'tap-spring px-1.5 sm:px-2 py-0.5 rounded-[6px] text-[9.5px] sm:text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E] whitespace-nowrap';
+                    ? 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs'
+                    : 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E]';
             }
             updateSubtitleText();
             renderCards();
