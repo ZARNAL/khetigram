@@ -200,6 +200,11 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
  .collage-crop-btn{height:100px!important;min-height:100px!important}
  .collage-crop-btn>div:first-child{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important}
 }
+
+/* Android WebView hit-testing / touch reliability */
+#cropCollageContainer,.collage-crop-btn{pointer-events:auto!important;touch-action:manipulation!important}
+.collage-crop-btn{position:relative!important;z-index:1!important;cursor:pointer!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+.collage-crop-btn:focus-visible{outline:3px solid #0a84ff!important;outline-offset:2px!important}
 </style>
 </head>
 <body class="min-h-screen pb-8 selection:bg-[#007AFF]/15 selection:text-[#007AFF]">
@@ -1358,15 +1363,7 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             }
 
             els.cropCollageContainer.innerHTML = html;
-            els.cropCollageContainer.querySelectorAll('.collage-crop-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    state.filters.cropKeyword = btn.dataset.crop;
-                    state.currentPage = 1;
-                    renderCropCollage();
-                    applyFiltersAndRender();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            });
+            // Crop click handling is delegated from the stable container (bound once in initEventListeners).
         }
 
         function applyFiltersAndRender() {
@@ -1820,6 +1817,22 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
         // 12. EVENT LISTENERS & INIT
         // ==========================================
         function initEventListeners() {
+            // Reliable crop selection in Android WebView and mobile browsers.
+            if (els.cropCollageContainer && !els.cropCollageContainer.dataset.cropClickBound) {
+                els.cropCollageContainer.dataset.cropClickBound = '1';
+                els.cropCollageContainer.addEventListener('click', (event) => {
+                    const btn = event.target.closest('.collage-crop-btn');
+                    if (!btn || !els.cropCollageContainer.contains(btn)) return;
+                    const cropKey = btn.getAttribute('data-crop');
+                    if (!cropKey) return;
+                    event.preventDefault();
+                    state.filters.cropKeyword = cropKey;
+                    state.currentPage = 1;
+                    renderCropCollage();
+                    applyFiltersAndRender();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
             if (els.btnModeDashboard) els.btnModeDashboard.addEventListener('click', () => setUiViewMode('dashboard'));
             if (els.btnModeKhetiGram) els.btnModeKhetiGram.addEventListener('click', () => setUiViewMode('khetigram'));
             if (els.mobileTabDashboard) els.mobileTabDashboard.addEventListener('click', () => setUiViewMode('dashboard'));
