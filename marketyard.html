@@ -572,10 +572,19 @@
 
         .price-list-row:hover { background: #F9F9FB; }
 
-        /* Allow full yard/market names to wrap instead of truncating on phones. */
-        .crop-price-primary, .crop-price-secondary { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: anywhere; line-height: 1.35; }
+        /* Clean, readable crop/yard labels: natural wrapping without awkward breaks. */
+        .crop-price-name-cell { min-width: 0; align-items: flex-start !important; }
+        .crop-price-name-cell > div { min-width: 0; flex: 1 1 auto; }
+        .crop-price-name-cell > div > div:first-child { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 4px 6px; }
+        .crop-price-primary { display: block; flex: 1 1 100%; min-width: 0; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: break-word; word-break: normal; line-height: 1.35; }
+        .crop-price-secondary { display: block; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; overflow-wrap: break-word; word-break: normal; line-height: 1.35; }
+        .crop-price-name-cell .variety-badge { flex: 0 0 auto; margin-top: 1px; }
         @media (max-width: 420px) {
-            .price-list-row { padding: 8px 8px; gap: 2px; }
+            .price-list-row { padding: 9px 8px; gap: 3px; align-items: start; }
+            .crop-price-name-cell { gap: 6px !important; }
+            .crop-price-primary { font-size: 12.5px !important; font-weight: 700; letter-spacing: -0.1px; }
+            .crop-price-secondary { font-size: 10.5px !important; margin-top: 3px !important; color: #8E8E93; }
+            .crop-price-name-cell .variety-badge { font-size: 9px; padding: 2px 5px; border-radius: 5px; }
             .price-min { font-size: 10px; }
             .price-modal { font-size: 11.5px; }
             .price-max { font-size: 10px; }
@@ -1918,7 +1927,7 @@
 
                 return `
                     <div data-yard-key="${yardBaseKey.replace(/"/g, '&quot;')}" style="animation-delay: ${delayMs}ms;" class="price-list-row animate-row-in">
-                        <div class="col-span-6" style="display:flex; align-items:center; gap:10px; min-width:0;">
+                        <div class="col-span-6 crop-price-name-cell" style="display:flex; align-items:flex-start; gap:8px; min-width:0;">
                             ${isSingleCrop ? '' : getCropIconHtml(rec.commodity, false)}
                             <div class="min-w-0">
                                 <div style="display:flex; align-items:center; gap:6px; min-width:0;">
