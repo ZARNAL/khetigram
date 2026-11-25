@@ -2197,8 +2197,13 @@ return;
         // 12. EVENT LISTENERS & INIT
         // ==========================================
         function initEventListeners() {
-            // Every mode-tab tap fetches current data again, including tapping the active tab.
+            // Every mode-tab tap resets its view to the full/default list and fetches fresh data.
             const handleModeTabClick = (mode) => {
+                state.filters.category = 'all';
+                state.filters.cropKeyword = '';
+                state.currentPage = 1;
+                state.khetiGram.region = 'all';
+                state.khetiGram.selectedYardKey = null;
                 setUiViewMode(mode);
                 loadMandiData(state.dateMode, state.selectedDateISO);
             };
