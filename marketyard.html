@@ -1937,6 +1937,13 @@
                 row.addEventListener('click', () => {
                     const yKey = row.dataset.yardKey;
                     if (yKey) {
+                        // Crop-price row -> yard detail is a deliberate cross-view navigation.
+                        state.khetiGram.region = 'all';
+                        document.querySelectorAll('.kg-region-tab').forEach(t => {
+                            t.className = t.dataset.region === 'all'
+                                ? 'kg-region-tab tap-spring pill-dark'
+                                : 'kg-region-tab tap-spring pill-light';
+                        });
                         setUiViewMode('khetigram');
                         openKhetiGramYard(yKey);
                     }
@@ -2287,6 +2294,7 @@ return;
         function initEventListeners() {
             // Reset and render locally on tab switch. No network fetch/loading skeleton, so switching stays smooth.
             const handleModeTabClick = (mode) => {
+                // Keep both views in a clean list state when users switch sections.
                 resetMarketViewSelections();
                 setUiViewMode(mode);
                 if (mode === 'dashboard') {
@@ -2296,6 +2304,7 @@ return;
                 } else {
                     renderKhetiGramView();
                 }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             };
             if (els.btnModeDashboard) els.btnModeDashboard.addEventListener('click', () => handleModeTabClick('dashboard'));
             if (els.btnModeKhetiGram) els.btnModeKhetiGram.addEventListener('click', () => handleModeTabClick('khetigram'));
@@ -2330,10 +2339,13 @@ return;
 
             if (els.clearSelectedCropBtn) {
                 els.clearSelectedCropBtn.addEventListener('click', () => {
+                    state.filters.category = 'all';
                     state.filters.cropKeyword = '';
                     state.currentPage = 1;
+                    renderCategoryPills();
                     renderCropCollage();
                     applyFiltersAndRender();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
 
@@ -2374,7 +2386,14 @@ return;
             if (els.kgBackToYardsBtn) {
                 els.kgBackToYardsBtn.addEventListener('click', () => {
                     state.khetiGram.selectedYardKey = null;
+                    state.khetiGram.region = 'all';
+                    document.querySelectorAll('.kg-region-tab').forEach(t => {
+                        t.className = t.dataset.region === 'all'
+                            ? 'kg-region-tab tap-spring pill-dark'
+                            : 'kg-region-tab tap-spring pill-light';
+                    });
                     renderKhetiGramView();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
 
