@@ -2197,10 +2197,15 @@ return;
         // 12. EVENT LISTENERS & INIT
         // ==========================================
         function initEventListeners() {
-            if (els.btnModeDashboard) els.btnModeDashboard.addEventListener('click', () => setUiViewMode('dashboard'));
-            if (els.btnModeKhetiGram) els.btnModeKhetiGram.addEventListener('click', () => setUiViewMode('khetigram'));
-            if (els.mobileTabDashboard) els.mobileTabDashboard.addEventListener('click', () => setUiViewMode('dashboard'));
-            if (els.mobileTabKhetiGram) els.mobileTabKhetiGram.addEventListener('click', () => setUiViewMode('khetigram'));
+            // Every mode-tab tap fetches current data again, including tapping the active tab.
+            const handleModeTabClick = (mode) => {
+                setUiViewMode(mode);
+                loadMandiData(state.dateMode, state.selectedDateISO);
+            };
+            if (els.btnModeDashboard) els.btnModeDashboard.addEventListener('click', () => handleModeTabClick('dashboard'));
+            if (els.btnModeKhetiGram) els.btnModeKhetiGram.addEventListener('click', () => handleModeTabClick('khetigram'));
+            if (els.mobileTabDashboard) els.mobileTabDashboard.addEventListener('click', () => handleModeTabClick('dashboard'));
+            if (els.mobileTabKhetiGram) els.mobileTabKhetiGram.addEventListener('click', () => handleModeTabClick('khetigram'));
 
             if (els.btnUnitMann) els.btnUnitMann.addEventListener('click', () => setPriceUnit(5));
             if (els.btnUnitQuintal) els.btnUnitQuintal.addEventListener('click', () => setPriceUnit(1));
