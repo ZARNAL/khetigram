@@ -5,25 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ખેતીગ્રામ | ગુજરાત માર્કેટ યાર્ડ ભાવ</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
     <!-- Google Fonts: Inter & Noto Sans Gujarati -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+        /* ==========================================
+           BASE & RESET STYLES (NO EXTERNAL CDN NEEDED)
+           ========================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         :root {
             --apple-bg: #F2F2F7;
             --apple-card: #FFFFFF;
             --apple-text: #1C1C1E;
             --apple-secondary: #8E8E93;
             --apple-blue: #007AFF;
-            --apple-green: #34C759;
+            --apple-green: #28A745;
             --apple-separator: rgba(60, 60, 67, 0.1);
             --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Noto Sans Gujarati', 'Inter', sans-serif;
             background-color: var(--apple-bg);
@@ -32,226 +39,703 @@
             -moz-osx-font-smoothing: grayscale;
             -webkit-tap-highlight-color: transparent;
             scroll-behavior: smooth;
+            min-height: 100vh;
+            padding-bottom: 32px;
+            line-height: 1.4;
         }
-        .tabular-nums {
-            font-variant-numeric: tabular-nums;
+
+        button, input, select {
+            font-family: inherit;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: inherit;
         }
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+
+        button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
         }
-        .apple-glass {
-            background: rgba(255, 255, 255, 0.78);
+
+        .hidden { display: none !important; }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+        .select-none { user-select: none; }
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .min-w-0 { min-width: 0; }
+        .shrink-0 { flex-shrink: 0; }
+        .flex-1 { flex: 1 1 0%; }
+        .w-full { width: 100%; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ==========================================
+           LAYOUT & GLASSMORPHISM CARDS
+           ========================================== */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: saturate(180%) blur(24px);
             -webkit-backdrop-filter: saturate(180%) blur(24px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
+
+        .header-inner {
+            max-width: 768px;
+            margin: 0 auto;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .main-container {
+            max-width: 768px;
+            margin: 0 auto;
+            padding: 12px 14px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .apple-card {
             background: var(--apple-card);
             border-radius: 20px;
             box-shadow: 0 2px 14px rgba(0, 0, 0, 0.03), 0 0.5px 1px rgba(0, 0, 0, 0.04);
-            border: 0.5px solid rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.06);
         }
+
+        .card-padded { padding: 12px; }
+        .card-padded-lg { padding: 14px; }
+        .overflow-hidden { overflow: hidden; }
+
+        .stack-sm { display: flex; flex-direction: column; gap: 10px; }
+        .stack-md { display: flex; flex-direction: column; gap: 12px; }
+
+        /* ==========================================
+           HEADER & NAVIGATION ELEMENTS
+           ========================================== */
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: linear-gradient(180deg, #38BDF8 0%, #0284C7 100%);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 900;
+            flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1C1C1E;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            font-size: 10.5px;
+            font-weight: 500;
+            color: #8E8E93;
+            line-height: 1.2;
+        }
+
+        .segmented-control {
+            display: flex;
+            align-items: center;
+            background: rgba(118, 118, 128, 0.12);
+            padding: 2px;
+            border-radius: 9px;
+        }
+
+        .segmented-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            background: rgba(118, 118, 128, 0.12);
+            padding: 2px;
+            border-radius: 10px;
+        }
+
+        .seg-btn-active {
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #FFFFFF;
+            color: #1C1C1E;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .seg-btn-inactive {
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #636366;
+        }
+
+        .mobile-seg-active {
+            padding: 6px 8px;
+            border-radius: 8px;
+            background: #FFFFFF;
+            color: #1C1C1E;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .mobile-seg-inactive {
+            padding: 6px 8px;
+            border-radius: 8px;
+            color: #636366;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .desktop-only { display: none; }
+        .mobile-only { display: grid; }
+        @media (min-width: 640px) {
+            .desktop-only { display: flex; }
+            .mobile-only { display: none; }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .stats-badge-btn {
+            padding: 0 8px;
+            height: 26px;
+            border-radius: 9999px;
+            background: rgba(0, 122, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #007AFF;
+        }
+
+        .refresh-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 9999px;
+            background: rgba(118, 118, 128, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #1C1C1E;
+        }
+
+        /* ==========================================
+           PILLS, DATE PICKER & CATEGORY STRIP
+           ========================================== */
+        .scroll-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow-x: auto;
+        }
+
+        .pill-dark {
+            flex-shrink: 0;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            background: #1C1C1E;
+            color: #FFFFFF;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .pill-light {
+            flex-shrink: 0;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 600;
+            background: #F2F2F7;
+            color: #636366;
+        }
+
+        .pill-blue {
+            flex-shrink: 0;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            background: #007AFF;
+            color: #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0, 122, 255, 0.25);
+        }
+
+        .pill-cat-inactive {
+            flex-shrink: 0;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 700;
+            background: #F2F2F7;
+            color: #1C1C1E;
+        }
+
+        .date-input-wrap {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            background: #F2F2F7;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            border: 1.5px solid transparent;
+        }
+
+        .date-input-wrap.active-custom {
+            border-color: #007AFF;
+            background: rgba(0, 122, 255, 0.08);
+        }
+
+        .date-input {
+            background: transparent;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #1C1C1E;
+            outline: none;
+            width: 112px;
+        }
+
+        .divider-line {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        /* ==========================================
+           STATUS BANNER & SKELETON
+           ========================================== */
+        .status-banner {
+            padding: 10px 14px;
+            border-radius: 16px;
+            background: rgba(255, 149, 0, 0.12);
+            border: 1px solid rgba(255, 149, 0, 0.25);
+            color: #9A5B00;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .skeleton-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        @media (min-width: 640px) {
+            .skeleton-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        .skeleton-box {
+            height: 80px;
+            background: #F2F2F7;
+            border-radius: 16px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ==========================================
+           CROP COLLAGE GRID & CARDS
+           ========================================== */
+        .cat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .cat-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cat-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1C1C1E;
+        }
+
+        .cat-count-badge {
+            padding: 2px 10px;
+            border-radius: 9999px;
+            background: #F2F2F7;
+            font-size: 11px;
+            font-weight: 700;
+            color: #636366;
+        }
+
+        .crop-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        @media (min-width: 640px) {
+            .crop-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .collage-crop-btn {
+            background: #F9F9FB;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
+            padding: 10px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .collage-crop-btn:hover {
+            background: rgba(0, 122, 255, 0.07);
+            border-color: rgba(0, 122, 255, 0.3);
+        }
+
+        .crop-icon-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: #F2F2F7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .crop-icon-initial-lg {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            font-size: 17px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .crop-icon-sm {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            background: #F2F2F7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .crop-icon-initial-sm {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .crop-card-name {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #1C1C1E;
+            line-height: 1.25;
+        }
+
+        .crop-card-yards {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: #8E8E93;
+            margin-top: 2px;
+        }
+
+        /* ==========================================
+           SELECTED CROP DETAIL TABLE & ROWS
+           ========================================== */
+        .hero-banner {
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .back-pill-btn {
+            padding: 6px 14px;
+            border-radius: 9999px;
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .table-header-row {
+            background: #F9F9FB;
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #8E8E93;
+        }
+
+        .col-span-6 { grid-column: span 6 / span 6; }
+        .col-span-2 { grid-column: span 2 / span 2; }
+
+        .price-list-row {
+            padding: 10px 14px;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            align-items: center;
+            gap: 4px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .price-list-row:hover { background: #F9F9FB; }
+
+        .variety-badge {
+            flex-shrink: 0;
+            padding: 1px 6px;
+            border-radius: 6px;
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .price-min { font-size: 12px; font-weight: 600; color: #8E8E93; }
+        .price-modal { font-size: 13.5px; font-weight: 800; color: #007AFF; }
+        .price-max { font-size: 12px; font-weight: 700; color: #28A745; }
+
+        .pagination-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #8E8E93;
+        }
+
+        .page-btn {
+            padding: 6px 14px;
+            border-radius: 9999px;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            color: #1C1C1E;
+            font-weight: 700;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+
+        /* ==========================================
+           YARD DIRECTORY & DETAIL SHEET
+           ========================================== */
+        .yard-row {
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .yard-row:hover { background: #F9F9FB; }
+
+        .whatsapp-btn {
+            padding: 6px 14px;
+            border-radius: 9999px;
+            background: #34C759;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 1px 3px rgba(52, 199, 89, 0.3);
+        }
+
+        .data-table th {
+            background: #F9F9FB;
+            color: #8E8E93;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* ==========================================
+           STATISTICS MODAL
+           ========================================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        @media (min-width: 640px) {
+            .modal-overlay {
+                align-items: center;
+                padding: 16px;
+            }
+        }
+
+        .modal-sheet {
+            background: #FFFFFF;
+            width: 100%;
+            max-width: 512px;
+            border-radius: 28px 28px 0 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+        }
+        @media (min-width: 640px) {
+            .modal-sheet { border-radius: 28px; }
+        }
+
+        .stat-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .stat-box {
+            border-radius: 16px;
+            padding: 10px 6px;
+            text-align: center;
+        }
+
         .tap-spring {
-            transition: transform 0.25s var(--spring-ease), background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+            transition: transform 0.2s var(--spring-ease);
         }
         .tap-spring:active {
             transform: scale(0.96);
         }
+
         @keyframes fadeSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .animate-row-in {
-            animation: fadeSlideUp 0.28s var(--spring-ease) both;
+            animation: fadeSlideUp 0.25s var(--spring-ease) both;
         }
-        @keyframes sheetSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(24px) scale(0.98);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        .animate-sheet-in {
-            animation: sheetSlideUp 0.32s var(--spring-ease) both;
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            cursor: pointer;
-            opacity: 0.65;
-            transition: opacity 0.2s ease;
-        }
-        input[type="date"]::-webkit-calendar-picker-indicator:hover {
-            opacity: 1;
-        }
-    
-/* Responsive bug fixes for marketyard mobile */
-html,body{width:100%;max-width:100%;overflow-x:clip}
-body{margin:0}
-header,main{width:100%;max-width:100%}
-header>div{width:100%;min-width:0}
-@media(max-width:639px){
- header>div{padding-left:8px!important;padding-right:8px!important;gap:5px!important}
- header>div>.flex.items-center:first-child{flex:1 1 auto;min-width:0;gap:5px!important}
- header>div>.flex.items-center:last-child{flex:0 0 auto;gap:3px!important;max-width:100%}
- header .flex.items-center.bg-\\[\\#767680\\]\\/\\[0\\.12\\] button{padding-left:5px!important;padding-right:5px!important;font-size:9px!important}
- #openStatsBtn{padding-left:5px!important;padding-right:5px!important}
- #refreshDataBtn{width:25px!important;height:25px!important;flex-shrink:0}
- main{padding-left:8px!important;padding-right:8px!important;padding-top:8px!important}
- main>section{min-width:0;padding:9px!important}
- #navDateControlsBar{width:100%;min-width:0;max-width:100%;flex:1 1 auto;overscroll-behavior-x:contain}
- #navDateControlsBar .date-pill{padding-left:8px!important;padding-right:8px!important;font-size:10px!important}
- #customDatePillWrap{padding-left:6px!important;padding-right:6px!important}
- #customDateInput{width:98px!important;max-width:98px!important;font-size:10px!important}
- #categoryPillStrip{max-width:100%;min-width:0}
- #selectedCropHeroBanner{padding:9px!important;gap:5px!important}
- #selectedCropHeroBanner button{padding:5px 8px!important;font-size:10px!important}
- #priceListContainer,#dashboardContent,#yardViewContainer{max-width:100%;min-width:0}
- .price-list-row{padding-left:8px!important;padding-right:8px!important;grid-template-columns:minmax(0,6fr) minmax(0,2fr) minmax(0,2fr) minmax(0,2fr)!important;gap:2px!important}
- .price-list-row>div{min-width:0}
- .price-list-row>div:first-child{gap:5px!important}
- .price-list-row>div:first-child .w-9{width:27px!important;height:27px!important;flex:0 0 27px}
- .price-list-row>div:first-child span{max-width:100%;overflow:hidden;text-overflow:ellipsis}
- .price-list-row>div:nth-child(n+2){font-size:10px!important;white-space:nowrap}
-}
-@media(max-width:360px){
- header .brand h1{font-size:12px!important}
- header .brand p{font-size:8px!important}
- #btnUnitMann,#btnUnitQuintal{font-size:8px!important;padding-left:4px!important;padding-right:4px!important}
- #openStatsBtn{font-size:8px!important}
- #navDateControlsBar .date-pill{padding-left:6px!important;padding-right:6px!important}
- #customDateInput{width:88px!important;max-width:88px!important}
- .price-list-row>div:first-child .w-9{display:none!important}
-}
-
-/* FULL CSS FALLBACK: page must remain styled even when Tailwind CDN is blocked (WebView/PWA) */
-html{font-size:16px!important;box-sizing:border-box;background:#f2f2f7}
-*,*:before,*:after{box-sizing:border-box}
-body{margin:0!important;min-height:100vh;background:#f2f2f7!important;color:#1c1c1e!important;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans Gujarati",sans-serif!important;font-size:14px!important;line-height:1.4!important;overflow-x:hidden!important}
-.hidden{display:none!important}
-header{position:sticky!important;top:0!important;z-index:40!important;background:rgba(250,250,252,.94)!important;backdrop-filter:blur(18px)!important;border-bottom:1px solid #e5e5ea!important}
-header>div{max-width:760px!important;margin:0 auto!important;padding:7px 10px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important}
-header>div>.flex.items-center:first-child{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex:1 1 auto!important}
-header>div>.flex.items-center:first-child>div:first-child{width:29px!important;height:29px!important;border-radius:9px!important;background:#1485ce!important;color:white!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:14px!important;font-weight:900!important;flex:0 0 29px!important}
-header h1{margin:0!important;font-size:15px!important;line-height:1.2!important;font-weight:800!important}
-header p{margin:2px 0 0!important;font-size:10px!important;line-height:1.25!important;color:#85858d!important}
-header>div>.flex.items-center:last-child{display:flex!important;align-items:center!important;gap:4px!important;flex:0 0 auto!important}
-header button{border:0!important;border-radius:8px!important;min-height:27px!important;padding:4px 7px!important;font-family:inherit!important;font-size:10px!important;font-weight:700!important;white-space:nowrap!important}
-#btnUnitMann,#btnUnitQuintal{background:#f0f0f5!important;color:#45454b!important}
-#btnUnitMann.bg-white,#btnUnitQuintal.bg-white{background:white!important;color:#202024!important}
-#openStatsBtn{background:#e9f2ff!important;color:#0875df!important}
-#refreshDataBtn{width:28px!important;height:28px!important;padding:0!important;background:#eeeeF3!important;display:grid!important;place-items:center!important}
-main{width:100%!important;max-width:760px!important;margin:0 auto!important;padding:9px 9px 20px!important;display:flex!important;flex-direction:column!important;gap:9px!important}
-main>section:first-child{background:white!important;border:1px solid #e8e8ee!important;border-radius:18px!important;padding:10px!important;box-shadow:0 2px 10px #00000006!important;display:flex!important;flex-direction:column!important;gap:8px!important}
-#mobileTabDashboard,#mobileTabKhetiGram{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;border:0!important;border-radius:9px!important;padding:7px 5px!important;background:#f0f0f5!important;color:#66666e!important;font-size:12px!important;font-weight:700!important}
-#mobileTabDashboard.bg-white,#mobileTabKhetiGram.bg-white{background:white!important;color:#1c1c1e!important;box-shadow:0 1px 3px #00000010!important}
-#navDateControlsBar{display:flex!important;align-items:center!important;gap:5px!important;overflow-x:auto!important;white-space:nowrap!important;min-width:0!important}
-.date-pill{border:0!important;border-radius:999px!important;min-height:29px!important;padding:5px 10px!important;background:#f0f0f5!important;color:#55555c!important;font-size:10px!important;font-weight:700!important;white-space:nowrap!important}
-.date-pill.bg-\\[\\#1C1C1E\\]{background:#202024!important;color:white!important}
-#customDatePillWrap{display:flex!important;align-items:center!important;flex-shrink:0!important;padding:3px 6px!important;background:#f0f0f5!important;border-radius:999px!important}
-#customDateInput{width:95px!important;max-width:95px!important;border:0!important;background:transparent!important;font-size:10px!important}
-#categoryStripDivider{height:1px!important;background:#e9e9ef!important}
-#categoryPillStrip{display:flex!important;gap:5px!important;overflow-x:auto!important;white-space:nowrap!important;padding:2px 0!important}
-.cat-pill{border:0!important;border-radius:999px!important;padding:6px 10px!important;background:#f0f0f5!important;color:#44444b!important;font-size:10px!important;font-weight:700!important;white-space:nowrap!important}
-.cat-pill.bg-\\[\\#007AFF\\]{background:#1478e5!important;color:white!important}
-.apple-card{background:#fff!important;border:1px solid #e8e8ee!important;border-radius:18px!important;box-shadow:0 2px 10px #00000006!important}
-#dashboardListView{display:flex!important;flex-direction:column!important;gap:9px!important}
-#cropCollageContainer{display:flex!important;flex-direction:column!important;gap:9px!important}
-#cropCollageContainer>.apple-card{padding:10px!important;display:flex!important;flex-direction:column!important;gap:8px!important;min-width:0!important}
-#cropCollageContainer>.apple-card>div:first-child{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
-#cropCollageContainer h2{margin:0!important;font-size:14px!important;line-height:1.3!important;font-weight:800!important}
-#cropCollageContainer .grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
-.collage-crop-btn{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;min-width:0!important;min-height:78px!important;padding:7px 4px!important;gap:5px!important;border:1px solid #e7e7ed!important;border-radius:13px!important;background:#f8f8fa!important;color:#1c1c1e!important;font-family:inherit!important}
-.collage-crop-btn>div{width:100%!important;min-width:0!important}
-.collage-crop-btn .text-xs,.collage-crop-btn .text-\\[13px\\]{font-size:12px!important;line-height:1.25!important;font-weight:800!important;white-space:normal!important;overflow-wrap:anywhere!important}
-.collage-crop-btn .text-\\[10px\\]{font-size:10px!important;line-height:1.25!important;color:#85858d!important}
-#cropCollageContainer .apple-card>span{border-radius:999px!important;background:#f0f0f5!important;padding:3px 8px!important;font-size:10px!important}
-#selectedCropDetailView{display:flex!important;flex-direction:column!important;gap:8px!important}
-#selectedCropHeroBanner{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:10px!important}
-#selectedCropHeroTitle{font-size:15px!important;font-weight:800!important}
-#selectedCropDetailView button{font-family:inherit!important}
-#statusBanner{border-radius:13px!important;padding:9px 11px!important;font-size:11px!important}
-button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highlight-color:transparent}
-@media(min-width:640px){main{padding:12px 14px!important}#cropCollageContainer .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
-@media(max-width:380px){header>div{padding:6px 7px!important}header h1{font-size:13px!important}header p{font-size:9px!important}header button{padding:3px 5px!important;font-size:9px!important}main{padding-left:7px!important;padding-right:7px!important}main>section:first-child{padding:8px!important}.date-pill{padding:4px 8px!important;font-size:9px!important}#cropCollageContainer .grid{gap:5px!important}.collage-crop-btn{min-height:72px!important;padding:6px 3px!important}}
-
-/* Compact crop tiles based on Android screenshot */
-@media(max-width:600px){
- #cropCollageContainer>.apple-card{padding:10px!important;gap:7px!important}
- #cropCollageContainer>.apple-card>div:first-child{margin-bottom:1px!important}
- #cropCollageContainer .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
- .collage-crop-btn{min-height:108px!important;height:108px!important;padding:6px 4px!important;gap:4px!important;border-radius:15px!important}
- .collage-crop-btn>div:first-child{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;border-radius:9px!important;font-size:17px!important}
- .collage-crop-btn>div:last-child{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:3px!important}
- .collage-crop-btn .text-xs,.collage-crop-btn .text-\\[13px\\]{font-size:12px!important;line-height:1.2!important;font-weight:700!important;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
- .collage-crop-btn .text-\\[10px\\]{font-size:10px!important;line-height:1.15!important;margin-top:0!important}
-}
-@media(max-width:380px){
- .collage-crop-btn{height:100px!important;min-height:100px!important}
- .collage-crop-btn>div:first-child{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important}
-}
-
-/* Android WebView hit-testing / touch reliability */
-#cropCollageContainer,.collage-crop-btn{pointer-events:auto!important;touch-action:manipulation!important}
-.collage-crop-btn{position:relative!important;z-index:1!important;cursor:pointer!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
-.collage-crop-btn:focus-visible{outline:3px solid #0a84ff!important;outline-offset:2px!important}
-</style>
+    </style>
 </head>
-<body class="min-h-screen pb-8 selection:bg-[#007AFF]/15 selection:text-[#007AFF]">
+<body>
 
     <!-- STICKY APPLE FROSTED GLASS HEADER -->
-    <header class="sticky top-0 z-40 apple-glass border-b border-black/[0.06]">
-        <div class="max-w-3xl mx-auto px-3 py-1.5 flex items-center justify-between gap-2">
+    <header class="sticky-header">
+        <div class="header-inner">
             <!-- App Brand -->
-            <div class="flex items-center gap-2 min-w-0">
-                <div class="w-7 h-7 rounded-[8px] bg-gradient-to-b from-[#38BDF8] to-[#0284C7] text-white flex items-center justify-center text-[14px] font-black shrink-0 shadow-xs ring-1 ring-black/5">
-                    ખ
-                </div>
-                <div class="min-w-0 flex flex-col justify-center">
-                    <h1 class="text-[14px] sm:text-[15px] font-extrabold text-[#1C1C1E] tracking-tight truncate leading-tight">
-                        ખેતીગ્રામ
-                    </h1>
-                    <p id="headerSubtitleText" class="text-[10px] font-medium text-[#8E8E93] truncate leading-tight">
+            <div class="brand-wrap">
+                <div class="brand-logo">ખ</div>
+                <div class="min-w-0">
+                    <h1 class="brand-title truncate">ખેતીગ્રામ</h1>
+                    <p id="headerSubtitleText" class="brand-subtitle truncate">
                         આજના તાજા ભાવ • ૨૦ કિલો (મણ)
                     </p>
                 </div>
             </div>
 
             <!-- Desktop iOS Segmented View Switcher -->
-            <div class="hidden sm:flex items-center bg-[#767680]/[0.12] p-[2px] rounded-[9px]">
-                <button type="button" id="btnModeDashboard" class="tap-spring px-2.5 py-0.5 rounded-[7px] text-[11px] font-bold bg-white text-[#1C1C1E] shadow-xs">
+            <div class="desktop-only segmented-control">
+                <button type="button" id="btnModeDashboard" class="tap-spring seg-btn-active">
                     🌱 પાક મુજબ
                 </button>
-                <button type="button" id="btnModeKhetiGram" class="tap-spring px-2.5 py-0.5 rounded-[7px] text-[11px] font-semibold text-[#636366] hover:text-[#1C1C1E]">
+                <button type="button" id="btnModeKhetiGram" class="tap-spring seg-btn-inactive">
                     🏛️ યાર્ડ મુજબ
                 </button>
             </div>
 
             <!-- iOS Weight Segmented Control + Stats + Refresh -->
-            <div class="flex items-center gap-1 shrink-0">
-                <div class="flex items-center bg-[#767680]/[0.12] p-[2px] rounded-[9px]">
-                    <button type="button" id="btnUnitMann" class="tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs">
+            <div class="header-actions">
+                <div class="segmented-control">
+                    <button type="button" id="btnUnitMann" class="tap-spring seg-btn-active" style="font-size: 10px; padding: 3px 8px;">
                         ૨૦ કિલો
                     </button>
-                    <button type="button" id="btnUnitQuintal" class="tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E]">
+                    <button type="button" id="btnUnitQuintal" class="tap-spring seg-btn-inactive" style="font-size: 10px; padding: 3px 8px;">
                         ૧૦૦ કિલો
                     </button>
                 </div>
-                <button type="button" id="openStatsBtn" title="ડેટા આંકડા (Statistics)" class="tap-spring px-2 h-6 rounded-full bg-[#007AFF]/[0.1] hover:bg-[#007AFF]/[0.16] flex items-center gap-1 text-[10px] font-bold text-[#007AFF]">
+                <button type="button" id="openStatsBtn" title="ડેટા આંકડા (Statistics)" class="tap-spring stats-badge-btn">
                     <span>📊</span>
                     <span id="headerStatsBadgeCount" class="tabular-nums">૦</span>
                 </button>
-                <button type="button" id="refreshDataBtn" title="તાજા ભાવ લોડ કરો" class="tap-spring w-6 h-6 rounded-full bg-[#767680]/[0.12] hover:bg-[#767680]/[0.2] flex items-center justify-center text-[11px] text-[#1C1C1E]">
+                <button type="button" id="refreshDataBtn" title="તાજા ભાવ લોડ કરો" class="tap-spring refresh-btn">
                     🔄
                 </button>
             </div>
@@ -259,117 +743,113 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
     </header>
 
     <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-3xl mx-auto px-3.5 pt-3 space-y-3">
+    <main class="main-container">
 
         <!-- TOP INTEGRATED APPLE CONTROL CARD -->
-        <section class="apple-card p-3 space-y-2.5">
-            <!-- Mobile Top Segmented Switcher (🌱 પાક મુજબ | 🏛️ યાર્ડ મુજબ) -->
-            <div class="sm:hidden grid grid-cols-2 bg-[#767680]/[0.12] p-[2px] rounded-[10px]">
-                <button type="button" id="mobileTabDashboard" class="tap-spring py-1 rounded-[8px] bg-white text-[#1C1C1E] text-xs font-bold flex items-center justify-center gap-1 shadow-xs">
+        <section class="apple-card card-padded stack-sm">
+            <!-- Mobile Top Segmented Switcher -->
+            <div class="mobile-only segmented-grid-2">
+                <button type="button" id="mobileTabDashboard" class="tap-spring mobile-seg-active">
                     <span>🌱 પાક મુજબ</span>
                 </button>
-                <button type="button" id="mobileTabKhetiGram" class="tap-spring py-1 rounded-[8px] text-[#636366] text-xs font-semibold flex items-center justify-center gap-1">
+                <button type="button" id="mobileTabKhetiGram" class="tap-spring mobile-seg-inactive">
                     <span>🏛️ યાર્ડ મુજબ</span>
                 </button>
             </div>
 
             <!-- Row 1: Date Controls -->
-            <div class="flex items-center justify-between gap-1.5">
-                <div id="navDateControlsBar" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    <button type="button" data-mode="latest" class="date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-bold bg-[#1C1C1E] text-white shadow-xs">
-                        આજ
-                    </button>
-                    <button type="button" data-mode="yesterday" class="date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F2F2F7] text-[#636366] hover:text-[#1C1C1E]">
-                        ગઈકાલ
-                    </button>
-                    <button type="button" data-mode="2days" class="date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F2F2F7] text-[#636366] hover:text-[#1C1C1E]">
-                        ૨ દિવસ પહેલા
-                    </button>
-                    <div id="customDatePillWrap" class="shrink-0 flex items-center bg-[#F2F2F7] px-2.5 py-0.5 rounded-full border border-transparent transition-all">
-                        <input type="date" id="customDateInput" aria-label="તારીખ પસંદ કરો" class="bg-transparent text-[11px] font-semibold text-[#1C1C1E] focus:outline-none w-[108px]">
-                    </div>
+            <div id="navDateControlsBar" class="scroll-row no-scrollbar">
+                <button type="button" data-mode="latest" class="date-pill tap-spring pill-dark">
+                    આજ
+                </button>
+                <button type="button" data-mode="yesterday" class="date-pill tap-spring pill-light">
+                    ગઈકાલ
+                </button>
+                <button type="button" data-mode="2days" class="date-pill tap-spring pill-light">
+                    ૨ દિવસ પહેલા
+                </button>
+                <div id="customDatePillWrap" class="date-input-wrap">
+                    <input type="date" id="customDateInput" aria-label="તારીખ પસંદ કરો" class="date-input">
                 </div>
             </div>
 
             <!-- Subtle Hairline Divider -->
-            <div id="categoryStripDivider" class="h-[0.5px] bg-black/[0.06]"></div>
+            <div id="categoryStripDivider" class="divider-line"></div>
 
             <!-- Row 2: Gujarati Crop Category Tabs -->
-            <div id="categoryPillStrip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar"></div>
+            <div id="categoryPillStrip" class="scroll-row no-scrollbar"></div>
         </section>
 
         <!-- STATUS / INFO BANNER -->
-        <div id="statusBanner" class="hidden px-3.5 py-2.5 rounded-2xl bg-[#FF9500]/[0.12] border border-[#FF9500]/25 text-[#9A5B00] text-xs font-semibold flex items-center justify-between gap-2">
+        <div id="statusBanner" class="hidden status-banner">
             <span id="statusBannerText">માહિતી લોડ થઈ રહી છે...</span>
-            <button type="button" onclick="document.getElementById('statusBanner').classList.add('hidden')" class="tap-spring text-xs font-bold px-2 py-0.5 rounded-full hover:bg-black/5">✕</button>
+            <button type="button" onclick="document.getElementById('statusBanner').classList.add('hidden')" class="tap-spring" style="font-weight:700; padding:2px 6px;">✕</button>
         </div>
 
         <!-- VIEW 1: CATEGORIZED CROP COLLAGE & CROP RATE SHEET (પાક મુજબ) -->
-        <section id="dashboardListView" class="space-y-3">
+        <section id="dashboardListView" class="stack-md">
             <!-- Loading Skeleton -->
-            <div id="listLoadingSkeleton" class="apple-card p-3.5 space-y-3">
-                <div class="h-5 w-28 bg-[#F2F2F7] rounded-lg animate-pulse"></div>
-                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                    <div class="h-20 bg-[#F2F2F7] rounded-2xl animate-pulse"></div>
-                    <div class="h-20 bg-[#F2F2F7] rounded-2xl animate-pulse"></div>
-                    <div class="h-20 bg-[#F2F2F7] rounded-2xl animate-pulse"></div>
-                    <div class="h-20 bg-[#F2F2F7] rounded-2xl animate-pulse"></div>
-                    <div class="h-20 bg-[#F2F2F7] rounded-2xl animate-pulse"></div>
-                    <div class="h-20 bg-[#F2F2F7] rounded-2xl animate-pulse"></div>
+            <div id="listLoadingSkeleton" class="apple-card card-padded-lg">
+                <div style="height:20px; width:110px; background:#F2F2F7; border-radius:8px;"></div>
+                <div class="skeleton-grid">
+                    <div class="skeleton-box"></div>
+                    <div class="skeleton-box"></div>
+                    <div class="skeleton-box"></div>
+                    <div class="skeleton-box"></div>
+                    <div class="skeleton-box"></div>
+                    <div class="skeleton-box"></div>
                 </div>
             </div>
 
             <!-- Categorized Crop Button Collage Container -->
-            <div id="cropCollageContainer" class="space-y-3"></div>
+            <div id="cropCollageContainer" class="stack-md"></div>
 
             <!-- Selected Crop Yard-by-Yard Price Sheet -->
-            <div id="selectedCropDetailView" class="hidden space-y-2.5 animate-row-in">
+            <div id="selectedCropDetailView" class="hidden stack-sm animate-row-in">
                 <!-- Selected Crop Summary Hero Banner -->
-                <div id="selectedCropHeroBanner" class="apple-card px-3.5 py-3 flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-3 min-w-0">
+                <div id="selectedCropHeroBanner" class="apple-card hero-banner">
+                    <div style="display:flex; align-items:center; gap:12px; min-width:0;">
                         <div id="selectedCropHeroIcon"></div>
                         <div class="min-w-0">
-                            <h2 id="selectedCropHeroTitle" class="text-[15px] sm:text-base font-extrabold text-[#1C1C1E] tracking-tight truncate">મગફળી</h2>
-                            <p id="selectedCropHeroMeta" class="text-[11px] font-medium text-[#8E8E93] truncate mt-0.5">વિવિધ યાર્ડના ભાવ</p>
+                            <h2 id="selectedCropHeroTitle" class="truncate" style="font-size:16px; font-weight:800; color:#1C1C1E;">મગફળી</h2>
+                            <p id="selectedCropHeroMeta" class="truncate" style="font-size:11px; font-weight:500; color:#8E8E93; margin-top:2px;">વિવિધ યાર્ડના ભાવ</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <button type="button" id="clearSelectedCropBtn" class="tap-spring px-3.5 py-1.5 rounded-full bg-[#007AFF]/[0.1] hover:bg-[#007AFF]/[0.18] text-[#007AFF] text-xs font-bold">
-                            ‹ બધા પાક
-                        </button>
-                    </div>
+                    <button type="button" id="clearSelectedCropBtn" class="tap-spring back-pill-btn">
+                        ‹ બધા પાક
+                    </button>
                 </div>
 
                 <!-- Compact Grouped List Container -->
                 <div class="apple-card overflow-hidden">
                     <!-- Sticky Column Header -->
-                    <div class="bg-[#F9F9FB] px-3.5 py-2.5 border-b border-black/[0.06] grid grid-cols-12 items-center text-[11px] font-bold text-[#8E8E93] tracking-tight">
+                    <div class="table-header-row">
                         <div id="listPrimaryColHeader" class="col-span-6">માર્કેટ યાર્ડ / જાત</div>
                         <div class="col-span-2 text-right">ઓછો</div>
-                        <div class="col-span-2 text-right text-[#007AFF]">સરેરાશ</div>
-                        <div class="col-span-2 text-right text-[#28A745]">ઊંચો</div>
+                        <div class="col-span-2 text-right" style="color:#007AFF;">સરેરાશ</div>
+                        <div class="col-span-2 text-right" style="color:#28A745;">ઊંચો</div>
                     </div>
 
                     <!-- Compact Price Rows -->
-                    <div id="compactPriceListContainer" class="divide-y divide-black/[0.05]"></div>
+                    <div id="compactPriceListContainer"></div>
 
                     <!-- Empty State -->
-                    <div id="emptyListState" class="hidden py-12 px-4 text-center space-y-1.5">
-                        <div class="text-3xl mb-1">🌾</div>
-                        <p class="text-[15px] font-bold text-[#1C1C1E]">આ પસંદગી મુજબ કોઈ ભાવ મળ્યા નથી</p>
-                        <p class="text-xs font-medium text-[#8E8E93]">બીજો પાક અથવા તારીખ પસંદ કરો</p>
+                    <div id="emptyListState" class="hidden text-center" style="padding:48px 16px;">
+                        <div style="font-size:28px; margin-bottom:4px;">🌾</div>
+                        <p style="font-size:15px; font-weight:700; color:#1C1C1E;">આ પસંદગી મુજબ કોઈ ભાવ મળ્યા નથી</p>
+                        <p style="font-size:12px; font-weight:500; color:#8E8E93; margin-top:4px;">બીજો પાક અથવા તારીખ પસંદ કરો</p>
                     </div>
                 </div>
 
                 <!-- Compact Apple Pagination Bar -->
-                <div id="paginationBar" class="flex items-center justify-between px-1.5 py-1 text-xs font-medium text-[#8E8E93]">
+                <div id="paginationBar" class="pagination-bar">
                     <span id="paginationInfoText">૦ ભાવ</span>
-                    <div class="flex items-center gap-1.5">
-                        <button type="button" id="prevPageBtn" class="tap-spring px-3.5 py-1.5 rounded-full bg-white shadow-xs border border-black/[0.06] text-[#1C1C1E] font-bold disabled:opacity-35">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <button type="button" id="prevPageBtn" class="tap-spring page-btn">
                             ← પાછળ
                         </button>
-                        <span id="pageIndicatorText" class="px-2 font-bold text-[#1C1C1E] tabular-nums">૧ / ૧</span>
-                        <button type="button" id="nextPageBtn" class="tap-spring px-3.5 py-1.5 rounded-full bg-white shadow-xs border border-black/[0.06] text-[#1C1C1E] font-bold disabled:opacity-35">
+                        <span id="pageIndicatorText" class="tabular-nums" style="padding:0 8px; font-weight:700; color:#1C1C1E;">૧ / ૧</span>
+                        <button type="button" id="nextPageBtn" class="tap-spring page-btn">
                             આગળ →
                         </button>
                     </div>
@@ -378,56 +858,54 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
         </section>
 
         <!-- VIEW 2: KHETIGRAM YARD DIRECTORY & RATE SHEET (યાર્ડ મુજબ) -->
-        <section id="khetiGramView" class="hidden space-y-2.5">
+        <section id="khetiGramView" class="hidden stack-sm">
             <!-- Region Tabs -->
-            <div class="apple-card p-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                <button type="button" data-region="all" class="kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-[#1C1C1E] text-white">બધા યાર્ડ</button>
-                <button type="button" data-region="fav" class="kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F2F2F7] text-[#636366]">⭐ મનપસંદ</button>
-                <button type="button" data-region="Saurashtra" class="kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F2F2F7] text-[#636366]">સૌરાષ્ટ્ર</button>
-                <button type="button" data-region="North" class="kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F2F2F7] text-[#636366]">ઉત્તર ગુજરાત</button>
-                <button type="button" data-region="Central" class="kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F2F2F7] text-[#636366]">મધ્ય ગુજરાત</button>
-                <button type="button" data-region="South" class="kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F2F2F7] text-[#636366]">દક્ષિણ ગુજરાત</button>
-                <button type="button" data-region="Kutch" class="kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F2F2F7] text-[#636366]">કચ્છ</button>
+            <div class="apple-card scroll-row no-scrollbar" style="padding:8px;">
+                <button type="button" data-region="all" class="kg-region-tab tap-spring pill-dark">બધા યાર્ડ</button>
+                <button type="button" data-region="fav" class="kg-region-tab tap-spring pill-light">⭐ મનપસંદ</button>
+                <button type="button" data-region="Saurashtra" class="kg-region-tab tap-spring pill-light">સૌરાષ્ટ્ર</button>
+                <button type="button" data-region="North" class="kg-region-tab tap-spring pill-light">ઉત્તર ગુજરાત</button>
+                <button type="button" data-region="Central" class="kg-region-tab tap-spring pill-light">મધ્ય ગુજરાત</button>
+                <button type="button" data-region="South" class="kg-region-tab tap-spring pill-light">દક્ષિણ ગુજરાત</button>
+                <button type="button" data-region="Kutch" class="kg-region-tab tap-spring pill-light">કચ્છ</button>
             </div>
 
             <!-- Yard Directory List -->
-            <div id="kgYardDirectoryList" class="apple-card divide-y divide-black/[0.05] overflow-hidden"></div>
+            <div id="kgYardDirectoryList" class="apple-card overflow-hidden"></div>
 
             <!-- Selected Yard Rate Sheet -->
             <div id="kgYardDetailSheet" class="hidden apple-card overflow-hidden animate-row-in">
-                <div class="px-3.5 py-2.5 bg-[#F9F9FB] border-b border-black/[0.06] flex items-center justify-between">
-                    <button type="button" id="kgBackToYardsBtn" class="tap-spring text-xs font-bold text-[#007AFF] flex items-center gap-1">
+                <div style="padding:10px 14px; background:#F9F9FB; border-bottom:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:space-between;">
+                    <button type="button" id="kgBackToYardsBtn" class="tap-spring" style="font-size:12px; font-weight:700; color:#007AFF;">
                         ‹ બધા યાર્ડ
                     </button>
-                    <span id="kgSheetDateBadge" class="text-[11px] font-semibold text-[#8E8E93]">આજના ભાવ</span>
+                    <span id="kgSheetDateBadge" style="font-size:11px; font-weight:600; color:#8E8E93;">આજના ભાવ</span>
                 </div>
 
-                <div class="p-3.5 border-b border-black/[0.06] flex items-center justify-between gap-2">
+                <div style="padding:14px; border-bottom:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:space-between; gap:8px;">
                     <div class="min-w-0">
-                        <div class="flex items-center gap-1.5">
-                            <h3 id="kgSelectedYardTitle" class="text-[16px] sm:text-lg font-extrabold text-[#1C1C1E] tracking-tight truncate">ગોંડલ માર્કેટ યાર્ડ</h3>
-                            <button type="button" id="kgToggleFavDetailBtn" class="tap-spring text-base leading-none p-1.5 rounded-full bg-[#F2F2F7]">☆</button>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <h3 id="kgSelectedYardTitle" class="truncate" style="font-size:16px; font-weight:800; color:#1C1C1E;">ગોંડલ માર્કેટ યાર્ડ</h3>
+                            <button type="button" id="kgToggleFavDetailBtn" class="tap-spring" style="font-size:16px; padding:4px 6px; border-radius:9999px; background:#F2F2F7;">☆</button>
                         </div>
-                        <p id="kgSelectedYardMeta" class="text-xs text-[#8E8E93] font-medium truncate mt-0.5">જિલ્લો: રાજકોટ</p>
+                        <p id="kgSelectedYardMeta" class="truncate" style="font-size:12px; color:#8E8E93; font-weight:500; margin-top:2px;">જિલ્લો: રાજકોટ</p>
                     </div>
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <button type="button" id="kgShareWhatsAppBtn" class="tap-spring px-3.5 py-1.5 rounded-full bg-[#34C759] text-white text-xs font-bold shadow-xs">
-                            📲 શેર
-                        </button>
-                    </div>
+                    <button type="button" id="kgShareWhatsAppBtn" class="tap-spring whatsapp-btn shrink-0">
+                        📲 શેર
+                    </button>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div style="overflow-x:auto;">
+                    <table class="data-table">
                         <thead>
-                            <tr class="bg-[#F9F9FB] text-[#8E8E93] text-[11px] font-bold border-b border-black/[0.06]">
-                                <th class="py-2.5 px-3.5">પાક / જાત</th>
-                                <th class="py-2.5 px-2 text-right">ઓછો</th>
-                                <th class="py-2.5 px-2 text-right text-[#007AFF]">સરેરાશ</th>
-                                <th class="py-2.5 px-3.5 text-right text-[#28A745]">ઊંચો</th>
+                            <tr>
+                                <th>પાક / જાત</th>
+                                <th class="text-right">ઓછો</th>
+                                <th class="text-right" style="color:#007AFF;">સરેરાશ</th>
+                                <th class="text-right" style="color:#28A745;">ઊંચો</th>
                             </tr>
                         </thead>
-                        <tbody id="kgYardRatesTbody" class="divide-y divide-black/[0.05] text-sm"></tbody>
+                        <tbody id="kgYardRatesTbody"></tbody>
                     </table>
                 </div>
             </div>
@@ -436,65 +914,61 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
     </main>
 
     <!-- DATA FETCH STATISTICS APPLE SHEET -->
-    <div id="statsModalOverlay" class="hidden fixed inset-0 z-50 bg-black/35 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity">
-        <div class="bg-white w-full max-w-lg rounded-t-[28px] sm:rounded-[28px] shadow-2xl border border-black/[0.08] overflow-hidden max-h-[88vh] flex flex-col animate-sheet-in">
-            <!-- Drag Handle (Mobile) -->
-            <div class="sm:hidden pt-2 pb-1 flex justify-center bg-[#F9F9FB]">
-                <div class="w-9 h-1 rounded-full bg-black/15"></div>
-            </div>
+    <div id="statsModalOverlay" class="hidden modal-overlay">
+        <div class="modal-sheet animate-row-in">
             <!-- Modal Header -->
-            <div class="px-4 py-3 bg-[#F9F9FB] border-b border-black/[0.06] flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <span class="w-8 h-8 rounded-[10px] bg-[#007AFF] text-white flex items-center justify-center text-sm shadow-xs">📊</span>
+            <div style="padding:12px 16px; background:#F9F9FB; border-bottom:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="width:32px; height:32px; border-radius:10px; background:#007AFF; color:#FFF; display:flex; align-items:center; justify-content:center; font-size:14px;">📊</span>
                     <div>
-                        <h3 class="text-[15px] font-extrabold text-[#1C1C1E] tracking-tight leading-tight">ડેટા ફેચ આંકડા</h3>
-                        <p id="statsFetchStatusText" class="text-[11px] font-semibold text-[#28A745] leading-tight mt-0.5">● લાઈવ સરકારી API ચાલુ છે</p>
+                        <h3 style="font-size:15px; font-weight:800; color:#1C1C1E; line-height:1.2;">ડેટા ફેચ આંકડા</h3>
+                        <p id="statsFetchStatusText" style="font-size:11px; font-weight:600; color:#28A745; margin-top:2px;">● લાઈવ સરકારી API ચાલુ છે</p>
                     </div>
                 </div>
-                <button type="button" id="closeStatsModalBtn" class="tap-spring w-7 h-7 rounded-full bg-[#E5E5EA] text-[#3A3A3C] text-xs font-bold flex items-center justify-center">
+                <button type="button" id="closeStatsModalBtn" class="tap-spring" style="width:28px; height:28px; border-radius:9999px; background:#E5E5EA; color:#3A3A3C; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center;">
                     ✕
                 </button>
             </div>
 
             <!-- Summary Metric Cards -->
-            <div class="p-4 space-y-3 overflow-y-auto">
-                <div class="grid grid-cols-4 gap-2">
-                    <div class="bg-[#F2F2F7] rounded-2xl p-2.5 text-center">
-                        <div id="statTotalRows" class="text-base sm:text-lg font-extrabold text-[#1C1C1E] tabular-nums">0</div>
-                        <div class="text-[10px] font-semibold text-[#8E8E93] mt-0.5">કુલ રો</div>
+            <div style="padding:16px; overflow-y:auto;" class="stack-md">
+                <div class="stat-grid-4">
+                    <div class="stat-box" style="background:#F2F2F7;">
+                        <div id="statTotalRows" class="tabular-nums" style="font-size:16px; font-weight:800; color:#1C1C1E;">0</div>
+                        <div style="font-size:10px; font-weight:600; color:#8E8E93; margin-top:2px;">કુલ રો</div>
                     </div>
-                    <div class="bg-[#007AFF]/[0.08] rounded-2xl p-2.5 text-center">
-                        <div id="statTotalApmcs" class="text-base sm:text-lg font-extrabold text-[#007AFF] tabular-nums">0</div>
-                        <div class="text-[10px] font-semibold text-[#007AFF] mt-0.5">માર્કેટ યાર્ડ</div>
+                    <div class="stat-box" style="background:rgba(0,122,255,0.08);">
+                        <div id="statTotalApmcs" class="tabular-nums" style="font-size:16px; font-weight:800; color:#007AFF;">0</div>
+                        <div style="font-size:10px; font-weight:600; color:#007AFF; margin-top:2px;">માર્કેટ યાર્ડ</div>
                     </div>
-                    <div class="bg-[#34C759]/[0.1] rounded-2xl p-2.5 text-center">
-                        <div id="statTotalCrops" class="text-base sm:text-lg font-extrabold text-[#28A745] tabular-nums">0</div>
-                        <div class="text-[10px] font-semibold text-[#28A745] mt-0.5">કુલ પાક</div>
+                    <div class="stat-box" style="background:rgba(52,199,89,0.1);">
+                        <div id="statTotalCrops" class="tabular-nums" style="font-size:16px; font-weight:800; color:#28A745;">0</div>
+                        <div style="font-size:10px; font-weight:600; color:#28A745; margin-top:2px;">કુલ પાક</div>
                     </div>
-                    <div class="bg-[#FF9500]/[0.1] rounded-2xl p-2.5 text-center">
-                        <div id="statTotalDistricts" class="text-base sm:text-lg font-extrabold text-[#C97A00] tabular-nums">0</div>
-                        <div class="text-[10px] font-semibold text-[#C97A00] mt-0.5">જિલ્લા</div>
+                    <div class="stat-box" style="background:rgba(255,149,0,0.1);">
+                        <div id="statTotalDistricts" class="tabular-nums" style="font-size:16px; font-weight:800; color:#C97A00;">0</div>
+                        <div style="font-size:10px; font-weight:600; color:#C97A00; margin-top:2px;">જિલ્લા</div>
                     </div>
                 </div>
 
                 <!-- Fetch Technical Meta Row -->
-                <div class="bg-[#F2F2F7]/80 rounded-2xl px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-semibold text-[#636366]">
+                <div style="background:#F2F2F7; border-radius:16px; padding:10px 14px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; font-size:11px; font-weight:600; color:#636366;">
                     <span id="statFeedDateInfo">તારીખ: --</span>
                     <span id="statFetchTimeInfo">લોડ સમય: --</span>
                     <span id="statFilteredInfo">ફિલ્ટર: --</span>
                 </div>
 
-                <!-- iOS Segmented Switch: APMC Breakdown vs Crop Breakdown -->
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center bg-[#767680]/[0.12] p-[3px] rounded-[11px]">
-                        <button type="button" id="statsTabApmc" class="tap-spring px-3 py-1 rounded-[8.5px] text-[11px] font-bold bg-white text-[#1C1C1E] shadow-xs">
+                <!-- Segmented Switch -->
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                    <div class="segmented-control" style="padding:3px;">
+                        <button type="button" id="statsTabApmc" class="tap-spring seg-btn-active">
                             🏛️ યાર્ડ મુજબ રો
                         </button>
-                        <button type="button" id="statsTabCrop" class="tap-spring px-3 py-1 rounded-[8.5px] text-[11px] font-semibold text-[#636366]">
+                        <button type="button" id="statsTabCrop" class="tap-spring seg-btn-inactive">
                             🌾 પાક મુજબ રો
                         </button>
                     </div>
-                    <select id="statsSortSelect" class="bg-[#F2F2F7] text-[#1C1C1E] text-[11px] font-bold px-3 py-1.5 rounded-full focus:outline-none">
+                    <select id="statsSortSelect" style="background:#F2F2F7; color:#1C1C1E; font-size:11px; font-weight:700; padding:6px 12px; border-radius:9999px; outline:none;">
                         <option value="count_desc">વધુ રો પહેલા</option>
                         <option value="count_asc">ઓછા રો પહેલા</option>
                         <option value="name_asc">કક્કાવારી મુજબ</option>
@@ -502,7 +976,7 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                 </div>
 
                 <!-- Breakdown List -->
-                <div id="statsBreakdownList" class="bg-white border border-black/[0.06] rounded-2xl divide-y divide-black/[0.05] max-h-64 overflow-y-auto"></div>
+                <div id="statsBreakdownList" style="background:#FFF; border:1px solid rgba(0,0,0,0.06); border-radius:16px; max-height:256px; overflow-y:auto;"></div>
             </div>
         </div>
     </div>
@@ -522,13 +996,13 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             actualFeedDateISO: '',
             lastFetchDurationMs: 0,
             lastFetchTimestamp: '',
-            statsViewTab: 'apmc', // 'apmc' | 'crop'
+            statsViewTab: 'apmc',
             statsSort: 'count_desc',
             filteredRecords: [],
-            priceDivisor: 5, // 5 = ₹/20kg (Mann), 1 = ₹/100kg (Quintal)
+            priceDivisor: 5,
             dateMode: 'latest',
             selectedDateISO: '',
-            uiViewMode: 'dashboard', // 'dashboard' | 'khetigram'
+            uiViewMode: 'dashboard',
             currentPage: 1,
             rowsPerPage: 50,
             filters: {
@@ -728,7 +1202,6 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
         const SORTED_CATALOG = [...CROP_CATALOG].sort((a, b) => b.key.length - a.key.length);
 
         const GUJARATI_PLACES = {
-            // Saurashtra & Kutch
             'Rajkot': 'રાજકોટ', 'Gondal': 'ગોંડલ', 'Jasdan': 'જસદણ', 'Jetpur': 'જેતપુર', 'Dhoraji': 'ધોરાજી', 'Upleta': 'ઉપલેટા', 'Wankaner': 'વાંકાનેર', 'Vankaner': 'વાંકાનેર', 'Kotda Sangani': 'કોટડા સાંગાણી', 'Lodhika': 'લોધિકા', 'Paddhari': 'પડધરી', 'Jamkandorna': 'જામકંડોરણા',
             'Morbi': 'મોરબી', 'Halvad': 'હળવદ', 'Tankara': 'ટંકારા', 'Maliya Miyana': 'માળિયા મિયાણા', 'Malia': 'માળિયા',
             'Jamnagar': 'જામનગર', 'Kalavad': 'કાલાવડ', 'Kalawad': 'કાલાવડ', 'Dhrol': 'ધ્રોલ', 'Jamjodhpur': 'જામજોધપુર', 'Jodiya': 'જોડિયા', 'Lalpur': 'લાલપુર',
@@ -741,16 +1214,12 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             'Botad': 'બોટાદ', 'Gadhada': 'ગઢડા', 'Barwala': 'બરવાળા', 'Ranpur': 'રાણપુર',
             'Surendranagar': 'સુરેન્દ્રનગર', 'Wadhwan': 'વઢવાણ', 'Vadhvan': 'વઢવાણ', 'Chotila': 'ચોટીલા', 'Dhrangadhra': 'ધ્રાંગધ્રા', 'Lakhtar': 'લખતર', 'Sayla': 'સાયલા', 'Sayala': 'સાયલા', 'Dasada': 'દસાડા', 'Patadi': 'પાટડી', 'Patdi': 'પાટડી', 'Limbdi': 'લીંબડી', 'Limdi': 'લીંબડી', 'Muli': 'મૂળી', 'Thangadh': 'થાનગઢ', 'Chuda': 'ચુડા',
             'Kutch': 'કચ્છ', 'Kachchh': 'કચ્છ', 'Bhuj': 'ભુજ', 'Anjar': 'અંજાર', 'Rapar': 'રાપર', 'Bhachau': 'ભચાઉ', 'Nakhatrana': 'નખત્રાણા', 'Mundra': 'મુંદ્રા', 'Mandvi': 'માંડવી', 'Gandhidham': 'ગાંધીધામ', 'Lakhpat': 'લખપત', 'Abdasa': 'અબડાસા', 'Naliya': 'નલિયા',
-
-            // North Gujarat
             'Mehsana': 'મહેસાણા', 'Mahesana': 'મહેસાણા', 'Unjha': 'ઊંઝા', 'Visnagar': 'વિસનગર', 'Kadi': 'કડી', 'Vijapur': 'વિજાપુર', 'Unava': 'ઉનાવા', 'Vadnagar': 'વડનગર', 'Kheralu': 'ખેરાલુ', 'Satlasana': 'સતલાસણા', 'Becharaji': 'બેચરાજી', 'Bahucharaji': 'બહુચરાજી', 'Jotana': 'જોટાણા',
             'Banaskantha': 'બનાસકાંઠા', 'Banaskanth': 'બનાસકાંઠા', 'Deesa': 'ડીસા', 'Disa': 'ડીસા', 'Palanpur': 'પાલનપુર', 'Dhanera': 'ધાનેરા', 'Tharad': 'થરાદ', 'Thara': 'થરા', 'Lakhani': 'લાખણી', 'Vadgam': 'વડગામ', 'Vav': 'વાવ', 'Bhabhar': 'ભાભર', 'Diyodar': 'દિયોદર', 'Deodar': 'દિયોદર', 'Kankrej': 'કાંકરેજ', 'Suigam': 'સૂઈગામ', 'Amirgadh': 'અમીરગઢ', 'Panthawada': 'પાંથાવાડા', 'Danta': 'દાંતા', 'Ambaji': 'અંબાજી',
             'Sabarkantha': 'સાબરકાંઠા', 'Himatnagar': 'હિંમતનગર', 'Himmatnagar': 'હિંમતનગર', 'Idar': 'ઈડર', 'Talod': 'તલોદ', 'Prantij': 'પ્રાંતિજ', 'Khedbrahma': 'ખેડબ્રહ્મા', 'Vadali': 'વડાલી', 'Vijaynagar': 'વિજયનગર', 'Poshina': 'પોશીના',
             'Aravalli': 'અરવલ્લી', 'Modasa': 'મોડાસા', 'Bayad': 'બાયડ', 'Dhansura': 'ધનસુરા', 'Bhiloda': 'ભિલોડા', 'Malpur': 'માલપુર', 'Meghraj': 'મેઘરજ', 'Shamlaji': 'શામળાજી',
             'Patan': 'પાટણ', 'Siddhpur': 'સિદ્ધપુર', 'Sidhpur': 'સિદ્ધપુર', 'Harij': 'હારીજ', 'Chanasma': 'ચાણસ્મા', 'Chansama': 'ચાણસ્મા', 'Sami': 'સમી', 'Radhanpur': 'રાધનપુર', 'Santalpur': 'સાંતલપુર', 'Varahi': 'વારાહી', 'Shankheshwar': 'શંખેશ્વર',
             'Gandhinagar': 'ગાંધીનગર', 'Mansa': 'માણસા', 'Kalol': 'કલોલ', 'Dehgam': 'દહેગામ', 'Dahegam': 'દહેગામ',
-
-            // Central Gujarat
             'Ahmedabad': 'અમદાવાદ', 'Dholka': 'ધોળકા', 'Bavla': 'બાવળા', 'Viramgam': 'વિરમગામ', 'Sanand': 'સાણંદ', 'Mandal': 'માંડલ', 'Dhandhuka': 'ધંધુકા', 'Detroj': 'દેત્રોજ', 'Rampura': 'રામપુરા', 'Dholera': 'ધોલેરા',
             'Anand': 'આણંદ', 'Khambhat': 'ખંભાત', 'Cambay': 'ખંભાત', 'Petlad': 'પેટલાદ', 'Borsad': 'બોરસદ', 'Umreth': 'ઉમરેઠ', 'Anklav': 'આંકલાવ', 'Sojitra': 'સોજીત્રા', 'Tarapur': 'તારાપુર',
             'Kheda': 'ખેડા', 'Nadiad': 'નડિયાદ', 'Kapadvanj': 'કપડવંજ', 'Kapadwanj': 'કપડવંજ', 'Kathlal': 'કઠલાલ', 'Mahudha': 'મહુધા', 'Thasra': 'ઠાસરા', 'Galteshwar': 'ગળતેશ્વર', 'Matar': 'માતર', 'Mehmedabad': 'મહેમદાવાદ', 'Mahemdavad': 'મહેમદાવાદ', 'Vaso': 'વસો',
@@ -759,8 +1228,6 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             'Dahod': 'દાહોદ', 'Dohad': 'દાહોદ', 'Jhalod': 'ઝાલોદ', 'Zalod': 'ઝાલોદ', 'Devgadhbaria': 'દેવગઢ બારિયા', 'Devgadh Baria': 'દેવગઢ બારિયા', 'Davgadbaria': 'દેવગઢ બારિયા', 'Limkheda': 'લીમખેડા', 'Fatepura': 'ફતેપુરા', 'Garbada': 'ગરબાડા', 'Dhanpur': 'ધાનપુર', 'Sanjeli': 'સંજેલી', 'Singvad': 'સિંગવડ',
             'Chhota Udaipur': 'છોટા ઉદેપુર', 'Chhotaudepur': 'છોટા ઉદેપુર', 'Bodeli': 'બોડેલી', 'Bodeliu': 'બોડેલી', 'Sankheda': 'સંખેડા', 'Nasvadi': 'નસવાડી', 'Naswadi': 'નસવાડી', 'Kavant': 'કવાંટ', 'Kawant': 'કવાંટ', 'Pavi Jetpur': 'પાવી જેતપુર', 'Jetpur Pavi': 'જેતપુર પાવી',
             'Mahisagar': 'મહીસાગર', 'Lunawada': 'લુણાવાડા', 'Lunavada': 'લુણાવાડા', 'Balasinor': 'બાલાસિનોર', 'Santrampur': 'સંતરામપુર', 'Kadana': 'કડાણા', 'Khanpur': 'ખાનપુર', 'Virpur': 'વીરપુર',
-
-            // South Gujarat
             'Surat': 'સુરત', 'Bardoli': 'બારડોલી', 'Kamrej': 'કામરેજ', 'Olpad': 'ઓલપાડ', 'Palsana': 'પલસાણા', 'Umarpada': 'ઉમરપાડા', 'Choryasi': 'ચોર્યાસી',
             'Tapi': 'તાપી', 'Vyara': 'વ્યારા', 'Vyra': 'વ્યારા', 'Songadh': 'સોનગઢ', 'Nizar': 'નિઝર', 'Valod': 'વાલોડ', 'Uchchhal': 'ઉચ્છલ', 'Uchhal': 'ઉચ્છલ', 'Dolvan': 'ડોલવણ', 'Kukarmunda': 'કુકરમુંડા',
             'Bharuch': 'ભરૂચ', 'Ankleshwar': 'અંકલેશ્વર', 'Jambusar': 'જંબુસર', 'Hansot': 'હાંસોટ', 'Vagra': 'વાગરા', 'Jhagadia': 'ઝઘડિયા', 'Zagadia': 'ઝઘડિયા', 'Amod': 'આમોદ', 'Valia': 'વાલિયા', 'Netrang': 'નેત્રંગ',
@@ -771,44 +1238,17 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
         };
 
         const SUBYARD_TRANSLATIONS = {
-            'veg.sub yard': 'શાકભાજી સબ યાર્ડ',
-            'veg sub yard': 'શાકભાજી સબ યાર્ડ',
-            'veg. sub yard': 'શાકભાજી સબ યાર્ડ',
-            'veg yard': 'શાકભાજી યાર્ડ',
-            'veg. yard': 'શાકભાજી યાર્ડ',
-            'vegetable yard': 'શાકભાજી યાર્ડ',
-            'veg. market': 'શાકભાજી માર્કેટ',
-            'veg market': 'શાકભાજી માર્કેટ',
-            'vegetable market': 'શાકભાજી માર્કેટ',
-            'fruit market': 'ફળ માર્કેટ',
-            'grain market': 'અનાજ માર્કેટ',
-            'cotton yard': 'કપાસ યાર્ડ',
-            'sub yard': 'સબ યાર્ડ',
-            'main yard': 'મુખ્ય યાર્ડ',
-            'manas veg yard': 'શાકભાજી યાર્ડ',
-            'ghee kana': 'ઘી કાંટા',
-            'ghee kanta': 'ઘી કાંટા',
-            'vinchhiya': 'વિંછીયા',
-            'vinchiya': 'વિંછીયા',
-            'tintoi': 'ટીંટોઈ',
-            'shihori': 'શિહોરી',
-            'umrada': 'ઉમરપાડા',
-            'umarpada': 'ઉમરપાડા',
-            'badarpada': 'બદરપાડા',
-            'piplod': 'પીપલોદ',
-            'sanjeli': 'સંજેલી',
-            'khorgam': 'ખડગામ',
-            'khadgam': 'ખડગામ',
-            'kundlakap': 'કુંડલાકાંપ',
-            'pavijetpur': 'પાવી જેતપુર',
-            'pavi jetpur': 'પાવી જેતપુર',
-            'bhat': 'ભાટ',
-            'sardar patel': 'સરદાર પટેલ',
-            'bedi': 'બેડી',
-            'hapa': 'હાપા',
-            'vasna': 'વાસણા',
-            'jamalpur': 'જમાલપુર',
-            'naroda': 'નરોડા'
+            'veg.sub yard': 'શાકભાજી સબ યાર્ડ', 'veg sub yard': 'શાકભાજી સબ યાર્ડ', 'veg. sub yard': 'શાકભાજી સબ યાર્ડ',
+            'veg yard': 'શાકભાજી યાર્ડ', 'veg. yard': 'શાકભાજી યાર્ડ', 'vegetable yard': 'શાકભાજી યાર્ડ',
+            'veg. market': 'શાકભાજી માર્કેટ', 'veg market': 'શાકભાજી માર્કેટ', 'vegetable market': 'શાકભાજી માર્કેટ',
+            'fruit market': 'ફળ માર્કેટ', 'grain market': 'અનાજ માર્કેટ', 'cotton yard': 'કપાસ યાર્ડ',
+            'sub yard': 'સબ યાર્ડ', 'main yard': 'મુખ્ય યાર્ડ', 'manas veg yard': 'શાકભાજી યાર્ડ',
+            'ghee kana': 'ઘી કાંટા', 'ghee kanta': 'ઘી કાંટા', 'vinchhiya': 'વિંછીયા', 'vinchiya': 'વિંછીયા',
+            'tintoi': 'ટીંટોઈ', 'shihori': 'શિહોરી', 'umrada': 'ઉમરપાડા', 'umarpada': 'ઉમરપાડા',
+            'badarpada': 'બદરપાડા', 'piplod': 'પીપલોદ', 'sanjeli': 'સંજેલી', 'khorgam': 'ખડગામ',
+            'khadgam': 'ખડગામ', 'kundlakap': 'કુંડલાકાંપ', 'pavijetpur': 'પાવી જેતપુર', 'pavi jetpur': 'પાવી જેતપુર',
+            'bhat': 'ભાટ', 'sardar patel': 'સરદાર પટેલ', 'bedi': 'બેડી', 'hapa': 'હાપા',
+            'vasna': 'વાસણા', 'jamalpur': 'જમાલપુર', 'naroda': 'નરોડા'
         };
 
         const SORTED_GUJARATI_PLACES = Object.entries(GUJARATI_PLACES).sort((a, b) => b[0].length - a[0].length);
@@ -840,7 +1280,6 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
 
         function transliterateEnglishToGujarati(text) {
             if (!text) return '';
-            // If already contains Gujarati characters, return as-is
             if (/[\u0A80-\u0AFF]/.test(text)) return text;
 
             const words = text.trim().split(/\s+/);
@@ -893,10 +1332,7 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                         const vKey = matras[two] ? two : w[i];
                         const isEnd = (i + vKey.length) === w.length;
                         if (prevConsonant) {
-                            // Inherent 'a' in middle, 'ા' at end
-                            if (vKey === 'a' && !isEnd) {
-                                // inherent schwa
-                            } else {
+                            if (vKey !== 'a' || isEnd) {
                                 res += matras[vKey];
                             }
                         } else {
@@ -916,7 +1352,6 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                     }
 
                     if (consonants[w[i]]) {
-                        // Nasal 'n'/'m' before consonant -> anusvara
                         if ((w[i] === 'n' || w[i] === 'm') && i > 0 && i + 1 < w.length && consonants[w[i + 1]] && !prevConsonant) {
                             res += 'ં';
                         } else {
@@ -998,14 +1433,14 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             return match ? match.cat : 'અન્ય';
         }
 
-        function getCropIconHtml(rawCrop, sizeClass = 'w-9 h-9 text-base') {
+        function getCropIconHtml(rawCrop, isLarge = true) {
             const match = findCatalogEntry(rawCrop);
             if (match && match.emoji) {
-                return `<div class="${sizeClass} rounded-2xl bg-[#F2F2F7] flex items-center justify-center shrink-0 select-none">${match.emoji}</div>`;
+                return `<div class="${isLarge ? 'crop-icon-lg' : 'crop-icon-sm'} select-none">${match.emoji}</div>`;
             }
             const guName = match ? match.gu : (rawCrop || 'પા');
             const initial = guName.trim().charAt(0) || 'પા';
-            return `<div class="${sizeClass} rounded-2xl bg-[#007AFF]/[0.1] text-[#007AFF] font-extrabold flex items-center justify-center shrink-0 select-none">${initial}</div>`;
+            return `<div class="${isLarge ? 'crop-icon-initial-lg' : 'crop-icon-initial-sm'} select-none">${initial}</div>`;
         }
 
         function getYardBaseKey(rawMarket, rawDistrict) {
@@ -1017,21 +1452,10 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
         function getGujaratiVariety(rawVariety) {
             if (!rawVariety || rawVariety.toLowerCase() === 'other') return 'સામાન્ય';
             const map = {
-                'local': 'દેશી',
-                'hybrid': 'હાઈબ્રિડ',
-                'bold': 'જાડા દાણા',
-                'small': 'ઝીણા દાણા',
-                'red': 'લાલ',
-                'white': 'સફેદ',
-                'yellow': 'પીળા',
-                'green': 'લીલા',
-                'black': 'કાળા',
-                'deshi': 'દેશી',
-                'shankar-6': 'શંકર-૬',
-                'bt cotton': 'બીટી કપાસ',
-                'g-20': 'જી-૨૦',
-                'lokwan': 'લોકવન',
-                'tukda': 'ટુકડા'
+                'local': 'દેશી', 'hybrid': 'હાઈબ્રિડ', 'bold': 'જાડા દાણા', 'small': 'ઝીણા દાણા',
+                'red': 'લાલ', 'white': 'સફેદ', 'yellow': 'પીળા', 'green': 'લીલા', 'black': 'કાળા',
+                'deshi': 'દેશી', 'shankar-6': 'શંકર-૬', 'bt cotton': 'બીટી કપાસ', 'g-20': 'જી-૨૦',
+                'lokwan': 'લોકવન', 'tukda': 'ટુકડા'
             };
             const lower = rawVariety.toLowerCase().trim();
             for (const [k, v] of Object.entries(map)) {
@@ -1089,8 +1513,8 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             document.querySelectorAll('.date-pill').forEach(btn => {
                 const isActive = btn.dataset.mode === mode;
                 btn.className = isActive
-                    ? 'date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-bold bg-[#1C1C1E] text-white shadow-xs'
-                    : 'date-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold bg-[#F2F2F7] text-[#636366] hover:text-[#1C1C1E]';
+                    ? 'date-pill tap-spring pill-dark'
+                    : 'date-pill tap-spring pill-light';
             });
 
             if (els.customDateInput && targetISO) {
@@ -1098,9 +1522,9 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             }
             if (els.customDatePillWrap) {
                 if (mode === 'custom') {
-                    els.customDatePillWrap.classList.add('ring-2', 'ring-[#007AFF]', 'bg-[#007AFF]/[0.08]');
+                    els.customDatePillWrap.classList.add('active-custom');
                 } else {
-                    els.customDatePillWrap.classList.remove('ring-2', 'ring-[#007AFF]', 'bg-[#007AFF]/[0.08]');
+                    els.customDatePillWrap.classList.remove('active-custom');
                 }
             }
             updateSubtitleText();
@@ -1242,8 +1666,8 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                 if (cat.id !== 'all' && cnt === 0) return '';
                 const isActive = state.filters.category === cat.id;
                 return `
-                    <button type="button" data-cat="${cat.id}" class="cat-pill tap-spring shrink-0 px-3 py-1 rounded-full text-[11px] font-bold ${isActive ? 'bg-[#007AFF] text-white shadow-xs' : 'bg-[#F2F2F7] text-[#1C1C1E] hover:bg-[#E5E5EA]'}">
-                        ${cat.label} <span class="opacity-75 tabular-nums">(${cnt})</span>
+                    <button type="button" data-cat="${cat.id}" class="cat-pill tap-spring ${isActive ? 'pill-blue' : 'pill-cat-inactive'}">
+                        ${cat.label} <span class="tabular-nums" style="opacity:0.75;">(${cnt})</span>
                     </button>
                 `;
             }).join('');
@@ -1261,27 +1685,19 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
         }
 
         const CATEGORY_ICONS = {
-            'બીજ': '🌻',
-            'મસાલા': '🌶️',
-            'શાકભાજી': '🥦',
-            'પાંદડાવાળી શાકભાજી': '🥬',
-            'દાળ': '🫘',
-            'અનાજ': '🌾',
-            'ફળ': '🍎',
-            'અન્ય': '🌱'
+            'બીજ': '🌻', 'મસાલા': '🌶️', 'શાકભાજી': '🥦', 'પાંદડાવાળી શાકભાજી': '🥬',
+            'દાળ': '🫘', 'અનાજ': '🌾', 'ફળ': '🍎', 'અન્ય': '🌱'
         };
 
         function renderCropCollage() {
             if (!els.cropCollageContainer) return;
 
-            // Hide collage when a specific crop is opened
             if (state.filters.cropKeyword) {
                 els.cropCollageContainer.classList.add('hidden');
                 return;
             }
             els.cropCollageContainer.classList.remove('hidden');
 
-            // Group available crops by category
             const catGroups = new Map();
             CROP_CATEGORIES.forEach(cat => {
                 if (cat.id !== 'all') catGroups.set(cat.id, new Map());
@@ -1298,12 +1714,7 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
 
                 if (!group.has(key)) {
                     group.set(key, {
-                        key,
-                        gu,
-                        raw: r.commodity,
-                        yards: new Set(),
-                        count: 0,
-                        maxModal: 0
+                        key, gu, raw: r.commodity, yards: new Set(), count: 0, maxModal: 0
                     });
                 }
                 const entry = group.get(key);
@@ -1323,27 +1734,21 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                 const catEmoji = CATEGORY_ICONS[catName] || '🌱';
 
                 html += `
-                    <div class="apple-card p-3.5 space-y-2.5 animate-row-in">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base leading-none">${catEmoji}</span>
-                                <h2 class="text-[14px] sm:text-[15px] font-extrabold text-[#1C1C1E] tracking-tight">${catName}</h2>
+                    <div class="apple-card card-padded-lg animate-row-in">
+                        <div class="cat-header">
+                            <div class="cat-title-wrap">
+                                <span style="font-size:16px; line-height:1;">${catEmoji}</span>
+                                <h2 class="cat-title">${catName}</h2>
                             </div>
-                            <span class="px-2.5 py-0.5 rounded-full bg-[#F2F2F7] text-[11px] font-bold text-[#636366] tabular-nums">
-                                ${crops.length} પાક
-                            </span>
+                            <span class="cat-count-badge tabular-nums">${crops.length} પાક</span>
                         </div>
-                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                        <div class="crop-grid">
                             ${crops.map(c => `
-                                <button type="button" data-crop="${c.key.replace(/"/g, '&quot;')}" class="collage-crop-btn tap-spring group bg-[#F9F9FB] hover:bg-[#007AFF]/[0.07] active:bg-[#007AFF]/[0.14] border border-black/[0.06] hover:border-[#007AFF]/30 rounded-2xl p-2.5 flex flex-col items-center text-center gap-1.5 transition-all">
-                                    ${getCropIconHtml(c.raw, 'w-10 h-10 text-lg group-hover:scale-105 transition-transform')}
+                                <button type="button" data-crop="${c.key.replace(/"/g, '&quot;')}" class="collage-crop-btn tap-spring">
+                                    ${getCropIconHtml(c.raw, true)}
                                     <div class="w-full min-w-0">
-                                        <div class="text-xs sm:text-[13px] font-extrabold text-[#1C1C1E] group-hover:text-[#007AFF] truncate leading-tight">
-                                            ${c.gu}
-                                        </div>
-                                        <div class="text-[10px] font-semibold text-[#8E8E93] tabular-nums mt-0.5">
-                                            ${c.yards.size} યાર્ડ
-                                        </div>
+                                        <div class="crop-card-name truncate">${c.gu}</div>
+                                        <div class="crop-card-yards tabular-nums">${c.yards.size} યાર્ડ</div>
                                     </div>
                                 </button>
                             `).join('')}
@@ -1354,16 +1759,24 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
 
             if (totalRenderedCrops === 0) {
                 html = `
-                    <div class="apple-card py-12 px-4 text-center space-y-1.5">
-                        <div class="text-3xl mb-1">🌾</div>
-                        <p class="text-[15px] font-bold text-[#1C1C1E]">આ પસંદગી મુજબ કોઈ પાક મળ્યા નથી</p>
-                        <p class="text-xs font-medium text-[#8E8E93]">બીજી તારીખ અથવા વર્ગ પસંદ કરો</p>
+                    <div class="apple-card text-center" style="padding:48px 16px;">
+                        <div style="font-size:28px; margin-bottom:4px;">🌾</div>
+                        <p style="font-size:15px; font-weight:700; color:#1C1C1E;">આ પસંદગી મુજબ કોઈ પાક મળ્યા નથી</p>
+                        <p style="font-size:12px; font-weight:500; color:#8E8E93; margin-top:4px;">બીજી તારીખ અથવા વર્ગ પસંદ કરો</p>
                     </div>
                 `;
             }
 
             els.cropCollageContainer.innerHTML = html;
-            // Crop click handling is delegated from the stable container (bound once in initEventListeners).
+            els.cropCollageContainer.querySelectorAll('.collage-crop-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.filters.cropKeyword = btn.dataset.crop;
+                    state.currentPage = 1;
+                    renderCropCollage();
+                    applyFiltersAndRender();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
         }
 
         function applyFiltersAndRender() {
@@ -1403,7 +1816,7 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                 const sampleRec = state.filteredRecords[0] || { commodity: state.filters.cropKeyword };
                 const guCrop = getGujaratiCropName(sampleRec.commodity);
                 const dateLabel = sampleRec.arrival_date || isoToDDMMYYYY(state.selectedDateISO);
-                els.selectedCropHeroIcon.innerHTML = getCropIconHtml(sampleRec.commodity, 'w-10 h-10 text-xl');
+                els.selectedCropHeroIcon.innerHTML = getCropIconHtml(sampleRec.commodity, true);
                 els.selectedCropHeroTitle.textContent = guCrop;
                 els.selectedCropHeroMeta.textContent = `${dateLabel} • કુલ ${total} માર્કેટ યાર્ડના ભાવ`;
                 if (els.listPrimaryColHeader) els.listPrimaryColHeader.textContent = 'માર્કેટ યાર્ડ / જાત';
@@ -1437,24 +1850,24 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                 const delayMs = Math.min(idx * 15, 240);
 
                 return `
-                    <div data-yard-key="${yardBaseKey.replace(/"/g, '&quot;')}" style="animation-delay: ${delayMs}ms;" class="price-list-row animate-row-in px-3.5 py-2.5 grid grid-cols-12 items-center gap-1 hover:bg-[#F9F9FB] active:bg-[#F2F2F7] cursor-pointer transition-colors">
-                        <div class="col-span-6 flex items-center gap-2.5 min-w-0">
-                            ${isSingleCrop ? '' : getCropIconHtml(rec.commodity, 'w-9 h-9 text-base')}
+                    <div data-yard-key="${yardBaseKey.replace(/"/g, '&quot;')}" style="animation-delay: ${delayMs}ms;" class="price-list-row animate-row-in">
+                        <div class="col-span-6" style="display:flex; align-items:center; gap:10px; min-width:0;">
+                            ${isSingleCrop ? '' : getCropIconHtml(rec.commodity, false)}
                             <div class="min-w-0">
-                                <div class="flex items-center gap-1.5 min-w-0">
-                                    <span class="text-[13px] sm:text-sm font-bold text-[#1C1C1E] tracking-tight truncate">${primaryTitle}</span>
-                                    <span class="shrink-0 px-1.5 py-[1px] rounded-md bg-[#007AFF]/[0.1] text-[#007AFF] text-[10px] font-bold">${guVariety}</span>
+                                <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+                                    <span class="truncate" style="font-size:13.5px; font-weight:700; color:#1C1C1E;">${primaryTitle}</span>
+                                    <span class="variety-badge">${guVariety}</span>
                                 </div>
-                                <div class="text-[11px] font-medium text-[#8E8E93] truncate mt-0.5">${secondarySub}</div>
+                                <div class="truncate" style="font-size:11px; font-weight:500; color:#8E8E93; margin-top:2px;">${secondarySub}</div>
                             </div>
                         </div>
-                        <div class="col-span-2 text-right text-xs font-semibold text-[#8E8E93] tabular-nums">
+                        <div class="col-span-2 text-right price-min tabular-nums">
                             ₹${formatPrice(rec.min_price)}
                         </div>
-                        <div class="col-span-2 text-right text-[13px] sm:text-sm font-extrabold text-[#007AFF] tabular-nums">
+                        <div class="col-span-2 text-right price-modal tabular-nums">
                             ₹${formatPrice(rec.modal_price)}
                         </div>
-                        <div class="col-span-2 text-right text-xs font-bold text-[#28A745] tabular-nums">
+                        <div class="col-span-2 text-right price-max tabular-nums">
                             ₹${formatPrice(rec.max_price)}
                         </div>
                     </div>
@@ -1509,13 +1922,7 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                 const region = DISTRICT_TO_REGION[r.district] || 'Saurashtra';
 
                 if (!yardMap.has(key)) {
-                    yardMap.set(key, {
-                        key,
-                        display,
-                        guDistrict,
-                        region,
-                        records: []
-                    });
+                    yardMap.set(key, { key, display, guDistrict, region, records: [] });
                 }
                 yardMap.get(key).records.push(r);
             });
@@ -1544,19 +1951,19 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                         const guVar = getGujaratiVariety(r.variety);
                         const rDate = r.arrival_date || sheetDate;
                         return `
-                            <tr class="hover:bg-[#F5F5F7]/60">
-                                <td class="py-2.5 px-3.5">
-                                    <div class="flex items-center gap-2">
-                                        ${getCropIconHtml(r.commodity, 'w-7 h-7 text-xs')}
+                            <tr>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:8px;">
+                                        ${getCropIconHtml(r.commodity, false)}
                                         <div>
-                                            <div class="font-black text-[#1D1D1F] text-xs sm:text-sm">${guCrop}</div>
-                                            <div class="text-[10px] font-bold text-[#6E6E73]">${guVar} • ${rDate}</div>
+                                            <div style="font-weight:800; color:#1D1D1F; font-size:13px;">${guCrop}</div>
+                                            <div style="font-size:10.5px; font-weight:600; color:#6E6E73;">${guVar} • ${rDate}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-2.5 px-2 text-right text-xs font-bold text-[#6E6E73] tabular-nums">₹${formatPrice(r.min_price)}</td>
-                                <td class="py-2.5 px-2 text-right text-xs sm:text-sm font-black text-[#0071E3] tabular-nums">₹${formatPrice(r.modal_price)}</td>
-                                <td class="py-2.5 px-3.5 text-right text-xs font-extrabold text-[#248A3D] tabular-nums">₹${formatPrice(r.max_price)}</td>
+                                <td class="text-right price-min tabular-nums">₹${formatPrice(r.min_price)}</td>
+                                <td class="text-right price-modal tabular-nums">₹${formatPrice(r.modal_price)}</td>
+                                <td class="text-right price-max tabular-nums">₹${formatPrice(r.max_price)}</td>
                             </tr>
                         `;
                     }).join('');
@@ -1587,7 +1994,7 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
 
             if (filteredYards.length === 0) {
                 els.kgYardDirectoryList.innerHTML = `
-                    <div class="py-10 px-4 text-center text-xs font-bold text-[#6E6E73]">
+                    <div class="text-center" style="padding:40px 16px; font-size:12px; font-weight:700; color:#6E6E73;">
                         આ વિભાગમાં કોઈ માર્કેટ યાર્ડ મળ્યા નથી
                     </div>
                 `;
@@ -1597,16 +2004,16 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                 const isFav = state.khetiGram.favoriteYards.includes(y.display);
                 const delayMs = Math.min(idx * 12, 220);
                 return `
-                    <div style="animation-delay: ${delayMs}ms;" class="animate-row-in px-3.5 py-2.5 flex items-center justify-between gap-2 hover:bg-[#F9F9FB] active:bg-[#F2F2F7] transition-colors">
+                    <div style="animation-delay: ${delayMs}ms;" class="animate-row-in yard-row">
                         <button type="button" data-open-yard="${y.key.replace(/"/g, '&quot;')}" class="kg-open-yard-btn flex-1 text-left min-w-0">
-                            <div class="font-bold text-[13px] sm:text-sm text-[#1C1C1E] truncate">${y.display} માર્કેટ યાર્ડ</div>
-                            <div class="text-[11px] font-semibold text-[#8E8E93] tabular-nums mt-0.5">${y.records.length}</div>
+                            <div class="truncate" style="font-weight:700; font-size:13.5px; color:#1C1C1E;">${y.display} માર્કેટ યાર્ડ</div>
+                            <div class="tabular-nums" style="font-size:11px; font-weight:600; color:#8E8E93; margin-top:2px;">જિલ્લો: ${y.guDistrict} • ${y.records.length} પાક</div>
                         </button>
-                        <div class="flex items-center gap-1.5 shrink-0">
-                            <button type="button" data-fav-yard="${y.display.replace(/"/g, '&quot;')}" class="kg-fav-btn tap-spring text-base p-1.5 rounded-full hover:bg-[#F2F2F7]">
+                        <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                            <button type="button" data-fav-yard="${y.display.replace(/"/g, '&quot;')}" class="kg-fav-btn tap-spring" style="font-size:16px; padding:6px;">
                                 ${isFav ? '⭐' : '☆'}
                             </button>
-                            <button type="button" data-open-yard="${y.key.replace(/"/g, '&quot;')}" class="kg-open-yard-btn tap-spring px-3 py-1 rounded-full bg-[#007AFF]/[0.1] text-[#007AFF] text-[11px] font-bold">
+                            <button type="button" data-open-yard="${y.key.replace(/"/g, '&quot;')}" class="kg-open-yard-btn tap-spring back-pill-btn" style="padding:4px 12px; font-size:11px;">
                                 જુઓ ›
                             </button>
                         </div>
@@ -1672,10 +2079,10 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             if (els.statsFetchStatusText) {
                 if (state.isFallbackData) {
                     els.statsFetchStatusText.textContent = '● અંદાજિત બેકઅપ ડેટા (API ઉપલબ્ધ નથી)';
-                    els.statsFetchStatusText.className = 'text-[11px] font-bold text-[#B45309] leading-tight';
+                    els.statsFetchStatusText.style.color = '#B45309';
                 } else {
                     els.statsFetchStatusText.textContent = '● લાઈવ સરકારી API સફળતાપૂર્વક ફેચ થયો';
-                    els.statsFetchStatusText.className = 'text-[11px] font-bold text-[#248A3D] leading-tight';
+                    els.statsFetchStatusText.style.color = '#248A3D';
                 }
             }
 
@@ -1707,19 +2114,19 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
 
             if (els.statsBreakdownList) {
                 if (activeList.length === 0) {
-                    els.statsBreakdownList.innerHTML = `<div class="py-6 text-center text-xs font-bold text-[#6E6E73]">કોઈ ડેટા ઉપલબ્ધ નથી</div>`;
+                    els.statsBreakdownList.innerHTML = `<div class="text-center" style="padding:24px; font-size:12px; font-weight:700; color:#6E6E73;">કોઈ ડેટા ઉપલબ્ધ નથી</div>`;
                 } else {
                     els.statsBreakdownList.innerHTML = activeList.map((item, idx) => `
-                        <button type="button" data-stat-key="${item.key.replace(/"/g, '&quot;')}" class="stat-jump-row w-full px-3 py-2 flex items-center justify-between gap-2 hover:bg-[#F5F5F7] text-left transition-colors">
-                            <div class="flex items-center gap-2 min-w-0">
-                                <span class="w-5 text-[10px] font-extrabold text-[#6E6E73] tabular-nums">${idx + 1}.</span>
-                                ${state.statsViewTab === 'crop' ? getCropIconHtml(item.raw, 'w-6 h-6 text-xs') : ''}
+                        <button type="button" data-stat-key="${item.key.replace(/"/g, '&quot;')}" class="stat-jump-row w-full text-left" style="padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; border-bottom:1px solid rgba(0,0,0,0.05);">
+                            <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                                <span class="tabular-nums" style="width:20px; font-size:10px; font-weight:800; color:#6E6E73;">${idx + 1}.</span>
+                                ${state.statsViewTab === 'crop' ? getCropIconHtml(item.raw, false) : ''}
                                 <div class="min-w-0">
-                                    <div class="text-xs font-black text-[#1D1D1F] truncate">${item.label}</div>
-                                    <div class="text-[10px] font-semibold text-[#6E6E73] truncate">${item.sub}</div>
+                                    <div class="truncate" style="font-size:12px; font-weight:800; color:#1D1D1F;">${item.label}</div>
+                                    <div class="truncate" style="font-size:10px; font-weight:600; color:#6E6E73;">${item.sub}</div>
                                 </div>
                             </div>
-                            <span class="shrink-0 px-2 py-0.5 rounded-full bg-[#F0F7FF] text-[#0071E3] text-[11px] font-extrabold tabular-nums">
+                            <span class="tabular-nums shrink-0" style="padding:2px 8px; border-radius:9999px; background:#F0F7FF; color:#0071E3; font-size:11px; font-weight:800;">
                                 ${item.count} રો →
                             </span>
                         </button>
@@ -1765,14 +2172,10 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             state.priceDivisor = divisor;
             const isMann = divisor === 5;
             if (els.btnUnitMann) {
-                els.btnUnitMann.className = isMann
-                    ? 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs'
-                    : 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E]';
+                els.btnUnitMann.className = isMann ? 'tap-spring seg-btn-active' : 'tap-spring seg-btn-inactive';
             }
             if (els.btnUnitQuintal) {
-                els.btnUnitQuintal.className = !isMann
-                    ? 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-bold bg-white text-[#1C1C1E] shadow-xs'
-                    : 'tap-spring px-2 py-0.5 rounded-[7px] text-[10px] font-semibold text-[#636366] hover:text-[#1C1C1E]';
+                els.btnUnitQuintal.className = !isMann ? 'tap-spring seg-btn-active' : 'tap-spring seg-btn-inactive';
             }
             updateSubtitleText();
             renderCards();
@@ -1789,25 +2192,17 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             if (els.categoryPillStrip) els.categoryPillStrip.classList.toggle('hidden', !isDash);
 
             if (els.btnModeDashboard) {
-                els.btnModeDashboard.className = isDash
-                    ? 'tap-spring px-2.5 py-0.5 rounded-[7px] text-[11px] font-bold bg-white text-[#1C1C1E] shadow-xs'
-                    : 'tap-spring px-2.5 py-0.5 rounded-[7px] text-[11px] font-semibold text-[#636366] hover:text-[#1C1C1E]';
+                els.btnModeDashboard.className = isDash ? 'tap-spring seg-btn-active' : 'tap-spring seg-btn-inactive';
             }
             if (els.btnModeKhetiGram) {
-                els.btnModeKhetiGram.className = !isDash
-                    ? 'tap-spring px-2.5 py-0.5 rounded-[7px] text-[11px] font-bold bg-white text-[#1C1C1E] shadow-xs'
-                    : 'tap-spring px-2.5 py-0.5 rounded-[7px] text-[11px] font-semibold text-[#636366] hover:text-[#1C1C1E]';
+                els.btnModeKhetiGram.className = !isDash ? 'tap-spring seg-btn-active' : 'tap-spring seg-btn-inactive';
             }
 
             if (els.mobileTabDashboard) {
-                els.mobileTabDashboard.className = isDash
-                    ? 'tap-spring py-1 rounded-[8px] bg-white text-[#1C1C1E] text-xs font-bold flex items-center justify-center gap-1 shadow-xs'
-                    : 'tap-spring py-1 rounded-[8px] text-[#636366] text-xs font-semibold flex items-center justify-center gap-1';
+                els.mobileTabDashboard.className = isDash ? 'tap-spring mobile-seg-active' : 'tap-spring mobile-seg-inactive';
             }
             if (els.mobileTabKhetiGram) {
-                els.mobileTabKhetiGram.className = !isDash
-                    ? 'tap-spring py-1 rounded-[8px] bg-white text-[#1C1C1E] text-xs font-bold flex items-center justify-center gap-1 shadow-xs'
-                    : 'tap-spring py-1 rounded-[8px] text-[#636366] text-xs font-semibold flex items-center justify-center gap-1';
+                els.mobileTabKhetiGram.className = !isDash ? 'tap-spring mobile-seg-active' : 'tap-spring mobile-seg-inactive';
             }
 
             if (!isDash) renderKhetiGramView();
@@ -1817,22 +2212,6 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
         // 12. EVENT LISTENERS & INIT
         // ==========================================
         function initEventListeners() {
-            // Reliable crop selection in Android WebView and mobile browsers.
-            if (els.cropCollageContainer && !els.cropCollageContainer.dataset.cropClickBound) {
-                els.cropCollageContainer.dataset.cropClickBound = '1';
-                els.cropCollageContainer.addEventListener('click', (event) => {
-                    const btn = event.target.closest('.collage-crop-btn');
-                    if (!btn || !els.cropCollageContainer.contains(btn)) return;
-                    const cropKey = btn.getAttribute('data-crop');
-                    if (!cropKey) return;
-                    event.preventDefault();
-                    state.filters.cropKeyword = cropKey;
-                    state.currentPage = 1;
-                    renderCropCollage();
-                    applyFiltersAndRender();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            }
             if (els.btnModeDashboard) els.btnModeDashboard.addEventListener('click', () => setUiViewMode('dashboard'));
             if (els.btnModeKhetiGram) els.btnModeKhetiGram.addEventListener('click', () => setUiViewMode('khetigram'));
             if (els.mobileTabDashboard) els.mobileTabDashboard.addEventListener('click', () => setUiViewMode('dashboard'));
@@ -1900,8 +2279,8 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
                     document.querySelectorAll('.kg-region-tab').forEach(t => {
                         const active = t.dataset.region === state.khetiGram.region;
                         t.className = active
-                            ? 'kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-bold bg-[#1C1C1E] text-white'
-                            : 'kg-region-tab tap-spring shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F2F2F7] text-[#636366]';
+                            ? 'kg-region-tab tap-spring pill-dark'
+                            : 'kg-region-tab tap-spring pill-light';
                     });
                     renderKhetiGramView();
                 });
@@ -1925,16 +2304,16 @@ button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highli
             if (els.statsTabApmc) {
                 els.statsTabApmc.addEventListener('click', () => {
                     state.statsViewTab = 'apmc';
-                    els.statsTabApmc.className = 'tap-spring px-3 py-1 rounded-[8.5px] text-[11px] font-bold bg-white text-[#1C1C1E] shadow-xs';
-                    els.statsTabCrop.className = 'tap-spring px-3 py-1 rounded-[8.5px] text-[11px] font-semibold text-[#636366]';
+                    els.statsTabApmc.className = 'tap-spring seg-btn-active';
+                    els.statsTabCrop.className = 'tap-spring seg-btn-inactive';
                     renderStatsModal();
                 });
             }
             if (els.statsTabCrop) {
                 els.statsTabCrop.addEventListener('click', () => {
                     state.statsViewTab = 'crop';
-                    els.statsTabCrop.className = 'tap-spring px-3 py-1 rounded-[8.5px] text-[11px] font-bold bg-white text-[#1C1C1E] shadow-xs';
-                    els.statsTabApmc.className = 'tap-spring px-3 py-1 rounded-[8.5px] text-[11px] font-semibold text-[#636366]';
+                    els.statsTabCrop.className = 'tap-spring seg-btn-active';
+                    els.statsTabApmc.className = 'tap-spring seg-btn-inactive';
                     renderStatsModal();
                 });
             }
