@@ -1904,12 +1904,12 @@
             if (totalRenderedCrops === 0) {
                 html = `
                     <div class="apple-card text-center" style="padding:48px 16px;">
-                        <div style="font-size:28px; margin-bottom:4px;">🌾</div>
-                        <p style="font-size:15px; font-weight:700; color:#1C1C1E;">આ પસંદગી મુજબ કોઈ પાક મળ્યા નથી</p>
-                        <p style="font-size:12px; font-weight:500; color:#8E8E93; margin-top:4px;">${state.cropFavoriteMode === 'fav' ? '⭐ મનપસંદમાં પાક ઉમેરો અથવા બીજા વર્ગ પસંદ કરો' : 'બીજી તારીખ અથવા વર્ગ પસંદ કરો'}</p>
+                        <div style="font-size:28px; margin-bottom:4px;">📭</div>
+                        <p style="font-size:15px; font-weight:700; color:#1C1C1E;">${state.rawRecords.length === 0 ? 'કોઈ ડેટા ઉપલબ્ધ નથી' : 'આ પસંદગી મુજબ કોઈ પાક મળ્યા નથી'}</p>
+                        <p style="font-size:12px; font-weight:500; color:#8E8E93; margin-top:4px;">${state.rawRecords.length === 0 ? 'ભાવ ઉપલબ્ધ થતાં અહીં દેખાશે.' : (state.cropFavoriteMode === 'fav' ? '⭐ મનપસંદમાં પાક ઉમેરો અથવા બીજા વર્ગ પસંદ કરો' : 'બીજી તારીખ અથવા વર્ગ પસંદ કરો')}</p>
                     </div>
                 `;
-            }
+            }}
 
             els.cropCollageContainer.innerHTML = html;
             els.cropCollageContainer.querySelectorAll('.collage-crop-btn').forEach(btn => {
