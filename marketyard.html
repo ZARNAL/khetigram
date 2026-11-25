@@ -570,7 +570,30 @@
             transition: background-color 0.15s ease;
         }
 
-        .price-list-row:hover { background: #F9F9FB; }
+        /* Soft alternating row colors for a calmer, professional, readable list. */
+        .price-list-row {
+            background: #FFFFFF;
+            border-bottom: 1px solid #E8EDF3;
+        }
+        .price-list-row:nth-child(even) {
+            background: #F6F9FC;
+        }
+        .price-list-row:hover {
+            background: #EAF3FB;
+        }
+        .price-list-row:active {
+            background: #E2EDF8;
+        }
+        .crop-price-primary {
+            color: #263445 !important;
+            font-weight: 700;
+        }
+        .crop-price-secondary {
+            color: #667588 !important;
+        }
+        .price-min { color: #6B7280; }
+        .price-modal { color: #1769AA; }
+        .price-max { color: #27834A; }
 
         /* Clean, readable crop/yard labels: natural wrapping without awkward breaks. */
         .crop-price-name-cell { min-width: 0; align-items: flex-start !important; }
