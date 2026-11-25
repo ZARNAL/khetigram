@@ -1768,7 +1768,7 @@
                 counts[c] = (counts[c] || 0) + 1;
             });
 
-            const categoryButtons = CROP_CATEGORIES.map(cat => {
+            const renderCategoryButton = (cat) => {
                 const cnt = counts[cat.id] || 0;
                 if (cat.id !== 'all' && cnt === 0) return '';
                 const isActive = state.cropFavoriteMode !== 'fav' && state.filters.category === cat.id;
@@ -1777,9 +1777,11 @@
                         ${cat.label} <span class="tabular-nums" style="opacity:0.75;">(${cnt})</span>
                     </button>
                 `;
-            }).join('');
+            };
+            const allCategoriesButton = renderCategoryButton(CROP_CATEGORIES[0]);
             const favoritesButton = `<button type="button" id="cropCategoryFavoritesBtn" class="cat-pill tap-spring ${state.cropFavoriteMode === 'fav' ? 'pill-blue' : 'pill-cat-inactive'}">⭐ મનપસંદ</button>`;
-            els.categoryPillStrip.innerHTML = categoryButtons + favoritesButton;
+            const remainingCategoryButtons = CROP_CATEGORIES.slice(1).map(renderCategoryButton).join('');
+            els.categoryPillStrip.innerHTML = allCategoriesButton + favoritesButton + remainingCategoryButtons;
 
             els.categoryPillStrip.querySelectorAll('.cat-pill[data-cat]').forEach(btn => {
                 btn.addEventListener('click', () => {
