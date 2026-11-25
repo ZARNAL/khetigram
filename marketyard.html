@@ -133,6 +133,57 @@ header>div{width:100%;min-width:0}
  #customDateInput{width:88px!important;max-width:88px!important}
  .price-list-row>div:first-child .w-9{display:none!important}
 }
+
+/* FULL CSS FALLBACK: page must remain styled even when Tailwind CDN is blocked (WebView/PWA) */
+html{font-size:16px!important;box-sizing:border-box;background:#f2f2f7}
+*,*:before,*:after{box-sizing:border-box}
+body{margin:0!important;min-height:100vh;background:#f2f2f7!important;color:#1c1c1e!important;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans Gujarati",sans-serif!important;font-size:14px!important;line-height:1.4!important;overflow-x:hidden!important}
+.hidden{display:none!important}
+header{position:sticky!important;top:0!important;z-index:40!important;background:rgba(250,250,252,.94)!important;backdrop-filter:blur(18px)!important;border-bottom:1px solid #e5e5ea!important}
+header>div{max-width:760px!important;margin:0 auto!important;padding:7px 10px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:7px!important}
+header>div>.flex.items-center:first-child{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important;flex:1 1 auto!important}
+header>div>.flex.items-center:first-child>div:first-child{width:29px!important;height:29px!important;border-radius:9px!important;background:#1485ce!important;color:white!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:14px!important;font-weight:900!important;flex:0 0 29px!important}
+header h1{margin:0!important;font-size:15px!important;line-height:1.2!important;font-weight:800!important}
+header p{margin:2px 0 0!important;font-size:10px!important;line-height:1.25!important;color:#85858d!important}
+header>div>.flex.items-center:last-child{display:flex!important;align-items:center!important;gap:4px!important;flex:0 0 auto!important}
+header button{border:0!important;border-radius:8px!important;min-height:27px!important;padding:4px 7px!important;font-family:inherit!important;font-size:10px!important;font-weight:700!important;white-space:nowrap!important}
+#btnUnitMann,#btnUnitQuintal{background:#f0f0f5!important;color:#45454b!important}
+#btnUnitMann.bg-white,#btnUnitQuintal.bg-white{background:white!important;color:#202024!important}
+#openStatsBtn{background:#e9f2ff!important;color:#0875df!important}
+#refreshDataBtn{width:28px!important;height:28px!important;padding:0!important;background:#eeeeF3!important;display:grid!important;place-items:center!important}
+main{width:100%!important;max-width:760px!important;margin:0 auto!important;padding:9px 9px 20px!important;display:flex!important;flex-direction:column!important;gap:9px!important}
+main>section:first-child{background:white!important;border:1px solid #e8e8ee!important;border-radius:18px!important;padding:10px!important;box-shadow:0 2px 10px #00000006!important;display:flex!important;flex-direction:column!important;gap:8px!important}
+#mobileTabDashboard,#mobileTabKhetiGram{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;border:0!important;border-radius:9px!important;padding:7px 5px!important;background:#f0f0f5!important;color:#66666e!important;font-size:12px!important;font-weight:700!important}
+#mobileTabDashboard.bg-white,#mobileTabKhetiGram.bg-white{background:white!important;color:#1c1c1e!important;box-shadow:0 1px 3px #00000010!important}
+#navDateControlsBar{display:flex!important;align-items:center!important;gap:5px!important;overflow-x:auto!important;white-space:nowrap!important;min-width:0!important}
+.date-pill{border:0!important;border-radius:999px!important;min-height:29px!important;padding:5px 10px!important;background:#f0f0f5!important;color:#55555c!important;font-size:10px!important;font-weight:700!important;white-space:nowrap!important}
+.date-pill.bg-\\[\\#1C1C1E\\]{background:#202024!important;color:white!important}
+#customDatePillWrap{display:flex!important;align-items:center!important;flex-shrink:0!important;padding:3px 6px!important;background:#f0f0f5!important;border-radius:999px!important}
+#customDateInput{width:95px!important;max-width:95px!important;border:0!important;background:transparent!important;font-size:10px!important}
+#categoryStripDivider{height:1px!important;background:#e9e9ef!important}
+#categoryPillStrip{display:flex!important;gap:5px!important;overflow-x:auto!important;white-space:nowrap!important;padding:2px 0!important}
+.cat-pill{border:0!important;border-radius:999px!important;padding:6px 10px!important;background:#f0f0f5!important;color:#44444b!important;font-size:10px!important;font-weight:700!important;white-space:nowrap!important}
+.cat-pill.bg-\\[\\#007AFF\\]{background:#1478e5!important;color:white!important}
+.apple-card{background:#fff!important;border:1px solid #e8e8ee!important;border-radius:18px!important;box-shadow:0 2px 10px #00000006!important}
+#dashboardListView{display:flex!important;flex-direction:column!important;gap:9px!important}
+#cropCollageContainer{display:flex!important;flex-direction:column!important;gap:9px!important}
+#cropCollageContainer>.apple-card{padding:10px!important;display:flex!important;flex-direction:column!important;gap:8px!important;min-width:0!important}
+#cropCollageContainer>.apple-card>div:first-child{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+#cropCollageContainer h2{margin:0!important;font-size:14px!important;line-height:1.3!important;font-weight:800!important}
+#cropCollageContainer .grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+.collage-crop-btn{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;min-width:0!important;min-height:78px!important;padding:7px 4px!important;gap:5px!important;border:1px solid #e7e7ed!important;border-radius:13px!important;background:#f8f8fa!important;color:#1c1c1e!important;font-family:inherit!important}
+.collage-crop-btn>div{width:100%!important;min-width:0!important}
+.collage-crop-btn .text-xs,.collage-crop-btn .text-\\[13px\\]{font-size:12px!important;line-height:1.25!important;font-weight:800!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.collage-crop-btn .text-\\[10px\\]{font-size:10px!important;line-height:1.25!important;color:#85858d!important}
+#cropCollageContainer .apple-card>span{border-radius:999px!important;background:#f0f0f5!important;padding:3px 8px!important;font-size:10px!important}
+#selectedCropDetailView{display:flex!important;flex-direction:column!important;gap:8px!important}
+#selectedCropHeroBanner{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;padding:10px!important}
+#selectedCropHeroTitle{font-size:15px!important;font-weight:800!important}
+#selectedCropDetailView button{font-family:inherit!important}
+#statusBanner{border-radius:13px!important;padding:9px 11px!important;font-size:11px!important}
+button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highlight-color:transparent}
+@media(min-width:640px){main{padding:12px 14px!important}#cropCollageContainer .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
+@media(max-width:380px){header>div{padding:6px 7px!important}header h1{font-size:13px!important}header p{font-size:9px!important}header button{padding:3px 5px!important;font-size:9px!important}main{padding-left:7px!important;padding-right:7px!important}main>section:first-child{padding:8px!important}.date-pill{padding:4px 8px!important;font-size:9px!important}#cropCollageContainer .grid{gap:5px!important}.collage-crop-btn{min-height:72px!important;padding:6px 3px!important}}
 </style>
 </head>
 <body class="min-h-screen pb-8 selection:bg-[#007AFF]/15 selection:text-[#007AFF]">
