@@ -35,6 +35,71 @@
         .pb-safe-nav {
             padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
         }
+    
+/* ===== Khetigram Apple-inspired visual refresh ===== */
+:root{
+ --kg-bg:#f4f5f7;--kg-card:#fff;--kg-text:#1d1d1f;--kg-muted:#777982;
+ --kg-line:rgba(20,25,35,.075);--kg-green:#248a3d;--kg-blue:#0071e3;
+ --kg-shadow:0 8px 30px rgba(25,35,50,.055);
+}
+html{scroll-behavior:smooth;background:var(--kg-bg)}
+body{background:var(--kg-bg)!important;color:var(--kg-text);font-family:"Noto Sans Gujarati",-apple-system,BlinkMacSystemFont,"Inter",sans-serif;letter-spacing:-.012em}
+body,button,input,select{ -webkit-tap-highlight-color:transparent}
+header.sticky{background:rgba(255,255,255,.82)!important;backdrop-filter:saturate(180%) blur(22px)!important;-webkit-backdrop-filter:saturate(180%) blur(22px)!important;border-bottom:1px solid var(--kg-line)!important;box-shadow:0 2px 12px rgba(0,0,0,.025)}
+header .max-w-2xl{padding-top:12px!important;padding-bottom:12px!important}
+main{max-width:760px!important;padding-top:18px!important;gap:16px!important}
+main>section, #loadingState, #dashboardContent>div, #farmerDashboardView>div, #khetigramAppView>div,
+#selectedCropHeroBanner, #emptyTableState, #kgYardDirectoryScreen,#kgYardDetailScreen{
+ border-radius:26px!important;border:1px solid var(--kg-line)!important;box-shadow:var(--kg-shadow)!important;background:var(--kg-card)!important}
+main>section{padding:18px!important;gap:18px!important}
+button,select,input[type=date],input[type=text]{font-family:inherit;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,border-color .18s ease}
+button:active{transform:scale(.97)}
+button.rounded-full,button[class*="rounded-full"]{border-radius:999px!important}
+.date-pill{padding:10px 16px!important;letter-spacing:-.01em}
+#categoryTabs button{border-radius:999px!important;padding:9px 13px!important}
+#visualCropGrid{max-height:240px!important;gap:9px!important}
+#visualCropGrid button,#visualCropGrid>div{border-radius:18px!important;border:1px solid var(--kg-line)!important;background:#f8f9fb!important;transition:all .2s ease}
+#visualCropGrid button:hover,#visualCropGrid>div:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.06)}
+#visualCropGrid .active,#visualCropGrid button[aria-pressed=true]{background:#eaf6ed!important;border-color:rgba(36,138,61,.22)!important}
+#moreFiltersDrawer select,#kgSearchInput,#specificDateInput,#simpleSortSelect{border:1px solid var(--kg-line)!important;background:#f5f6f8!important;border-radius:15px!important;min-height:42px}
+#refreshDataBtn{background:#f0f5ff!important}
+#alertBanner{border-radius:18px!important}
+#loadingState{padding:44px 20px!important}
+#farmerCardsGrid article{border:1px solid var(--kg-line)!important;border-radius:24px!important;box-shadow:0 5px 20px rgba(30,40,55,.04)!important;padding:16px!important;transition:transform .2s ease,box-shadow .2s ease}
+#farmerCardsGrid article:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(30,40,55,.08)!important}
+#farmerCardsGrid article .grid{border-radius:18px!important;background:#f6f7f9!important}
+#farmerCardsGrid article .grid>div:nth-child(2){box-shadow:none!important;border:1px solid rgba(0,113,227,.10)}
+#selectedCropHeroBanner{background:linear-gradient(130deg,#fff,#f4fbf5)!important}
+#paginationControls button{min-height:38px}
+#kgRegionTabs .kg-region-pill{padding:9px 13px!important}
+#kgYardDirectoryScreen>div{padding:15px!important;transition:background .18s ease}
+#kgYardDirectoryScreen>div:hover{background:#f8f9fb!important}
+#kgYardDetailScreen table{min-width:500px}
+#kgYardDetailScreen thead{background:#f5f6f8!important}
+#kgYardDetailScreen th{font-size:12px;letter-spacing:.01em}
+#kgYardDetailScreen td,#kgYardDetailScreen th{padding-top:13px!important;padding-bottom:13px!important}
+#kgYardDetailScreen tbody tr:hover{background:#fafbfc}
+#kgYardDetailScreen .bg-\[\#F5F5F7\]{background:#f6f7f9!important}
+#mobileBottomNav{background:rgba(255,255,255,.86)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;border-top:1px solid var(--kg-line)!important}
+:focus-visible{outline:3px solid rgba(0,113,227,.25)!important;outline-offset:2px}
+.no-scrollbar{scrollbar-width:none}
+@media(max-width:640px){
+ header .max-w-2xl{padding:10px 12px!important}
+ main{padding:12px!important;gap:12px!important}
+ main>section{padding:14px!important;border-radius:22px!important}
+ #visualCropGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;max-height:225px!important}
+ #farmerCardsGrid{grid-template-columns:1fr!important}
+ #farmerCardsGrid article{padding:14px!important;border-radius:22px!important}
+ #kgYardDetailScreen table{min-width:470px}
+ #kgYardDetailScreen .p-4{padding:14px!important}
+ #simpleSortSelect{max-width:150px}
+ #specificDateInput{width:118px!important}
+}
+@media(min-width:641px){
+ main{padding-left:20px!important;padding-right:20px!important}
+ #farmerCardsGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
     </style>
 </head>
 <body class="bg-[#F5F5F7] text-[#1D1D1F] pb-safe-nav sm:pb-10">
