@@ -856,6 +856,12 @@
                 </div>
             </div>
 
+            <!-- Crop favorites filter, matching Yard Muaj favorites -->
+            <div id="cropFavoriteFilterBar" class="apple-card scroll-row no-scrollbar" style="padding:8px; gap:6px;">
+                <button type="button" id="cropFilterAllBtn" class="tap-spring pill-dark">બધા પાક</button>
+                <button type="button" id="cropFilterFavBtn" class="tap-spring pill-light">⭐ મનપસંદ</button>
+            </div>
+
             <!-- Categorized Crop Button Collage Container -->
             <div id="cropCollageContainer" class="stack-md"></div>
 
@@ -1065,6 +1071,13 @@
                 category: 'all',
                 cropKeyword: ''
             },
+            cropFavorites: (() => {
+                try {
+                    const saved = JSON.parse(localStorage.getItem('guj_mandi_fav_crops') || '[]');
+                    return Array.isArray(saved) ? saved.filter(v => typeof v === 'string') : [];
+                } catch (_) { return []; }
+            })(),
+            cropFavoriteMode: 'all',
             khetiGram: {
                 region: 'all',
                 selectedYardKey: null,
@@ -1097,6 +1110,8 @@
             categoryStripDivider: document.getElementById('categoryStripDivider'),
             categoryPillStrip: document.getElementById('categoryPillStrip'),
             cropCollageContainer: document.getElementById('cropCollageContainer'),
+            cropFilterAllBtn: document.getElementById('cropFilterAllBtn'),
+            cropFilterFavBtn: document.getElementById('cropFilterFavBtn'),
             selectedCropDetailView: document.getElementById('selectedCropDetailView'),
 
             statusBanner: document.getElementById('statusBanner'),
@@ -1787,8 +1802,22 @@
             'દાળ': '🫘', 'અનાજ': '🌾', 'ફળ': '🍎', 'અન્ય': '🌱'
         };
 
+        function syncCropFavoriteFilterButtons() {
+            if (els.cropFilterAllBtn) els.cropFilterAllBtn.className = state.cropFavoriteMode === 'all' ? 'tap-spring pill-dark' : 'tap-spring pill-light';
+            if (els.cropFilterFavBtn) els.cropFilterFavBtn.className = state.cropFavoriteMode === 'fav' ? 'tap-spring pill-dark' : 'tap-spring pill-light';
+        }
+
+        function toggleFavoriteCrop(cropKey) {
+            const index = state.cropFavorites.indexOf(cropKey);
+            if (index >= 0) state.cropFavorites.splice(index, 1);
+            else state.cropFavorites.push(cropKey);
+            try { localStorage.setItem('guj_mandi_fav_crops', JSON.stringify(state.cropFavorites)); } catch (_) { /* favorites remain active for this session */ }
+            renderCropCollage();
+        }
+
         function renderCropCollage() {
             if (!els.cropCollageContainer) return;
+            syncCropFavoriteFilterButtons();
 
             if (state.filters.cropKeyword) {
                 els.cropCollageContainer.classList.add('hidden');
@@ -1827,7 +1856,9 @@
 
             catGroups.forEach((cropMap, catName) => {
                 if (cropMap.size === 0) return;
-                const crops = Array.from(cropMap.values()).sort((a, b) => b.yards.size - a.yards.size || a.gu.localeCompare(b.gu, 'gu'));
+                let crops = Array.from(cropMap.values()).sort((a, b) => b.yards.size - a.yards.size || a.gu.localeCompare(b.gu, 'gu'));
+                if (state.cropFavoriteMode === 'fav') crops = crops.filter(c => state.cropFavorites.includes(c.key));
+                if (crops.length === 0) return;
                 totalRenderedCrops += crops.length;
                 const catEmoji = CATEGORY_ICONS[catName] || '🌱';
 
@@ -1842,13 +1873,16 @@
                         </div>
                         <div class="crop-grid">
                             ${crops.map(c => `
-                                <button type="button" data-crop="${c.key.replace(/"/g, '&quot;')}" class="collage-crop-btn tap-spring">
-                                    ${getCropIconHtml(c.raw, true)}
-                                    <div class="w-full min-w-0">
-                                        <div class="crop-card-name truncate">${c.gu}</div>
-                                        <div class="crop-card-yards tabular-nums">${c.yards.size} યાર્ડ</div>
-                                    </div>
-                                </button>
+                                <div class="crop-favorite-card" style="position:relative; min-width:0;">
+                                    <button type="button" data-crop="${c.key.replace(/"/g, '&quot;')}" class="collage-crop-btn tap-spring" style="width:100%; height:100%; padding-top:30px;">
+                                        ${getCropIconHtml(c.raw, true)}
+                                        <div class="w-full min-w-0">
+                                            <div class="crop-card-name">${c.gu}</div>
+                                            <div class="crop-card-yards tabular-nums">${c.yards.size} યાર્ડ</div>
+                                        </div>
+                                    </button>
+                                    <button type="button" data-fav-crop="${c.key.replace(/"/g, '&quot;')}" aria-label="${state.cropFavorites.includes(c.key) ? 'મનપસંદમાંથી દૂર કરો' : 'મનપસંદમાં ઉમેરો'}" class="crop-fav-star tap-spring" style="position:absolute; top:5px; right:5px; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.92); box-shadow:0 1px 4px rgba(0,0,0,.08); font-size:15px; display:flex; align-items:center; justify-content:center; z-index:2;">${state.cropFavorites.includes(c.key) ? '⭐' : '☆'}</button>
+                                </div>
                             `).join('')}
                         </div>
                     </div>
@@ -1860,7 +1894,7 @@
                     <div class="apple-card text-center" style="padding:48px 16px;">
                         <div style="font-size:28px; margin-bottom:4px;">🌾</div>
                         <p style="font-size:15px; font-weight:700; color:#1C1C1E;">આ પસંદગી મુજબ કોઈ પાક મળ્યા નથી</p>
-                        <p style="font-size:12px; font-weight:500; color:#8E8E93; margin-top:4px;">બીજી તારીખ અથવા વર્ગ પસંદ કરો</p>
+                        <p style="font-size:12px; font-weight:500; color:#8E8E93; margin-top:4px;">${state.cropFavoriteMode === 'fav' ? '⭐ મનપસંદમાં પાક ઉમેરો અથવા બીજા વર્ગ પસંદ કરો' : 'બીજી તારીખ અથવા વર્ગ પસંદ કરો'}</p>
                     </div>
                 `;
             }
@@ -1873,6 +1907,12 @@
                     renderCropCollage();
                     applyFiltersAndRender();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+            els.cropCollageContainer.querySelectorAll('.crop-fav-star').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavoriteCrop(btn.dataset.favCrop);
                 });
             });
         }
@@ -2336,6 +2376,17 @@ return;
         // 12. EVENT LISTENERS & INIT
         // ==========================================
         function initEventListeners() {
+            if (els.cropFilterAllBtn) els.cropFilterAllBtn.addEventListener('click', () => {
+                state.cropFavoriteMode = 'all';
+                syncCropFavoriteFilterButtons();
+                renderCropCollage();
+            });
+            if (els.cropFilterFavBtn) els.cropFilterFavBtn.addEventListener('click', () => {
+                state.cropFavoriteMode = 'fav';
+                syncCropFavoriteFilterButtons();
+                renderCropCollage();
+            });
+
             // Reset and render locally on tab switch. No network fetch/loading skeleton, so switching stays smooth.
             const handleModeTabClick = (mode) => {
                 // Keep both views in a clean list state when users switch sections.
