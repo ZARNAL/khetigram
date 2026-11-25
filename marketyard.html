@@ -1003,6 +1003,7 @@
         const HIST_BASE = `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=${API_KEY}&format=json&limit=10000&offset=0`;
 
         const state = {
+            requestSequence: 0,
             rawRecords: [],
             liveCacheRecords: [],
             isFallbackData: false,
@@ -1025,7 +1026,14 @@
             khetiGram: {
                 region: 'all',
                 selectedYardKey: null,
-                favoriteYards: JSON.parse(localStorage.getItem('guj_mandi_fav_yards') || '["ગોંડલ", "રાજકોટ", "ઊંઝા", "મહુવા"]')
+                favoriteYards: (() => {
+                    try {
+                        const saved = JSON.parse(localStorage.getItem('guj_mandi_fav_yards') || 'null');
+                        return Array.isArray(saved) ? saved.filter(v => typeof v === 'string') : ['ગોંડલ', 'રાજકોટ', 'ઊંઝા', 'મહુવા'];
+                    } catch (_) {
+                        return ['ગોંડલ', 'રાજકોટ', 'ઊંઝા', 'મહુવા'];
+                    }
+                })()
             }
         };
 
@@ -1568,67 +1576,99 @@
         // ==========================================
         // 7. DATA FETCHING ENGINE
         // ==========================================
+        function normalizeMandiRecord(record, fallbackDate = '') {
+            const read = (...keys) => {
+                for (const key of keys) {
+                    const value = record?.[key];
+                    if (value !== undefined && value !== null && value !== '') return value;
+                }
+                return '';
+            };
+            const numericPrice = value => String(value ?? '').replace(/,/g, '').trim();
+            return {
+                state: read('state', 'State') || 'Gujarat',
+                district: read('district', 'District'),
+                market: read('market', 'Market'),
+                commodity: read('commodity', 'Commodity'),
+                variety: read('variety', 'Variety') || 'Other',
+                arrival_date: read('arrival_date', 'Arrival_Date') || fallbackDate,
+                min_price: numericPrice(read('min_price', 'Min_Price') || '0'),
+                max_price: numericPrice(read('max_price', 'Max_Price') || '0'),
+                modal_price: numericPrice(read('modal_price', 'Modal_Price') || '0')
+            };
+        }
+
         async function loadMandiData(mode = 'latest', customISO = '') {
+            const requestId = ++state.requestSequence;
             const fetchStart = performance.now();
-            if (els.listLoadingSkeleton) els.listLoadingSkeleton.classList.remove('hidden');
+            const isFirstLoad = state.rawRecords.length === 0;
+            if (isFirstLoad && els.listLoadingSkeleton) els.listLoadingSkeleton.classList.remove('hidden');
             if (els.statusBanner) els.statusBanner.classList.add('hidden');
+
+            state.dateMode = mode;
+            if (mode === 'custom' && customISO) state.selectedDateISO = customISO;
+            else if (mode === 'yesterday') state.selectedDateISO = getOffsetDateISO(1);
+            else if (mode === '2days') state.selectedDateISO = getOffsetDateISO(2);
 
             let records = [];
             let usedFallback = false;
+            let fetchError = false;
+            const targetISO = mode === 'custom' && customISO
+                ? customISO
+                : (mode === 'yesterday' ? getOffsetDateISO(1) : (mode === '2days' ? getOffsetDateISO(2) : state.selectedDateISO || getOffsetDateISO(0)));
+            const ddmmyyyy = isoToDDMMYYYY(targetISO);
 
             try {
-                if (mode === 'latest') {
-                    const res = await fetch(DAILY_URL);
-                    if (!res.ok) throw new Error('API Error');
-                    const json = await res.json();
-                    records = (json.records || []).filter(r => parseFloat(r.modal_price) > 0 || parseFloat(r.max_price) > 0);
-                    if (records.length > 0) {
-                        state.liveCacheRecords = records;
-                        const sampleDate = records[0].arrival_date;
-                        const isoFromFeed = ddmmyyyyToISO(sampleDate);
-                        if (isoFromFeed) {
-                            state.actualFeedDateISO = isoFromFeed;
-                            state.selectedDateISO = isoFromFeed;
-                            if (els.customDateInput) els.customDateInput.value = isoFromFeed;
-                        }
-                    }
-                } else {
-                    const targetISO = mode === 'custom' && customISO
-                        ? customISO
-                        : (mode === 'yesterday' ? getOffsetDateISO(1) : getOffsetDateISO(2));
-                    const ddmmyyyy = isoToDDMMYYYY(targetISO);
-                    const url = `${HIST_BASE}&filters[State]=Gujarat&filters[Arrival_Date]=${encodeURIComponent(ddmmyyyy)}`;
-                    const res = await fetch(url);
-                    if (res.ok) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+                try {
+                    if (mode === 'latest') {
+                        const res = await fetch(DAILY_URL, { signal: controller.signal });
+                        if (!res.ok) throw new Error(`API HTTP ${res.status}`);
                         const json = await res.json();
-                        records = (json.records || []).map(r => ({
-                            state: r.State || r.state || 'Gujarat',
-                            district: r.District || r.district || '',
-                            market: r.Market || r.market || '',
-                            commodity: r.Commodity || r.commodity || '',
-                            variety: r.Variety || r.variety || 'Other',
-                            arrival_date: r.Arrival_Date || r.arrival_date || ddmmyyyy,
-                            min_price: r.Min_Price || r.min_price || '0',
-                            max_price: r.Max_Price || r.max_price || '0',
-                            modal_price: r.Modal_Price || r.modal_price || '0'
-                        })).filter(r => parseFloat(r.modal_price) > 0 || parseFloat(r.max_price) > 0);
+                        records = (Array.isArray(json.records) ? json.records : [])
+                            .map(r => normalizeMandiRecord(r, ddmmyyyy))
+                            .filter(r => Number(r.modal_price) > 0 || Number(r.max_price) > 0);
+                        if (records.length) {
+                            state.liveCacheRecords = records;
+                            const feedDate = records[0].arrival_date;
+                            const feedISO = ddmmyyyyToISO(feedDate);
+                            if (feedISO) {
+                                state.actualFeedDateISO = feedISO;
+                                state.selectedDateISO = feedISO;
+                                if (els.customDateInput) els.customDateInput.value = feedISO;
+                            }
+                        }
+                    } else {
+                        const url = `${HIST_BASE}&filters[State]=Gujarat&filters[Arrival_Date]=${encodeURIComponent(ddmmyyyy)}`;
+                        const res = await fetch(url, { signal: controller.signal });
+                        if (!res.ok) throw new Error(`Historical API HTTP ${res.status}`);
+                        const json = await res.json();
+                        records = (Array.isArray(json.records) ? json.records : [])
+                            .map(r => normalizeMandiRecord(r, ddmmyyyy))
+                            .filter(r => Number(r.modal_price) > 0 || Number(r.max_price) > 0);
                     }
+                } finally {
+                    clearTimeout(timeoutId);
                 }
             } catch (err) {
-                console.warn('Fetch failed, checking cache/fallback:', err);
+                fetchError = true;
+                console.warn('Mandi data request failed:', err);
             }
+
+            // Ignore late responses from earlier date selections or refresh taps.
+            if (requestId !== state.requestSequence) return;
 
             if (records.length === 0) {
                 if (state.liveCacheRecords.length > 0 && mode === 'latest') {
                     records = state.liveCacheRecords;
                 } else {
                     usedFallback = true;
-                    const dStr = isoToDDMMYYYY(state.selectedDateISO || getOffsetDateISO(0));
-                    records = getFallbackRecords(dStr);
+                    records = getFallbackRecords(ddmmyyyy || isoToDDMMYYYY(getOffsetDateISO(0)));
                     if (els.statusBanner && els.statusBannerText) {
-                        els.statusBannerText.textContent = mode === 'latest'
-                            ? 'લાઈવ સર્વર વ્યસ્ત હોવાથી અંદાજિત ભાવ દર્શાવ્યા છે.'
-                            : `${dStr} ના સરકારી રેકોર્ડ ઉપલબ્ધ નથી — નમૂના ભાવ દર્શાવ્યા છે.`;
+                        els.statusBannerText.textContent = fetchError
+                            ? (mode === 'latest' ? 'લાઈવ ડેટા લોડ થઈ શક્યો નથી — છેલ્લો ઉપલબ્ધ/નમૂના ભાવ દર્શાવ્યા છે.' : `${ddmmyyyy} ના ભાવ લોડ થઈ શક્યા નથી — નમૂના ભાવ દર્શાવ્યા છે.`)
+                            : (mode === 'latest' ? 'આ સમયે API માં ભાવ ઉપલબ્ધ નથી — નમૂના ભાવ દર્શાવ્યા છે.' : `${ddmmyyyy} ના સરકારી રેકોર્ડ ઉપલબ્ધ નથી — નમૂના ભાવ દર્શાવ્યા છે.`);
                         els.statusBanner.classList.remove('hidden');
                     }
                 }
@@ -1639,23 +1679,18 @@
             state.lastFetchDurationMs = Math.max(1, Math.round(performance.now() - fetchStart));
             const now = new Date();
             state.lastFetchTimestamp = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            if (els.headerStatsBadgeCount) {
-                els.headerStatsBadgeCount.textContent = records.length.toLocaleString('en-IN');
-            }
+            if (els.headerStatsBadgeCount) els.headerStatsBadgeCount.textContent = records.length.toLocaleString('en-IN');
             state.currentPage = 1;
 
             renderCategoryPills();
             renderCropCollage();
             updateSubtitleText();
             applyFiltersAndRender();
-            if (els.statsModalOverlay && !els.statsModalOverlay.classList.contains('hidden')) {
-                renderStatsModal();
-            }
+            if (els.statsModalOverlay && !els.statsModalOverlay.classList.contains('hidden')) renderStatsModal();
 
             if (els.listLoadingSkeleton) els.listLoadingSkeleton.classList.add('hidden');
             if (state.uiViewMode === 'khetigram') renderKhetiGramView();
         }
-
         // ==========================================
         // 8. RENDERING CATEGORIES, CROP COLLAGE & LIST
         // ==========================================
@@ -1915,7 +1950,7 @@
             const idx = state.khetiGram.favoriteYards.indexOf(yardDisplayName);
             if (idx >= 0) state.khetiGram.favoriteYards.splice(idx, 1);
             else state.khetiGram.favoriteYards.push(yardDisplayName);
-            localStorage.setItem('guj_mandi_fav_yards', JSON.stringify(state.khetiGram.favoriteYards));
+            try { localStorage.setItem('guj_mandi_fav_yards', JSON.stringify(state.khetiGram.favoriteYards)); } catch (_) { /* storage may be blocked; favorites still work for this session */ }
             renderKhetiGramView();
         }
 
