@@ -1631,16 +1631,7 @@
                         records = (Array.isArray(json.records) ? json.records : [])
                             .map(r => normalizeMandiRecord(r, ddmmyyyy))
                             .filter(r => Number(r.modal_price) > 0 || Number(r.max_price) > 0);
-                        if (records.length) {
-                            state.liveCacheRecords = records;
-                            const feedDate = records[0].arrival_date;
-                            const feedISO = ddmmyyyyToISO(feedDate);
-                            if (feedISO) {
-                                state.actualFeedDateISO = feedISO;
-                                state.selectedDateISO = feedISO;
-                                if (els.customDateInput) els.customDateInput.value = feedISO;
-                            }
-                        }
+
                     } else {
                         const url = `${HIST_BASE}&filters[State]=Gujarat&filters[Arrival_Date]=${encodeURIComponent(ddmmyyyy)}`;
                         const res = await fetch(url, { signal: controller.signal });
@@ -1660,6 +1651,17 @@
 
             // Ignore late responses from earlier date selections or refresh taps.
             if (requestId !== state.requestSequence) return;
+
+            // Only the latest accepted request may update the live cache/date state.
+            if (mode === 'latest' && records.length) {
+                state.liveCacheRecords = records;
+                const feedISO = ddmmyyyyToISO(records[0].arrival_date);
+                if (feedISO) {
+                    state.actualFeedDateISO = feedISO;
+                    state.selectedDateISO = feedISO;
+                    if (els.customDateInput) els.customDateInput.value = feedISO;
+                }
+            }
 
             if (records.length === 0) {
                 if (state.liveCacheRecords.length > 0 && mode === 'latest') {
