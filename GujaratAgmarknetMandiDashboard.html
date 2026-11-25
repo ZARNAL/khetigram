@@ -1,443 +1,82 @@
 <!DOCTYPE html>
 <html lang="gu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ગુજરાત માર્કેટ યાર્ડ ભાવ | Gujarat APMC Mandi Bhav</title>
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Noto Sans Gujarati -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&family=Noto+Sans+Gujarati:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['"Noto Sans Gujarati"', '-apple-system', 'BlinkMacSystemFont', 'Inter', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'apple': '0 2px 14px rgba(0, 0, 0, 0.05)',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        body {
-            background-color: #F5F5F7;
-            color: #1D1D1F;
-            -webkit-font-smoothing: antialiased;
-        }
-        .pb-safe-nav {
-            padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
-        }
-    
-/* ===== Khetigram Apple-inspired visual refresh ===== */
-:root{
- --kg-bg:#f4f5f7;--kg-card:#fff;--kg-text:#1d1d1f;--kg-muted:#777982;
- --kg-line:rgba(20,25,35,.075);--kg-green:#248a3d;--kg-blue:#0071e3;
- --kg-shadow:0 8px 30px rgba(25,35,50,.055);
-}
-html{scroll-behavior:smooth;background:var(--kg-bg)}
-body{background:var(--kg-bg)!important;color:var(--kg-text);font-family:"Noto Sans Gujarati",-apple-system,BlinkMacSystemFont,"Inter",sans-serif;letter-spacing:-.012em}
-body,button,input,select{ -webkit-tap-highlight-color:transparent}
-header.sticky{background:rgba(255,255,255,.82)!important;backdrop-filter:saturate(180%) blur(22px)!important;-webkit-backdrop-filter:saturate(180%) blur(22px)!important;border-bottom:1px solid var(--kg-line)!important;box-shadow:0 2px 12px rgba(0,0,0,.025)}
-header .max-w-2xl{padding-top:12px!important;padding-bottom:12px!important}
-main{max-width:760px!important;padding-top:18px!important;gap:16px!important}
-main>section, #loadingState, #dashboardContent>div, #farmerDashboardView>div, #khetigramAppView>div,
-#selectedCropHeroBanner, #emptyTableState, #kgYardDirectoryScreen,#kgYardDetailScreen{
- border-radius:26px!important;border:1px solid var(--kg-line)!important;box-shadow:var(--kg-shadow)!important;background:var(--kg-card)!important}
-main>section{padding:18px!important;gap:18px!important}
-button,select,input[type=date],input[type=text]{font-family:inherit;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,border-color .18s ease}
-button:active{transform:scale(.97)}
-button.rounded-full,button[class*="rounded-full"]{border-radius:999px!important}
-.date-pill{padding:10px 16px!important;letter-spacing:-.01em}
-#categoryTabs button{border-radius:999px!important;padding:9px 13px!important}
-#visualCropGrid{max-height:240px!important;gap:9px!important}
-#visualCropGrid button,#visualCropGrid>div{border-radius:18px!important;border:1px solid var(--kg-line)!important;background:#f8f9fb!important;transition:all .2s ease}
-#visualCropGrid button:hover,#visualCropGrid>div:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.06)}
-#visualCropGrid .active,#visualCropGrid button[aria-pressed=true]{background:#eaf6ed!important;border-color:rgba(36,138,61,.22)!important}
-#moreFiltersDrawer select,#kgSearchInput,#specificDateInput,#simpleSortSelect{border:1px solid var(--kg-line)!important;background:#f5f6f8!important;border-radius:15px!important;min-height:42px}
-#refreshDataBtn{background:#f0f5ff!important}
-#alertBanner{border-radius:18px!important}
-#loadingState{padding:44px 20px!important}
-#farmerCardsGrid article{border:1px solid var(--kg-line)!important;border-radius:24px!important;box-shadow:0 5px 20px rgba(30,40,55,.04)!important;padding:16px!important;transition:transform .2s ease,box-shadow .2s ease}
-#farmerCardsGrid article:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(30,40,55,.08)!important}
-#farmerCardsGrid article .grid{border-radius:18px!important;background:#f6f7f9!important}
-#farmerCardsGrid article .grid>div:nth-child(2){box-shadow:none!important;border:1px solid rgba(0,113,227,.10)}
-#selectedCropHeroBanner{background:linear-gradient(130deg,#fff,#f4fbf5)!important}
-#paginationControls button{min-height:38px}
-#kgRegionTabs .kg-region-pill{padding:9px 13px!important}
-#kgYardDirectoryScreen>div{padding:15px!important;transition:background .18s ease}
-#kgYardDirectoryScreen>div:hover{background:#f8f9fb!important}
-#kgYardDetailScreen table{min-width:500px}
-#kgYardDetailScreen thead{background:#f5f6f8!important}
-#kgYardDetailScreen th{font-size:12px;letter-spacing:.01em}
-#kgYardDetailScreen td,#kgYardDetailScreen th{padding-top:13px!important;padding-bottom:13px!important}
-#kgYardDetailScreen tbody tr:hover{background:#fafbfc}
-#kgYardDetailScreen .bg-\[\#F5F5F7\]{background:#f6f7f9!important}
-#mobileBottomNav{background:rgba(255,255,255,.86)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;border-top:1px solid var(--kg-line)!important}
-:focus-visible{outline:3px solid rgba(0,113,227,.25)!important;outline-offset:2px}
-.no-scrollbar{scrollbar-width:none}
-@media(max-width:640px){
- header .max-w-2xl{padding:10px 12px!important}
- main{padding:12px!important;gap:12px!important}
- main>section{padding:14px!important;border-radius:22px!important}
- #visualCropGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;max-height:225px!important}
- #farmerCardsGrid{grid-template-columns:1fr!important}
- #farmerCardsGrid article{padding:14px!important;border-radius:22px!important}
- #kgYardDetailScreen table{min-width:470px}
- #kgYardDetailScreen .p-4{padding:14px!important}
- #simpleSortSelect{max-width:150px}
- #specificDateInput{width:118px!important}
-}
-@media(min-width:641px){
- main{padding-left:20px!important;padding-right:20px!important}
- #farmerCardsGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
-
-    /* ===== Compact space-saving mode =====
-main{padding-top:9px!important;gap:9px!important}
-main>section{padding:11px!important;gap:10px!important;border-radius:20px!important}
-header .max-w-2xl{padding-top:8px!important;padding-bottom:8px!important}
-header .w-9.h-9.rounded-2xl{width:32px!important;height:32px!important;border-radius:11px!important}
-header h1{font-size:14px!important}#activeDateSubtitle{font-size:10px!important}
-#dataStatusBadge{font-size:9px!important;padding:2px 6px!important}
-#unitMannBtn,#unitQuintalBtn{padding:5px 9px!important;font-size:10px!important}
-#refreshDataBtn{width:32px!important;height:32px!important}
-.date-pill{padding:7px 11px!important;font-size:11px!important}
-#specificDateInput{font-size:10px!important;width:105px!important}
-#categoryTabs{padding-bottom:3px!important;gap:5px!important}
-#categoryTabs button{padding:6px 10px!important;font-size:10px!important}
-#visualCropGrid{max-height:145px!important;gap:5px!important}
-#visualCropGrid button,#visualCropGrid>div{border-radius:12px!important;padding:6px 5px!important;min-height:42px!important}
-#visualCropGrid button span,#visualCropGrid>div span{font-size:11px!important}
-#visualCropGrid button .text-2xl,#visualCropGrid>div .text-2xl{font-size:18px!important}
-#visualCropGrid button .text-xl,#visualCropGrid>div .text-xl{font-size:17px!important}
-#visualCropGrid button .text-sm,#visualCropGrid>div .text-sm{font-size:10px!important}
-main>section>div:nth-child(2)>div:first-child{display:none!important}
-main>section>div:nth-child(2){gap:6px!important}
-main>section>div:nth-child(3){padding-top:5px!important}
-#toggleMoreFiltersBtn{padding:6px 10px!important;font-size:10px!important}
-#moreFiltersDrawer{gap:6px!important}
-#moreFiltersDrawer select{min-height:36px!important;padding:7px 10px!important;font-size:11px!important}
-#farmerDashboardView{gap:9px!important}
-#farmerDashboardView>div{border-radius:20px!important}
-#selectedCropHeroBanner{padding:8px 11px!important}
-#selectedCropHeroIcon{width:34px!important;height:34px!important;font-size:20px!important}
-#selectedCropHeroTitle{font-size:14px!important}
-#farmerDashboardView>div.flex.items-center.justify-between{padding:0!important}
-#farmerDashboardView h2{font-size:14px!important}
-#tableSummaryText{font-size:10px!important}
-#speakSummaryBtn{padding:6px 9px!important;font-size:10px!important}
-#speakSummaryBtn span:last-child{display:none!important}
-#simpleSortSelect{padding:6px 9px!important;font-size:10px!important;min-height:34px!important}
-#farmerCardsGrid{gap:8px!important}
-#farmerCardsGrid article{padding:11px!important;border-radius:18px!important;gap:8px!important}
-#farmerCardsGrid article .w-11.h-11{width:35px!important;height:35px!important;border-radius:11px!important;font-size:19px!important}
-#farmerCardsGrid article h3{font-size:14px!important}
-#farmerCardsGrid article p{font-size:10px!important}
-#farmerCardsGrid article .grid{padding:5px!important;border-radius:13px!important}
-#farmerCardsGrid article .grid>div{padding:4px 2px!important}
-#farmerCardsGrid article .grid>div span:first-child{font-size:10px!important}
-#farmerCardsGrid article .grid>div span:last-child{font-size:13px!important}
-#farmerCardsGrid article .grid>div:nth-child(2) span:last-child{font-size:15px!important}
-#paginationControls button{min-height:32px!important;padding:6px 10px!important}
-#khetigramAppView{gap:8px!important}
-#khetigramAppView>div{border-radius:19px!important}
-#kgSearchInput{min-height:36px!important;padding:7px 11px!important;font-size:11px!important}
-#kgRegionTabs{gap:5px!important}
-#kgRegionTabs .kg-region-pill{padding:6px 10px!important;font-size:10px!important}
-#kgYardDirectoryScreen>div{padding:10px!important}
-#kgYardDirectoryScreen .w-11.h-11{width:34px!important;height:34px!important;border-radius:11px!important}
-#kgYardDirectoryScreen h4{font-size:13px!important}
-#kgYardDirectoryScreen p{font-size:10px!important}
-#kgYardDetailScreen .p-4{padding:11px!important}
-#kgYardDetailScreen td,#kgYardDetailScreen th{padding-top:8px!important;padding-bottom:8px!important;font-size:11px!important}
-#loadingState{padding:25px 15px!important}
-@media(max-width:640px){main{padding:8px!important}main>section{padding:10px!important}#visualCropGrid{grid-template-columns:repeat(3,minmax(0,1fr))!important;max-height:140px!important}#farmerCardsGrid{grid-template-columns:1fr!important}#farmerCardsGrid article{padding:10px!important}#kgYardDetailScreen table{min-width:420px!important}}
-
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f7f3">
+<title>ખેતીગ્રામ · ગુજરાતના બજાર ભાવ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f3;--card:#fff;--ink:#1c241e;--muted:#6c766e;--line:#e8ece7;--green:#218448;--green2:#e8f5eb;--blue:#1675d1;--shadow:0 3px 14px rgba(31,50,36,.055}
+*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Gujarati",Inter,-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:calc(75px + env(safe-area-inset-bottom));font-size:14px}
+button,input,select{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:active{transform:scale(.97)}.hidden{display:none!important}.no-scrollbar{scrollbar-width:none}.no-scrollbar::-webkit-scrollbar{display:none}
+header{position:sticky;top:0;z-index:20;background:rgba(247,249,246,.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid rgba(30,45,30,.06)}
+.topbar{max-width:850px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:9px 12px;gap:9px}.brand{display:flex;align-items:center;gap:9px;min-width:0}.brand-icon{height:36px;width:36px;border-radius:13px;background:linear-gradient(145deg,#2a9b58,#16753c);color:white;display:grid;place-items:center;font-size:19px;box-shadow:0 3px 8px #24844830}.brand h1{font-size:15px;line-height:1.25;font-weight:800;margin:0}.brand small{font-size:10px;color:var(--muted);display:block;margin-top:1px}.header-actions{display:flex;align-items:center;gap:6px}.unit-toggle{background:#e9ede8;border-radius:999px;padding:3px;display:flex}.unit-toggle button{border:0;border-radius:999px;padding:6px 9px;background:transparent;color:#657067;font-size:11px;font-weight:800}.unit-toggle button.active{background:white;color:var(--ink);box-shadow:0 1px 4px #00000010}.icon-btn{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;background:white;color:var(--green);display:grid;place-items:center}
+main{max-width:850px;margin:0 auto;padding:10px 10px 14px;display:flex;flex-direction:column;gap:9px}
+.panel{background:var(--card);border:1px solid rgba(31,50,36,.045);border-radius:19px;box-shadow:var(--shadow)}
+.selector{padding:10px 10px 9px}.dates{display:flex;align-items:center;gap:5px;overflow-x:auto;padding-bottom:2px}.date-pill{border:0;background:#f0f3ef;color:#465247;border-radius:999px;padding:7px 11px;white-space:nowrap;font-size:11px;font-weight:800}.date-pill.active{background:#203128;color:white}.date-calendar{display:flex;align-items:center;background:#f0f3ef;border-radius:999px;padding:5px 8px;margin-left:auto;min-width:max-content}.date-calendar input{width:112px;border:0;background:transparent;color:#354238;font-size:11px;outline:none}
+.crop-search{display:flex;align-items:center;gap:8px;background:#f4f6f3;border:1px solid #edf0ec;border-radius:13px;padding:8px 10px;margin-top:9px}.crop-search input{width:100%;min-width:0;border:0;outline:none;background:transparent;font-size:13px}.crop-search .search-icon{color:#7a857b}
+#categoryTabs{display:flex;gap:5px;overflow-x:auto;padding:8px 0 5px}.cat-pill{border:1px solid #e9eee9;background:#f7f9f6;border-radius:999px;padding:6px 10px;white-space:nowrap;font-size:10px;font-weight:700;color:#58635a;display:flex;gap:4px;align-items:center}.cat-pill.selected{background:#e6f4e9;border-color:#cbe6d1;color:#1d7540}
+#visualCropGrid{display:flex;flex-wrap:wrap;gap:6px;max-height:130px;overflow-y:auto;align-content:flex-start;padding:2px 0 3px}.crop-chip{border:1px solid #e9eee9;border-radius:999px;background:white;color:#334035;display:inline-flex;align-items:center;gap:5px;padding:7px 10px;font-size:11px;font-weight:700;max-width:100%}.crop-chip .crop-emoji{font-size:13px}.crop-chip.active{background:#1f3428;border-color:#1f3428;color:white}.crop-empty{color:var(--muted);font-size:12px;padding:10px}
+.filter-row{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);margin-top:7px;padding-top:8px}.filter-row label{color:var(--muted);font-size:10px;font-weight:700}.filter-toggle{border:0;background:#f0f3ef;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:800;color:#39463b}.filter-drawer{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding-top:7px}.filter-drawer select{min-width:0;border:1px solid #e6ebe6;background:#f5f7f4;border-radius:12px;padding:9px 8px;font-size:11px;font-weight:700;color:#39443a}
+#alertBanner{padding:10px 12px;border-radius:14px;background:#fff8e9;border:1px solid #f2dfb8;font-size:11px;color:#765a23}
+#loadingState{padding:26px 12px;text-align:center}.loader{width:27px;height:27px;border:3px solid #e3ebe3;border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 9px}@keyframes spin{to{transform:rotate(360deg)}}#loadingState h3{font-size:13px;margin:0;font-weight:800}
+#dashboardContent{display:flex;flex-direction:column;gap:9px}
+#farmerDashboardView{display:flex;flex-direction:column;gap:9px}
+#selectedCropHeroBanner{padding:10px 12px;border-radius:15px;background:#eaf5ec;border:1px solid #d9eadc;display:flex;align-items:center;justify-content:space-between;gap:7px}#selectedCropHeroBanner>div{display:flex;align-items:center;gap:8px;min-width:0}#selectedCropHeroIcon{font-size:20px}#selectedCropHeroTitle{font-size:13px;font-weight:800;margin:0}#selectedCropHeroBanner button{border:0;background:#d9ebdd;border-radius:999px;padding:6px 9px;font-size:10px;font-weight:800}
+.summary-head{display:flex;align-items:center;justify-content:space-between;padding:2px 2px;gap:6px}.summary-head h2{margin:0;font-size:14px;font-weight:800}.summary-head p{margin:2px 0 0;color:var(--muted);font-size:10px}.summary-actions{display:flex;align-items:center;gap:5px}.summary-actions button{border:0;border-radius:999px;background:#e8f2ff;color:#1767b1;padding:7px 9px;font-size:11px;font-weight:800}.summary-actions select{border:1px solid var(--line);border-radius:999px;background:white;padding:6px 8px;font-size:10px;max-width:118px}
+#farmerCardsGrid{display:grid;grid-template-columns:1fr;gap:7px}
+#farmerCardsGrid article{background:white;border:1px solid #e9eee9!important;border-radius:17px!important;box-shadow:var(--shadow)!important;padding:11px!important;gap:8px!important}
+#farmerCardsGrid article .w-11.h-11{width:34px!important;height:34px!important;border-radius:11px!important;font-size:19px!important;background:#f2f6f1!important}
+#farmerCardsGrid article h3{font-size:13px!important;font-weight:800!important;line-height:1.35!important}#farmerCardsGrid article p{font-size:10px!important;color:var(--muted)!important}
+#farmerCardsGrid article .grid{padding:5px!important;border-radius:12px!important;background:#f5f7f4!important;gap:3px!important}
+#farmerCardsGrid article .grid>div{padding:5px 2px!important;border-radius:9px!important}
+#farmerCardsGrid article .grid>div:nth-child(2){background:#e8f3eb!important;border:0!important}
+#farmerCardsGrid article .grid>div span:first-child{font-size:10px!important}#farmerCardsGrid article .grid>div span:last-child{font-size:13px!important;font-weight:800!important}
+#farmerCardsGrid article .grid>div:nth-child(2) span:last-child{font-size:15px!important;color:#1c713c!important}
+#paginationControls{display:flex;align-items:center;gap:5px}#paginationControls button{border:0;border-radius:999px;padding:7px 10px;background:#edf2ed;color:#3c483e;font-size:10px;font-weight:800}#paginationControls button:last-child:not(:disabled){background:#203128;color:white}
+#emptyTableState{padding:24px 10px;text-align:center}#emptyTableState h4{margin:5px 0;font-size:13px}#emptyTableState p{font-size:11px;color:var(--muted)}
+#khetigramAppView{display:flex;flex-direction:column;gap:8px}#khetigramAppView>div:first-child{padding:10px;border-radius:18px}.yard-search{display:flex;gap:6px;align-items:center}.yard-search input{width:100%;border:1px solid var(--line);background:#f4f6f3;border-radius:12px;padding:9px;font-size:12px;outline:none}.yard-search button{border:0;border-radius:12px;background:#e8f2ff;color:#1767b1;padding:8px;font-size:10px;font-weight:800}
+#kgRegionTabs{display:flex;gap:5px;overflow:auto;padding-top:7px}.kg-region-pill{border:0;border-radius:999px;padding:6px 9px;background:#f0f3ef;color:#536054;white-space:nowrap;font-size:10px;font-weight:800}.kg-region-pill[data-region="ALL"]{background:#203128;color:white}
+#kgYardDirectoryScreen{border-radius:18px;overflow:hidden;background:white;border:1px solid var(--line);box-shadow:var(--shadow)}#kgYardDirectoryScreen>div{padding:10px!important;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}#kgYardDirectoryScreen .w-11.h-11{width:34px!important;height:34px!important;border-radius:11px!important;font-size:16px!important}#kgYardDirectoryScreen h4{font-size:12px!important;font-weight:800!important}#kgYardDirectoryScreen p{font-size:10px!important}
+#kgYardDetailScreen{background:white;border:1px solid var(--line);border-radius:18px;overflow:hidden}#kgYardDetailScreen .p-4{padding:11px!important}#kgYardDetailScreen table{min-width:480px}#kgYardDetailScreen th,#kgYardDetailScreen td{padding:9px 8px!important;font-size:11px!important}#kgYardDetailScreen thead{background:#f3f6f3!important}
+#mobileBottomNav{position:fixed;z-index:30;bottom:0;left:0;right:0;background:rgba(255,255,255,.88);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-top:1px solid #e7ece7;padding:6px 8px calc(6px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:12px}.nav-btn{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:65px;color:#778078;font-size:10px;font-weight:700;padding:3px 8px;border-radius:12px}.nav-btn.active{color:#218448;background:#eef7f0}.nav-icon{font-size:18px;line-height:1}
+:focus-visible{outline:3px solid #5ca77a55;outline-offset:2px}
+@media(min-width:650px){main{padding:14px 18px}#farmerCardsGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar{padding:12px 18px}.selector{padding:13px}}
+@media(max-width:390px){.brand-icon{width:32px;height:32px}.brand h1{font-size:13px}.unit-toggle button{padding:5px 7px;font-size:10px}.date-pill{padding:6px 9px;font-size:10px}.summary-actions button{padding:6px 7px}}
 </style>
 </head>
-<body class="bg-[#F5F5F7] text-[#1D1D1F] pb-safe-nav sm:pb-10">
-
-    <!-- Ultra-Simple App Header -->
-    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-black/[0.06]">
-        <div class="max-w-2xl mx-auto px-3.5 py-2.5 flex items-center justify-between gap-2">
-            <!-- Brand Title + Status -->
-            <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-9 h-9 rounded-2xl bg-[#248A3D] text-white flex items-center justify-center text-lg shadow-sm shrink-0">
-                    🌾
-                </div>
-                <div class="min-w-0">
-                    <div class="flex items-center gap-1.5">
-                        <h1 class="text-base sm:text-lg font-black tracking-tight text-[#1D1D1F] truncate">માર્કેટ ભાવ</h1>
-                        <span id="dataStatusBadge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#E8F8ED] text-[#1E7E34] shrink-0">
-                            <span class="w-1.5 h-1.5 rounded-full bg-[#34C759] animate-pulse"></span>
-                            તાજો
-                        </span>
-                    </div>
-                    <p id="activeDateSubtitle" class="text-[11px] text-[#6E6E73] font-semibold truncate">આજના ભાવ • ૨૦ કિલો (મણ)</p>
-                </div>
-            </div>
-
-            <!-- Simple 20kg vs 100kg Pill Switch + Refresh -->
-            <div class="flex items-center gap-1.5 shrink-0">
-                <div class="bg-[#E8E8ED] p-0.5 rounded-full flex items-center" role="group" aria-label="વજન">
-                    <button type="button" id="unitMannBtn" class="px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm transition-all">
-                        ૨૦ કિલો
-                    </button>
-                    <button type="button" id="unitQuintalBtn" class="px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73] hover:text-[#1D1D1F] transition-all">
-                        ૧૦૦ કિલો
-                    </button>
-                </div>
-
-                <!-- Desktop Mode Switcher -->
-                <div class="hidden sm:flex bg-[#E8E8ED] p-0.5 rounded-full items-center">
-                    <button type="button" id="viewDashboardBtn" class="px-3 py-1.5 text-xs font-extrabold rounded-full bg-white text-[#1D1D1F] shadow-sm">
-                        પાક મુજબ
-                    </button>
-                    <button type="button" id="viewKhetiGramBtn" class="px-3 py-1.5 text-xs font-bold rounded-full text-[#6E6E73]">
-                        યાર્ડ મુજબ
-                    </button>
-                </div>
-
-                <button id="refreshDataBtn" class="w-9 h-9 rounded-full bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#0071E3] flex items-center justify-center transition-all active:scale-90" title="તાજો ભાવ લાવો">
-                    <svg id="refreshIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Ultra-Clean Container -->
-    <main class="max-w-2xl mx-auto px-3 sm:px-4 pt-3 space-y-3.5">
-
-        <!-- Step 1 & 2: Visual Crop Icons + Big Day Buttons -->
-        <section class="bg-white rounded-3xl p-3.5 shadow-apple border border-black/[0.04] space-y-3">
-
-            <!-- Big Day Selector Pills -->
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
-                <button type="button" data-mode="live" class="date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-extrabold rounded-full bg-[#1D1D1F] text-white transition-all">
-                    આજ
-                </button>
-                <button type="button" data-mode="yesterday" class="date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-bold rounded-full bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED] transition-all">
-                    ગઈકાલ
-                </button>
-                <button type="button" data-mode="two_days_ago" class="date-pill shrink-0 px-4 py-2 text-xs sm:text-sm font-bold rounded-full bg-[#F5F5F7] text-[#1D1D1F] hover:bg-[#E8E8ED] transition-all">
-                    ૨ દિવસ પહેલા
-                </button>
-                <!-- Simple Calendar Input -->
-                <div class="flex items-center gap-1 shrink-0 ml-auto bg-[#F5F5F7] pl-3 pr-1.5 py-1 rounded-full">
-                    <span class="text-xs">📅</span>
-                    <input type="date" id="specificDateInput" aria-label="તારીખ પસંદ કરો" class="text-xs font-bold bg-transparent text-[#1D1D1F] outline-none w-[112px] cursor-pointer">
-                </div>
-            </div>
-
-            <!-- Big Visual Picture Crop Selector -->
-            <div>
-                <div class="flex items-center justify-between mb-2 px-0.5">
-                    <span class="text-xs font-bold text-[#6E6E73]">પહેલા વિભાગ અને પછી પાક દબાવો:</span>
-                    <button type="button" id="resetFiltersBtn" class="hidden text-xs font-extrabold text-[#D70015] bg-[#FFE5E5] px-2.5 py-0.5 rounded-full">
-                        બધા પાક ✕
-                    </button>
-                </div>
-
-                <!-- Category Pills (બીજ, મસાલા, શાકભાજી, પાંદડાવાળી શાકભાજી, દાળ, અનાજ, ફળ) -->
-                <div id="categoryTabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2">
-                    <!-- Populated dynamically -->
-                </div>
-
-                <!-- Crops Grid for Selected Category -->
-                <div id="visualCropGrid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[210px] overflow-y-auto pr-0.5">
-                    <!-- Populated dynamically with big emoji + Gujarati crop name -->
-                </div>
-            </div>
-
-            <!-- District / Yard Quick Filter Row -->
-            <div class="flex items-center justify-between gap-2 pt-1 border-t border-black/[0.05]">
-                <span class="text-xs font-bold text-[#6E6E73] px-1">જિલ્લો કે યાર્ડ મુજબ જુઓ:</span>
-                <button type="button" id="toggleMoreFiltersBtn" class="shrink-0 px-3.5 py-2 text-xs font-extrabold bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] rounded-full flex items-center gap-1.5">
-                    <span>📍 જિલ્લો / યાર્ડ</span>
-                    <span id="activeFilterDot" class="hidden w-2 h-2 rounded-full bg-[#0071E3]"></span>
-                </button>
-            </div>
-
-            <!-- Optional District / Yard Dropdowns (Hidden until tapped) -->
-            <div id="moreFiltersDrawer" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                <select id="districtFilter" aria-label="જિલ્લો" class="w-full px-3.5 py-2.5 text-sm font-bold bg-[#F5F5F7] text-[#1D1D1F] rounded-2xl outline-none">
-                    <option value="">📍 બધા જિલ્લા</option>
-                </select>
-                <select id="marketFilter" aria-label="માર્કેટ યાર્ડ" class="w-full px-3.5 py-2.5 text-sm font-bold bg-[#F5F5F7] text-[#1D1D1F] rounded-2xl outline-none">
-                    <option value="">🏛️ બધા માર્કેટ યાર્ડ</option>
-                </select>
-            </div>
-        </section>
-
-        <!-- Simple Status Message Banner -->
-        <div id="alertBanner" class="hidden rounded-2xl px-4 py-3 bg-white border border-amber-200 flex items-center justify-between gap-2 shadow-apple">
-            <div class="text-xs sm:text-sm font-semibold text-[#1D1D1F]">
-                <span id="alertTitle" class="font-extrabold"></span>
-                <span id="alertMessage" class="ml-1 text-[#6E6E73]"></span>
-            </div>
-            <button onclick="document.getElementById('alertBanner').classList.add('hidden')" class="text-sm font-bold text-[#86868B] px-2">✕</button>
-        </div>
-
-        <!-- Simple Loading Indicator -->
-        <div id="loadingState" class="bg-white rounded-3xl p-10 shadow-apple flex flex-col items-center justify-center text-center">
-            <div class="w-9 h-9 border-4 border-[#E8E8ED] border-t-[#248A3D] rounded-full animate-spin mb-3"></div>
-            <h3 class="text-base font-extrabold text-[#1D1D1F]">તાજા ભાવ લાવી રહ્યા છીએ...</h3>
-        </div>
-
-        <!-- Main Content Area -->
-        <div id="dashboardContent" class="hidden space-y-3.5">
-
-            <!-- VIEW 1: ULTRA-SIMPLE CROP PRICE CARDS (પાક મુજબ) -->
-            <div id="farmerDashboardView" class="space-y-3">
-
-                <!-- Selected Crop Banner -->
-                <div id="selectedCropHeroBanner" class="hidden bg-white rounded-3xl border border-black/[0.05] shadow-apple px-4 py-3 flex items-center justify-between gap-3">
-                    <div class="flex items-center gap-3 min-w-0">
-                        <div id="selectedCropHeroIcon" class="w-11 h-11 rounded-2xl bg-[#E8F8ED] flex items-center justify-center text-2xl shrink-0">🥜</div>
-                        <div class="min-w-0">
-                            <span class="block text-[11px] font-bold text-[#248A3D]">પસંદ કરેલ પાક</span>
-                            <h3 id="selectedCropHeroTitle" class="text-lg font-black text-[#1D1D1F] truncate">મગફળી</h3>
-                        </div>
-                    </div>
-                    <button type="button" onclick="clearSelectedCrop()" class="shrink-0 px-3.5 py-2 rounded-full bg-[#F5F5F7] hover:bg-[#E8E8ED] text-xs font-extrabold text-[#1D1D1F]">
-                        બધા પાક ✕
-                    </button>
-                </div>
-
-                <!-- Minimal Header with Voice Listen Button -->
-                <div class="flex items-center justify-between gap-2 px-1">
-                    <div>
-                        <h2 class="text-base font-black text-[#1D1D1F]">
-                            આજના ભાવ <span class="text-xs font-bold text-[#6E6E73]">(<span class="unit-label-full">૨૦ કિલો / ૧ મણ</span>)</span>
-                        </h2>
-                        <p id="tableSummaryText" class="text-xs text-[#6E6E73] font-semibold">કુલ 0 ભાવ</p>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <button type="button" id="speakSummaryBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-extrabold text-white bg-[#0071E3] rounded-full shadow-sm active:scale-95">
-                            <span>🔊</span>
-                            <span>સાંભળો</span>
-                        </button>
-                        <select id="simpleSortSelect" aria-label="ગોઠવો" class="px-3 py-2 text-xs font-extrabold bg-white border border-black/[0.08] rounded-full text-[#1D1D1F] outline-none">
-                            <option value="modal_desc">વધુ ભાવ પહેલા</option>
-                            <option value="modal_asc">ઓછો ભાવ પહેલા</option>
-                            <option value="market_asc">યાર્ડ પ્રમાણે</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Big, High-Contrast Price Cards -->
-                <div id="farmerCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Injected dynamically -->
-                </div>
-
-                <!-- Empty State -->
-                <div id="emptyTableState" class="hidden bg-white rounded-3xl shadow-apple py-12 px-4 text-center">
-                    <div class="text-4xl mb-2">🌾</div>
-                    <h4 class="text-base font-extrabold text-[#1D1D1F]">કોઈ ભાવ મળ્યા નથી</h4>
-                    <p class="text-xs text-[#6E6E73] mt-1 font-medium">ઉપરથી બીજો પાક અથવા તારીખ પસંદ કરો.</p>
-                </div>
-
-                <!-- Simple Next / Prev Page Bar -->
-                <div class="bg-white px-4 py-3 rounded-2xl shadow-apple flex items-center justify-between gap-2">
-                    <span class="text-xs font-bold text-[#6E6E73]">વધુ ભાવ જુઓ</span>
-                    <div id="paginationControls" class="flex items-center gap-2"></div>
-                </div>
-            </div>
-
-            <!-- VIEW 2: YARD DIRECTORY LIST (યાર્ડ મુજબ) -->
-            <div id="khetigramAppView" class="hidden space-y-3">
-                <div class="bg-white p-3.5 rounded-3xl shadow-apple space-y-2.5">
-                    <div class="flex items-center justify-between gap-2">
-                        <input type="text" id="kgSearchInput" placeholder="🔍 યાર્ડ શોધો (ગોંડલ, રાજકોટ, જસદણ...)" class="flex-1 px-4 py-2.5 text-sm font-semibold bg-[#F5F5F7] text-[#1D1D1F] placeholder-[#86868B] rounded-2xl outline-none">
-                        <button type="button" id="kgBackToYardsBtn" class="hidden shrink-0 px-3.5 py-2.5 rounded-2xl bg-[#0071E3] text-white text-xs font-extrabold">
-                            ‹ બધા યાર્ડ
-                        </button>
-                    </div>
-
-                    <div id="kgRegionTabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                        <button type="button" data-region="ALL" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-[#1D1D1F] text-white">બધા યાર્ડ</button>
-                        <button type="button" data-region="FAV" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">⭐ મનપસંદ</button>
-                        <button type="button" data-region="Saurashtra" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">સૌરાષ્ટ્ર</button>
-                        <button type="button" data-region="North" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">ઉત્તર ગુજરાત</button>
-                        <button type="button" data-region="Central" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">મધ્ય ગુજરાત</button>
-                        <button type="button" data-region="South" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">દક્ષિણ ગુજરાત</button>
-                        <button type="button" data-region="Kutch" class="kg-region-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#F5F5F7] text-[#1D1D1F]">કચ્છ</button>
-                    </div>
-                </div>
-
-                <!-- Screen A: APMC Market Yard List -->
-                <div id="kgYardDirectoryScreen" class="bg-white rounded-3xl shadow-apple divide-y divide-black/[0.06] overflow-hidden"></div>
-
-                <!-- Screen B: Selected Yard's Rate Sheet -->
-                <div id="kgYardDetailScreen" class="hidden bg-white rounded-3xl shadow-apple overflow-hidden">
-                    <div class="p-4 border-b border-black/[0.06] flex items-center justify-between gap-2">
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-2">
-                                <h3 id="kgSelectedYardTitle" class="text-lg font-black text-[#1D1D1F] truncate">ગોંડલ માર્કેટ યાર્ડ</h3>
-                                <button type="button" id="kgToggleFavDetailBtn" class="text-lg leading-none p-1.5 rounded-full bg-[#F5F5F7]">☆</button>
-                            </div>
-                            <p id="kgSelectedYardMeta" class="text-xs text-[#6E6E73] font-semibold truncate">જિલ્લો: રાજકોટ</p>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <button type="button" id="kgSpeakYardBtn" class="px-3.5 py-2 rounded-full bg-[#0071E3] text-white text-xs font-extrabold active:scale-95">
-                                🔊 સાંભળો
-                            </button>
-                            <button type="button" id="kgShareWhatsAppBtn" class="px-3.5 py-2 rounded-full bg-[#248A3D] text-white text-xs font-extrabold active:scale-95">
-                                📲 શેર
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-[#F5F5F7] text-[#6E6E73] text-xs font-extrabold border-b border-black/[0.06]">
-                                    <th class="py-2.5 px-4">પાક</th>
-                                    <th class="py-2.5 px-2 text-right">ઓછો</th>
-                                    <th class="py-2.5 px-2 text-right text-[#1D1D1F]">સરેરાશ</th>
-                                    <th class="py-2.5 px-4 text-right text-[#248A3D]">ઊંચો</th>
-                                </tr>
-                            </thead>
-                            <tbody id="kgYardRatesTbody" class="divide-y divide-black/[0.06] text-sm"></tbody>
-                        </table>
-                    </div>
-                    <div class="bg-[#F5F5F7] px-4 py-3 text-xs font-bold text-[#6E6E73] flex items-center justify-between">
-                        <span>બધા ભાવ ₹ (<span class="unit-label-short">૨૦ કિલો</span>) માં છે</span>
-                        <button type="button" id="kgBottomBackBtn" class="text-[#0071E3] font-extrabold">‹ બીજું યાર્ડ જુઓ</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Mobile Sticky Bottom Tab Bar (3 Large Easy Buttons) -->
-    <nav class="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-xl border-t border-black/[0.08] px-3 py-2 flex items-center justify-around">
-        <button type="button" id="mobileTabCardsBtn" class="flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#0071E3] font-extrabold">
-            <span class="text-xl leading-none">🌾</span>
-            <span class="text-xs mt-1">પાક મુજબ</span>
-        </button>
-        <button type="button" id="mobileTabYardsBtn" class="flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#6E6E73] font-bold">
-            <span class="text-xl leading-none">🏛️</span>
-            <span class="text-xs mt-1">યાર્ડ મુજબ</span>
-        </button>
-        <button type="button" id="mobileTabSpeakBtn" class="flex flex-col items-center justify-center py-1 px-4 rounded-2xl text-[#248A3D] font-extrabold active:scale-95">
-            <span class="text-xl leading-none">🔊</span>
-            <span class="text-xs mt-1">સાંભળો</span>
-        </button>
-    </nav>
-
-    <script>
+<body>
+<header><div class="topbar">
+<div class="brand"><div class="brand-icon">🌾</div><div><h1>ખેતીગ્રામ <span style="color:#218448">· બજાર ભાવ</span></h1><small id="activeDateSubtitle">આજના ભાવ</small></div></div>
+<div class="header-actions"><div class="unit-toggle"><button id="unitMannBtn" class="active" type="button">મણ</button><button id="unitQuintalBtn" type="button">ક્વિન્ટલ</button></div><button id="refreshDataBtn" class="icon-btn" type="button" title="ફરી ભાવ લાવો"><svg id="refreshIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 7v5h-5M4 17v-5h5M5.6 9A7 7 0 0 1 18 5.5L20 7M4 17l2 1.5A7 7 0 0 0 18.4 15"/></svg></button></div>
+</div></header>
+<main>
+<section class="panel selector">
+<div class="dates"><button data-mode="live" class="date-pill active">આજ</button><button data-mode="yesterday" class="date-pill">ગઈકાલ</button><button data-mode="two_days_ago" class="date-pill">૨ દિવસ</button><div class="date-calendar"><span style="font-size:12px">📅</span><input id="specificDateInput" type="date" aria-label="તારીખ પસંદ કરો"></div></div>
+<div class="crop-search"><span class="search-icon">⌕</span><input id="cropSearchInput" type="search" placeholder="પાક શોધો — જેમ કે મગફળી, કપાસ..." aria-label="પાક શોધો"></div>
+<div id="categoryTabs"></div><div id="visualCropGrid"></div>
+<div class="filter-row"><label>તમારા વિસ્તારના ભાવ જુઓ</label><button id="toggleMoreFiltersBtn" class="filter-toggle" type="button">📍 જિલ્લો / યાર્ડ <span id="activeFilterDot" class="hidden">●</span></button></div>
+<div id="moreFiltersDrawer" class="hidden filter-drawer"><select id="districtFilter" aria-label="જિલ્લો"><option value="">બધા જિલ્લા</option></select><select id="marketFilter" aria-label="માર્કેટ યાર્ડ"><option value="">બધા યાર્ડ</option></select></div>
+<button id="resetFiltersBtn" class="hidden" type="button" style="border:0;background:#eef4ed;color:#2c693e;border-radius:999px;padding:6px 10px;font-size:10px;font-weight:800;margin-top:6px">ફિલ્ટર દૂર કરો ✕</button>
+</section>
+<div id="alertBanner" class="hidden"><strong><span id="alertTitle"></span></strong> <span id="alertMessage"></span><button onclick="document.getElementById('alertBanner').classList.add('hidden')" style="float:right;border:0;background:none">✕</button></div>
+<div id="loadingState" class="panel"><div class="loader"></div><h3>બજારના ભાવ લાવી રહ્યા છીએ...</h3><p style="color:#7a847b;font-size:11px;margin:5px 0 0">થોડી ક્ષણ રાહ જુઓ</p></div>
+<div id="dashboardContent" class="hidden">
+<div id="farmerDashboardView">
+<div id="selectedCropHeroBanner" class="hidden"><div><span id="selectedCropHeroIcon">🌾</span><h3 id="selectedCropHeroTitle">પાક ભાવ</h3></div><button onclick="clearSelectedCrop()">બધા પાક જુઓ ✕</button></div>
+<div class="summary-head"><div><h2>માર્કેટ ભાવ</h2><p id="tableSummaryText">ભાવ ઉપલબ્ધ છે</p></div><div class="summary-actions"><button id="speakSummaryBtn" type="button">🔊 સાંભળો</button><select id="simpleSortSelect" aria-label="ભાવ ગોઠવો"><option value="modal_desc">ઊંચા ભાવ પહેલા</option><option value="modal_asc">નીચા ભાવ પહેલા</option><option value="market_asc">યાર્ડ પ્રમાણે</option></select></div></div>
+<div id="farmerCardsGrid"></div><div id="emptyTableState" class="hidden"><div style="font-size:28px">🌱</div><h4>ભાવ મળ્યા નથી</h4><p>બીજો પાક અથવા તારીખ પસંદ કરો.</p></div>
+<div class="panel" style="padding:9px;display:flex;justify-content:space-between;align-items:center;gap:6px"><span style="font-size:10px;color:#7a847b;font-weight:700">વધુ ભાવ</span><div id="paginationControls"></div></div>
+</div>
+<div id="khetigramAppView" class="hidden">
+<div class="panel"><div class="yard-search"><input type="search" id="kgSearchInput" placeholder="માર્કેટ યાર્ડ શોધો..." aria-label="યાર્ડ શોધો"><button id="kgBackToYardsBtn" class="hidden">‹ બધા યાર્ડ</button></div><div id="kgRegionTabs"><button data-region="ALL" class="kg-region-pill">બધા</button><button data-region="FAV" class="kg-region-pill">⭐ મનપસંદ</button><button data-region="Saurashtra" class="kg-region-pill">સૌરાષ્ટ્ર</button><button data-region="North" class="kg-region-pill">ઉત્તર</button><button data-region="Central" class="kg-region-pill">મધ્ય</button><button data-region="South" class="kg-region-pill">દક્ષિણ</button><button data-region="Kutch" class="kg-region-pill">કચ્છ</button></div></div>
+<div id="kgYardDirectoryScreen"></div>
+<div id="kgYardDetailScreen" class="hidden"><div class="p-4" style="display:flex;justify-content:space-between;align-items:center"><div style="min-width:0"><h3 id="kgSelectedYardTitle" style="margin:0;font-size:14px;font-weight:800"></h3><p id="kgSelectedYardMeta" style="font-size:10px;color:#7a847b;margin:3px 0"></p></div><div style="display:flex;gap:4px"><button id="kgToggleFavDetailBtn" type="button" style="border:0;background:#f1f4f1;border-radius:12px;padding:7px">☆</button><button id="kgBackToYardsBtn" type="button" style="border:0;background:#edf5ee;color:#287343;border-radius:12px;padding:7px;font-size:10px;font-weight:800">‹ પાછા</button></div></div><div style="overflow:auto"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left">પાક</th><th style="text-align:right">ઓછો</th><th style="text-align:right">સરેરાશ</th><th style="text-align:right">ઊંચો</th></tr></thead><tbody id="kgYardRatesTbody"></tbody></table></div><div class="p-4" style="display:flex;gap:6px;flex-wrap:wrap"><button id="kgSpeakYardBtn" type="button" style="border:0;border-radius:999px;padding:8px 12px;background:#e8f2ff;color:#1469b2;font-size:11px;font-weight:800">🔊 ભાવ સાંભળો</button><button id="kgShareWhatsAppBtn" type="button" style="border:0;border-radius:999px;padding:8px 12px;background:#e8f5eb;color:#247540;font-size:11px;font-weight:800">WhatsApp મોકલો</button><button id="kgBottomBackBtn" type="button" style="border:0;border-radius:999px;padding:8px 12px;background:#f0f3ef;font-size:11px;font-weight:800">પાછા</button></div></div>
+</div>
+</div></main>
+<nav id="mobileBottomNav"><button id="mobileTabCardsBtn" class="nav-btn active" type="button"><span class="nav-icon">🌾</span><span>પાકના ભાવ</span></button><button id="mobileTabYardsBtn" class="nav-btn" type="button"><span class="nav-icon">🏪</span><span>યાર્ડ</span></button><button id="mobileTabSpeakBtn" class="nav-btn" type="button"><span class="nav-icon">🔊</span><span>ભાવ સાંભળો</span></button></nav>
+<script>
         const LIVE_API_BASE = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070';
         const HISTORICAL_API_BASE = 'https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24';
         const DEFAULT_API_KEY = '579b464db66ec23bdd0000017185aa4a01fb494e47104dff02edf1ba';
@@ -446,7 +85,7 @@ main>section>div:nth-child(3){padding-top:5px!important}
             rawRecords: [],
             filteredRecords: [],
             currentPage: 1,
-            rowsPerPage: 12,
+            rowsPerPage: 8,
             sortKey: 'modal_price',
             sortDirection: 'desc',
             activeMode: 'live',
@@ -934,20 +573,26 @@ function getCsvCropList() {
             const categories = [...new Set(csvCrops.map(c => c.category))];
             const categoryMeta = CROP_CATEGORIES.filter(c => c.id !== 'ALL');
             const dynamicCategories = categories.map(id => categoryMeta.find(c => c.id === id) || {id, gu:id, icon:'🌾'});
-            const tabs = [{id:'ALL',gu:'બધા પાક',icon:'🌾'}, ...dynamicCategories];
+            const tabs = [{id:'ALL',gu:'બધા',icon:'🌾'}, ...dynamicCategories];
             if (els.categoryTabs) {
                 els.categoryTabs.innerHTML = tabs.map(cat => {
                     const active = state.selectedCategory === cat.id;
-                    const cls = active ? 'bg-[#248A3D] text-white shadow-sm font-extrabold' : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] font-bold';
-                    return `<button type="button" onclick="selectCropCategory('${cat.id}')" class="shrink-0 px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-all active:scale-95 ${cls}"><span>${cat.icon}</span><span>${cat.gu}</span></button>`;
+                    const cls = active ? 'cat-pill selected' : 'cat-pill';
+                    return `<button type="button" onclick="selectCropCategory('${cat.id}')" class="${cls}"><span>${cat.icon}</span><span>${cat.gu}</span></button>`;
                 }).join('');
             }
-            const visible = state.selectedCategory === 'ALL' ? csvCrops : csvCrops.filter(c => c.category === state.selectedCategory);
+            const search = (document.getElementById('cropSearchInput')?.value || '').trim().toLowerCase();
+            let visible = state.selectedCategory === 'ALL' ? csvCrops : csvCrops.filter(c => c.category === state.selectedCategory);
+            if (search) visible = visible.filter(c => c.gu.toLowerCase().includes(search) || c.commodity.toLowerCase().includes(search));
+            if (!visible.length) {
+                els.visualCropGrid.innerHTML = '<div class="crop-empty">પાક મળ્યો નથી. બીજું નામ લખો.</div>';
+                return;
+            }
             els.visualCropGrid.innerHTML = visible.map(crop => {
                 const active = state.filters.cropKeyword === crop.id;
-                const cls = active ? 'bg-[#1D1D1F] text-white shadow-sm ring-2 ring-[#1D1D1F]' : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F]';
+                const cls = active ? 'crop-chip active' : 'crop-chip';
                 const safe = JSON.stringify(crop.commodity).replace(/</g,'\\u003c');
-                return `<button type="button" onclick="toggleVisualCrop(${safe})" class="py-2 px-1.5 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${cls}"><span class="text-2xl leading-none">${crop.icon}</span><span class="text-[11px] font-extrabold text-center leading-tight line-clamp-2">${crop.gu}</span></button>`;
+                return `<button type="button" onclick="toggleVisualCrop(${safe})" class="${cls}"><span class="crop-emoji">${crop.icon}</span><span>${crop.gu}</span></button>`;
             }).join('');
         }
 
@@ -1574,7 +1219,7 @@ function getCsvCropList() {
                 });
             }
 
-            if (els.speakSummaryBtn) els.speakSummaryBtn.addEventListener('click', speakTopSummary);
+            if (els.speakSummaryBtn) els.speakSummaryBtn.addEventListener('click', speakTopSummary);\n            const cropSearch = document.getElementById('cropSearchInput');\n            if (cropSearch) cropSearch.addEventListener('input', renderVisualCropButtons);
 
             els.datePills.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1687,3 +1332,5 @@ function getCsvCropList() {
     </script>
 </body>
 </html>
+
+</body></html>
