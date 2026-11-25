@@ -913,37 +913,41 @@ main>section>div:nth-child(3){padding-top:5px!important}
             speakGujarati(`ગુજરાત માર્કેટ યાર્ડના ${unitText} મુખ્ય ભાવ: ${topThree}.`);
         }
 
+function getCsvCropList() {
+            const unique = [...new Set((state.rawRecords || []).map(r => r.commodity).filter(Boolean))];
+            return unique.map(commodity => {
+                const lower = commodity.toLowerCase();
+                const match = CROP_DICTIONARY.find(c => c.keywords.some(k => lower.includes(k)));
+                return {
+                    id: 'CSV:' + commodity,
+                    commodity,
+                    gu: getGujaratiName(commodity),
+                    category: match ? match.category : 'અન્ય પાક',
+                    icon: match ? match.icon : '🌾',
+                    keywords: [commodity.toLowerCase()]
+                };
+            }).sort((a,b) => a.gu.localeCompare(b.gu, 'gu'));
+        }
+
         function renderVisualCropButtons() {
+            const csvCrops = getCsvCropList();
+            const categories = [...new Set(csvCrops.map(c => c.category))];
+            const categoryMeta = CROP_CATEGORIES.filter(c => c.id !== 'ALL');
+            const dynamicCategories = categories.map(id => categoryMeta.find(c => c.id === id) || {id, gu:id, icon:'🌾'});
+            const tabs = [{id:'ALL',gu:'બધા પાક',icon:'🌾'}, ...dynamicCategories];
             if (els.categoryTabs) {
-                els.categoryTabs.innerHTML = CROP_CATEGORIES.map(cat => {
-                    const isCatActive = state.selectedCategory === cat.id;
-                    const catClasses = isCatActive
-                        ? 'bg-[#248A3D] text-white shadow-sm font-extrabold'
-                        : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] font-bold';
-                    return `
-                        <button type="button" onclick="selectCropCategory('${cat.id}')" class="shrink-0 px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-all active:scale-95 ${catClasses}">
-                            <span>${cat.icon}</span>
-                            <span>${cat.gu}</span>
-                        </button>
-                    `;
+                els.categoryTabs.innerHTML = tabs.map(cat => {
+                    const active = state.selectedCategory === cat.id;
+                    const cls = active ? 'bg-[#248A3D] text-white shadow-sm font-extrabold' : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F] font-bold';
+                    return `<button type="button" onclick="selectCropCategory('${cat.id}')" class="shrink-0 px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-all active:scale-95 ${cls}"><span>${cat.icon}</span><span>${cat.gu}</span></button>`;
                 }).join('');
             }
-
-            const visibleCrops = state.selectedCategory === 'ALL'
-                ? CROP_DICTIONARY
-                : CROP_DICTIONARY.filter(c => c.category === state.selectedCategory);
-
-            els.visualCropGrid.innerHTML = visibleCrops.map(crop => {
-                const isSelected = state.filters.cropKeyword === crop.id;
-                const activeClasses = isSelected
-                    ? 'bg-[#1D1D1F] text-white shadow-sm ring-2 ring-[#1D1D1F]'
-                    : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F]';
-                return `
-                    <button type="button" onclick="toggleVisualCrop('${crop.id}')" class="py-2 px-1.5 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${activeClasses}">
-                        <span class="text-2xl leading-none">${crop.icon}</span>
-                        <span class="text-[11px] font-extrabold text-center leading-tight line-clamp-2">${crop.gu}</span>
-                    </button>
-                `;
+            const visible = state.selectedCategory === 'ALL' ? csvCrops : csvCrops.filter(c => c.category === state.selectedCategory);
+            els.visualCropGrid.innerHTML = visible.map(crop => {
+                const active = state.filters.cropKeyword === crop.id;
+                const cls = active ? 'bg-[#1D1D1F] text-white shadow-sm ring-2 ring-[#1D1D1F]' : 'bg-[#F5F5F7] hover:bg-[#E8E8ED] text-[#1D1D1F]';
+                const safe = JSON.stringify(crop.commodity).replace(/</g,'\\u003c');
+                return `<button type="button" onclick="toggleVisualCrop(${safe})" class="py-2 px-1.5 rounded-2xl flex flex-col items-center justify-center gap-1 transition-all active:scale-95 ${cls}"><span class="text-2xl leading-none">${crop.icon}</span><span class="text-[11px] font-extrabold text-center leading-tight line-clamp-2">${crop.gu}</span></button>`;
             }).join('');
         }
 
@@ -955,8 +959,9 @@ main>section>div:nth-child(3){padding-top:5px!important}
             applyFiltersAndRender();
         };
 
-        window.toggleVisualCrop = function(cropId) {
-            state.filters.cropKeyword = state.filters.cropKeyword === cropId ? '' : cropId;
+        window.toggleVisualCrop = function(commodity) {
+            const key = 'CSV:' + commodity;
+            state.filters.cropKeyword = state.filters.cropKeyword === key ? '' : key;
             state.currentPage = 1;
             renderVisualCropButtons();
             applyFiltersAndRender();
@@ -969,7 +974,6 @@ main>section>div:nth-child(3){padding-top:5px!important}
             renderVisualCropButtons();
             applyFiltersAndRender();
         };
-
         function getDateDaysAgo(daysAgo) {
             const d = new Date();
             d.setDate(d.getDate() - daysAgo);
@@ -1250,6 +1254,8 @@ main>section>div:nth-child(3){padding-top:5px!important}
         }
 
         function applyFiltersAndRender() {
+            const csvCropSelected = String(state.filters.cropKeyword || '').startsWith('CSV:');
+            const selectedCommodity = csvCropSelected ? String(state.filters.cropKeyword).slice(4) : '';
             const cropObj = CROP_DICTIONARY.find(c => c.id === state.filters.cropKeyword);
             const activeCategory = state.selectedCategory;
 
@@ -1267,12 +1273,13 @@ main>section>div:nth-child(3){padding-top:5px!important}
 
                 const commLower = rec.commodity.toLowerCase();
 
-                if (cropObj) {
+                if (csvCropSelected) {
+                    if (rec.commodity !== selectedCommodity) return false;
+                } else if (cropObj) {
                     if (!cropObj.keywords.some(k => commLower.includes(k))) return false;
                 } else if (activeCategory !== 'ALL') {
-                    const catCrops = CROP_DICTIONARY.filter(c => c.category === activeCategory);
-                    const matchesCategory = catCrops.some(c => c.keywords.some(k => commLower.includes(k)));
-                    if (!matchesCategory) return false;
+                    const csvCrops = getCsvCropList().filter(c => c.category === activeCategory);
+                    if (!csvCrops.some(c => c.commodity === rec.commodity)) return false;
                 }
 
                 return true;
@@ -1297,7 +1304,7 @@ main>section>div:nth-child(3){padding-top:5px!important}
             const startIdx = (state.currentPage - 1) * state.rowsPerPage;
             const pageRows = state.filteredRecords.slice(startIdx, startIdx + state.rowsPerPage);
 
-            const selectedCropObj = CROP_DICTIONARY.find(c => c.id === state.filters.cropKeyword);
+            const selectedCropObj = getCsvCropList().find(c => c.id === state.filters.cropKeyword);
             const selectedCatObj = CROP_CATEGORIES.find(c => c.id === state.selectedCategory && c.id !== 'ALL');
             const isSingleCropSelected = Boolean(selectedCropObj);
 
