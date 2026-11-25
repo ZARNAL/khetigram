@@ -2219,11 +2219,17 @@ return;
         // 12. EVENT LISTENERS & INIT
         // ==========================================
         function initEventListeners() {
-            // Every tab tap—even the active tab—clears selections and reloads data.
+            // Reset and render locally on tab switch. No network fetch/loading skeleton, so switching stays smooth.
             const handleModeTabClick = (mode) => {
                 resetMarketViewSelections();
                 setUiViewMode(mode);
-                loadMandiData(state.dateMode, state.selectedDateISO);
+                if (mode === 'dashboard') {
+                    renderCategoryPills();
+                    renderCropCollage();
+                    applyFiltersAndRender();
+                } else {
+                    renderKhetiGramView();
+                }
             };
             if (els.btnModeDashboard) els.btnModeDashboard.addEventListener('click', () => handleModeTabClick('dashboard'));
             if (els.btnModeKhetiGram) els.btnModeKhetiGram.addEventListener('click', () => handleModeTabClick('khetigram'));
