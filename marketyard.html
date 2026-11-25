@@ -1058,7 +1058,7 @@
             priceDivisor: 5,
             dateMode: 'latest',
             selectedDateISO: '',
-            uiViewMode: 'dashboard',
+            uiViewMode: 'khetigram',
             currentPage: 1,
             rowsPerPage: 50,
             filters: {
@@ -2535,6 +2535,8 @@ return;
 
         document.addEventListener('DOMContentLoaded', () => {
             initEventListeners();
+            // Open Yard Muaj by default; users can switch to Pak Muaj at any time.
+            setUiViewMode('khetigram');
             syncDateSelectorUI('latest');
             loadMandiData('latest');
         });
