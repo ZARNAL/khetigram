@@ -184,6 +184,22 @@ main>section:first-child{background:white!important;border:1px solid #e8e8ee!imp
 button{font-family:inherit!important;cursor:pointer!important;-webkit-tap-highlight-color:transparent}
 @media(min-width:640px){main{padding:12px 14px!important}#cropCollageContainer .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}}
 @media(max-width:380px){header>div{padding:6px 7px!important}header h1{font-size:13px!important}header p{font-size:9px!important}header button{padding:3px 5px!important;font-size:9px!important}main{padding-left:7px!important;padding-right:7px!important}main>section:first-child{padding:8px!important}.date-pill{padding:4px 8px!important;font-size:9px!important}#cropCollageContainer .grid{gap:5px!important}.collage-crop-btn{min-height:72px!important;padding:6px 3px!important}}
+
+/* Compact crop tiles based on Android screenshot */
+@media(max-width:600px){
+ #cropCollageContainer>.apple-card{padding:10px!important;gap:7px!important}
+ #cropCollageContainer>.apple-card>div:first-child{margin-bottom:1px!important}
+ #cropCollageContainer .grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important}
+ .collage-crop-btn{min-height:108px!important;height:108px!important;padding:6px 4px!important;gap:4px!important;border-radius:15px!important}
+ .collage-crop-btn>div:first-child{width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;border-radius:9px!important;font-size:17px!important}
+ .collage-crop-btn>div:last-child{display:flex!important;flex-direction:column!important;justify-content:center!important;gap:3px!important}
+ .collage-crop-btn .text-xs,.collage-crop-btn .text-\\[13px\\]{font-size:12px!important;line-height:1.2!important;font-weight:700!important;white-space:normal!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+ .collage-crop-btn .text-\\[10px\\]{font-size:10px!important;line-height:1.15!important;margin-top:0!important}
+}
+@media(max-width:380px){
+ .collage-crop-btn{height:100px!important;min-height:100px!important}
+ .collage-crop-btn>div:first-child{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important}
+}
 </style>
 </head>
 <body class="min-h-screen pb-8 selection:bg-[#007AFF]/15 selection:text-[#007AFF]">
