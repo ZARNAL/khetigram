@@ -131,6 +131,13 @@
         /* ==========================================
            HEADER & NAVIGATION ELEMENTS
            ========================================== */
+        .market-back-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 3px; flex: 0 0 auto; min-height: 34px; padding: 0 9px; border-radius: 11px; color: #007AFF; background: rgba(0, 122, 255, 0.09); font-size: 12px; font-weight: 700;
+        }
+        .market-back-icon { font-size: 24px; line-height: 1; margin-top: -2px; }
+        .market-back-label { white-space: nowrap; }
+        @media (max-width: 380px) { .market-back-label { display: none; } .market-back-btn { width: 34px; padding: 0; } }
+
         .brand-wrap {
             display: flex;
             align-items: center;
@@ -700,6 +707,10 @@
     <!-- STICKY APPLE FROSTED GLASS HEADER -->
     <header class="sticky-header">
         <div class="header-inner">
+            <!-- Back Navigation -->
+            <button type="button" id="marketBackBtn" class="tap-spring market-back-btn" aria-label="પાછા જાઓ" title="પાછા જાઓ">
+                <span class="market-back-icon" aria-hidden="true">‹</span><span class="market-back-label">પાછા</span>
+            </button>
             <!-- App Brand -->
             <div class="brand-wrap">
                 <div class="brand-logo">ખ</div>
@@ -979,6 +990,13 @@
     </div>
 
     <script>
+        // Back navigation: use same-site browser history, with home fallback.
+        document.getElementById("marketBackBtn")?.addEventListener("click", () => {
+            const referrer = document.referrer;
+            if (window.history.length > 1 && referrer && new URL(referrer).origin === window.location.origin) window.history.back();
+            else window.location.href = "./index.html";
+        });
+
         // ==========================================
         // 1. API CONFIG & STATE
         // ==========================================
