@@ -890,9 +890,6 @@
                         </div>
                         <p id="kgSelectedYardMeta" class="truncate" style="font-size:12px; color:#8E8E93; font-weight:500; margin-top:2px;">જિલ્લો: રાજકોટ</p>
                     </div>
-                    <button type="button" id="kgShareWhatsAppBtn" class="tap-spring whatsapp-btn shrink-0">
-                        📲 શેર
-                    </button>
                 </div>
 
                 <div style="overflow-x:auto;">
@@ -1062,7 +1059,6 @@
             kgSelectedYardTitle: document.getElementById('kgSelectedYardTitle'),
             kgSelectedYardMeta: document.getElementById('kgSelectedYardMeta'),
             kgToggleFavDetailBtn: document.getElementById('kgToggleFavDetailBtn'),
-            kgShareWhatsAppBtn: document.getElementById('kgShareWhatsAppBtn'),
             kgYardRatesTbody: document.getElementById('kgYardRatesTbody'),
 
             openStatsBtn: document.getElementById('openStatsBtn'),
@@ -1968,18 +1964,7 @@
                         `;
                     }).join('');
                 }
-
-                if (els.kgShareWhatsAppBtn) {
-                    els.kgShareWhatsAppBtn.onclick = () => {
-                        const lines = [`🌾 *${yard.display} માર્કેટ યાર્ડ ભાવ* (${sheetDate})`, `તોલ: ${getUnitLabel()}`, ''];
-                        yard.records.slice(0, 15).forEach(r => {
-                            lines.push(`• ${getGujaratiCropName(r.commodity)}: ₹${formatPrice(r.min_price)} થી ₹${formatPrice(r.max_price)}`);
-                        });
-                        const url = `https://wa.me/?text=${encodeURIComponent(lines.join('\n'))}`;
-                        window.open(url, '_blank');
-                    };
-                }
-                return;
+return;
             }
 
             state.khetiGram.selectedYardKey = null;
