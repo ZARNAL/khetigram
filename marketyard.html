@@ -2186,15 +2186,10 @@ return;
             if (els.cropCollageContainer) els.cropCollageContainer.classList.remove('hidden');
             if (els.clearSelectedCropBtn) els.clearSelectedCropBtn.classList.add('hidden');
 
-            renderCategoryPills();
-            renderCropCollage();
-            applyFiltersAndRender();
-            renderKhetiGramView();
+            // Avoid rebuilding the UI multiple times here; loadMandiData performs the final render.
         }
 
         function setUiViewMode(mode) {
-            const previousMode = state.uiViewMode;
-            if (previousMode !== mode) resetMarketViewSelections();
             state.uiViewMode = mode;
             const isDash = mode === 'dashboard';
 
