@@ -711,6 +711,7 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
         function getPastDatesDDMMYYYY(days) {
             const list = [];
             const now = new Date();
+            now.setHours(12, 0, 0, 0); // Anchor to local noon so date keys stay stable across renders
             const dayMs = 86400000;
             // For 6 months and longer, request one representative date per week.
             // Keep daily resolution for short ranges; include today as the final sample.
@@ -785,29 +786,36 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
                 return Promise.resolve(state.dateCache.get(dateObj.ddmmyyyy));
             }
 
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 4500);
             const url = dateObj.daysAgo === 0
                 ? DAILY_URL
                 : `${HIST_BASE}&filters[State]=Gujarat&filters[Arrival_Date]=${encodeURIComponent(dateObj.ddmmyyyy)}`;
 
-            return fetch(url, { signal: controller.signal })
-                .then(res => {
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    return res.json();
-                })
-                .then(json => {
-                    const records = (Array.isArray(json.records) ? json.records : [])
-                        .map(r => normalizeRecord(r, dateObj.ddmmyyyy))
-                        .filter(r => r.modal_price > 0 || r.max_price > 0);
-                    state.dateCache.set(dateObj.ddmmyyyy, records);
-                    return records;
-                })
-                .catch(() => {
-                    state.dateCache.set(dateObj.ddmmyyyy, []);
-                    return [];
-                })
-                .finally(() => clearTimeout(timer));
+            // Retry once for transient throttling/network failures. Do not cache failed requests as empty data.
+            const attempt = (retry) => {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), 8000);
+                return fetch(url, { signal: controller.signal })
+                    .then(res => {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(json => {
+                        const records = (Array.isArray(json.records) ? json.records : [])
+                            .map(r => normalizeRecord(r, dateObj.ddmmyyyy))
+                            .filter(r => r.modal_price > 0 || r.max_price > 0);
+                        state.dateCache.set(dateObj.ddmmyyyy, records);
+                        return records;
+                    })
+                    .catch(err => {
+                        if (retry > 0) return new Promise(resolve => setTimeout(resolve, 700)).then(() => attempt(retry - 1));
+                        // Store failed-date marker separately; leave date cache clear so it can retry later.
+                        state.failedDates = state.failedDates || new Set();
+                        state.failedDates.add(dateObj.ddmmyyyy);
+                        return [];
+                    })
+                    .finally(() => clearTimeout(timer));
+            };
+            return attempt(1);
         }
 
         function startHistoryLoad() {
@@ -819,7 +827,7 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
             const dates = getPastDatesDDMMYYYY(state.daysWindow);
             let index = 0;
             let liveRecordsFound = 0;
-            const BATCH_SIZE = 12; // Parallel date requests for faster long-range charts
+            const BATCH_SIZE = 4; // Conservative concurrency helps avoid data.gov.in throttling
 
             function stepQueue() {
                 if (token !== state.loadToken) return;
@@ -848,7 +856,7 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
                     setTimeout(stepQueue, 0);
                 }).catch(() => {
                     if (token !== state.loadToken) return;
-                    progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} દિવસ`;
+                    progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} ${dates.some(d => d.weeklySample) ? 'અઠવાડિયા' : 'દિવસ'} (કેટલાક ડેટા લોડ ન થયા)`;
                     setTimeout(stepQueue, 0);
                 });
             }
