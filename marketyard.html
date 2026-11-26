@@ -1711,7 +1711,7 @@
             const emptyMessage = document.getElementById('emptyListMessage');
             if (records.length === 0) {
                 if (emptyTitle) emptyTitle.textContent = fetchError ? 'API જોડાયેલ નથી' : 'કોઈ ડેટા ઉપલબ્ધ નથી';
-                if (emptyMessage) emptyMessage.textContent = fetchError ? 'સરકારી API સાથે કનેક્શન થઈ શક્યું નથી.' : 'આ તારીખ માટે કોઈ બજાર ભાવ મળ્યા નથી.';
+                if (emptyMessage) emptyMessage.textContent = fetchError ? 'API સાથે કનેક્શન થઈ શક્યું નથી.' : 'આ તારીખ માટે કોઈ બજાર ભાવ મળ્યા નથી.';
             } else {
                 if (emptyTitle) emptyTitle.textContent = 'આ પસંદગી મુજબ કોઈ ભાવ મળ્યા નથી';
                 if (emptyMessage) emptyMessage.textContent = 'બીજો પાક અથવા તારીખ પસંદ કરો';
@@ -2213,7 +2213,7 @@ return;
                     els.statsFetchStatusText.textContent = '● અગાઉ લોડ કરેલો ડેટા (હાલ API ઉપલબ્ધ નથી)';
                     els.statsFetchStatusText.style.color = '#B45309';
                 } else {
-                    els.statsFetchStatusText.textContent = '● લાઈવ સરકારી API સફળતાપૂર્વક ફેચ થયો';
+                    els.statsFetchStatusText.textContent = '● લાઈવ API સફળતાપૂર્વક ફેચ થયો';
                     els.statsFetchStatusText.style.color = '#248A3D';
                 }
             }
