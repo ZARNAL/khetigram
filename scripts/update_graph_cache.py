@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Refresh the static Khetigram Gujarat mandi graph cache from data.gov.in."""
-import json, os, urllib.parse, urllib.request, datetime, pathlib, sys
+import json, os, urllib.parse, urllib.request, datetime, pathlib, sys, time
+from urllib.error import URLError, HTTPError
 
 API_KEY = os.environ.get("DATA_GOV_API_KEY", "").strip()
 if not API_KEY:
@@ -21,8 +22,19 @@ def fetch_resource(resource):
         params = {"api-key":API_KEY,"format":"json","limit":10000,"offset":offset,"filters[State]":"Gujarat"}
         url = BASE + resource + "?" + urllib.parse.urlencode(params)
         req = urllib.request.Request(url, headers={"User-Agent":"Khetigram-data-cache/1.0"})
-        with urllib.request.urlopen(req, timeout=30) as response:
-            payload = json.loads(response.read().decode("utf-8"))
+        payload = None
+        for attempt in range(1, 4):
+            try:
+                with urllib.request.urlopen(req, timeout=45) as response:
+                    payload = json.loads(response.read().decode("utf-8"))
+                break
+            except (URLError, HTTPError, TimeoutError, OSError) as exc:
+                if attempt == 3:
+                    print(f"API request failed after {attempt} attempts for resource {resource}: {exc}", file=sys.stderr)
+                    raise
+                wait = 8 * attempt
+                print(f"API connection attempt {attempt} failed; retrying in {wait}s ({exc})", flush=True)
+                time.sleep(wait)
         batch = payload.get("records") or []
         rows.extend(batch)
         total = int(payload.get("total") or 0)
