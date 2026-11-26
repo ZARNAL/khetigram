@@ -443,7 +443,31 @@
             transform: scale(0.96);
         }
     </style>
-</head>
+<style>
+/* Farmer-first redesign: clean, accessible Apple-inspired interface */
+body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Noto Sans Gujarati",Arial,sans-serif}
+.sticky-header{background:rgba(250,250,252,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.header-inner,.main-container{max-width:880px}.main-container{padding:14px;gap:12px}
+.apple-card{border-radius:21px;border:1px solid rgba(20,25,35,.07);box-shadow:0 2px 12px rgba(30,40,55,.025)}
+.card-padded,.card-padded-lg{padding:16px}
+.brand-logo{background:#e5f2e8;color:#187443;box-shadow:none;border-radius:12px}
+.brand-title{font-size:16px;font-weight:800}.brand-subtitle{font-size:11px}
+.apple-select-box{background:#f8f9fb;border:1px solid #e6e8ec;border-radius:14px;padding:10px 12px}
+.apple-select-label{font-size:12px;color:#636a73}.apple-select{font-size:14px;padding:4px 0}
+.range-bar{display:grid;gap:10px;align-items:stretch}.range-pills{background:#f0f2f5;border-radius:12px;padding:3px}
+.range-btn{padding:8px 7px;font-size:12px;border-radius:9px;color:#646b75}
+.range-btn.active,.seg-btn-active{background:#fff;color:#1d1d1f;box-shadow:0 1px 4px rgba(0,0,0,.09)}
+.price-hero{gap:10px}.hero-price-value{font-size:clamp(30px,8vw,43px);letter-spacing:-1px;font-weight:850}
+.hero-price-unit{font-size:12px}.hero-crop-badge{font-size:13px}
+.chart-stage{height:220px}.kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.kpi-card{background:#f7f8fa;border:0;border-radius:14px;padding:11px}
+.kpi-label{font-size:11px;color:#737982}.kpi-val{font-size:19px}.kpi-sub{font-size:10px}
+.yard-bar-row{padding:12px 14px;gap:7px}.progress-track{height:6px;background:#f0f2f5}
+.progress-fill{background:linear-gradient(90deg,#82bcff,#087cf0)}
+.nav-link-pill{border-radius:99px;background:#eaf2ff;color:#096bd2;padding:8px 11px}
+@media(min-width:540px){.range-bar{grid-template-columns:1fr 1fr}.kpi-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:390px){.header-inner{padding:9px 11px}.main-container{padding:11px}.card-padded,.card-padded-lg{padding:12px}.selector-grid{grid-template-columns:1fr}.range-btn{font-size:10px;padding:7px 4px}.chart-stage{height:190px}}
+</style></head>
 <body>
 
     <!-- STICKY APPLE FROSTED GLASS HEADER -->
@@ -477,14 +501,14 @@
         <section class="apple-card card-padded stack-sm">
             <div class="selector-grid">
                 <label class="apple-select-box">
-                    <span class="apple-select-label">🌱 પાક પસંદ કરો</span>
+                    <span class="apple-select-label">🌱 કયો પાક પસંદ કરવો?</span>
                     <select id="cropSelect" class="apple-select"></select>
                 </label>
 
                 <label class="apple-select-box">
-                    <span class="apple-select-label">🏛️ માર્કેટ યાર્ડ</span>
+                    <span class="apple-select-label">🏛️ કયું માર્કેટ?</span>
                     <select id="yardSelect" class="apple-select">
-                        <option value="ALL">બધા યાર્ડ (ગુજરાત સરેરાશ)</option>
+                        <option value="ALL">ગુજરાતના બધા માર્કેટ</option>
                     </select>
                 </label>
             </div>
@@ -546,7 +570,7 @@
             <!-- Summary KPIs -->
             <div class="kpi-grid">
                 <div class="kpi-card">
-                    <div class="kpi-label">સૌથી ઊંચો ભાવ</div>
+                    <div class="kpi-label">આ સમયનો સૌથી ઊંચો ભાવ</div>
                     <div id="kpiHighVal" class="kpi-val tabular-nums" style="color:#28A745;">₹--</div>
                     <div id="kpiHighDate" class="kpi-sub truncate">--</div>
                 </div>
@@ -561,9 +585,9 @@
                     <div id="kpiDaysCount" class="kpi-sub">૦ દિવસનો ડેટા</div>
                 </div>
                 <div class="kpi-card">
-                    <div class="kpi-label">વધઘટ (Spread)</div>
+                    <div class="kpi-label">ભાવનો તફાવત</div>
                     <div id="kpiSpreadVal" class="kpi-val tabular-nums">₹--</div>
-                    <div class="kpi-sub">ઊંચા અને ઓછાનો તફાવત</div>
+                    <div class="kpi-sub">ઊંચા અને નીચા ભાવ વચ્ચે</div>
                 </div>
             </div>
         </section>
@@ -572,8 +596,8 @@
         <section class="apple-card" style="overflow:hidden;">
             <div style="padding:12px 16px; background:#F9F9FB; border-bottom:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:space-between;">
                 <div>
-                    <h2 style="font-size:14px; font-weight:800; color:#1C1C1E;">🏛️ ટોચના માર્કેટ યાર્ડ (સરેરાશ ભાવ મુજબ)</h2>
-                    <p style="font-size:11px; font-weight:500; color:#8E8E93;">યાર્ડ પર ટેપ કરીને તેનો અલગ ગ્રાફ જુઓ</p>
+                    <h2 style="font-size:14px; font-weight:800; color:#1C1C1E;">🏛️ વધુ ભાવ આપતા માર્કેટ</h2>
+                    <p style="font-size:11px; font-weight:500; color:#8E8E93;">માર્કેટ પર ટેપ કરો અને તેનો ભાવ જુઓ</p>
                 </div>
                 <span id="yardCountBadge" style="padding:2px 10px; border-radius:9999px; background:#F2F2F7; font-size:11px; font-weight:700; color:#636366;" class="tabular-nums">૦ યાર્ડ</span>
             </div>
@@ -586,7 +610,7 @@
         // ==========================================
         // 1. API & SHARED GUJARATI DICTIONARIES
         // ==========================================
-        const API_KEY = '579b464db66ec23bdd0000017185aa4a01fb494e47104dff02edf1ba';
+        const API_KEY = 'YOUR_DATA_GOV_IN_API_KEY';
         const DAILY_URL = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${API_KEY}&format=json&limit=10000&offset=0&filters[state]=Gujarat`;
         const HIST_BASE = `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=${API_KEY}&format=json&limit=10000&offset=0`;
 
@@ -787,15 +811,7 @@
                 if (token !== state.loadToken) return;
 
                 if (index >= dates.length) {
-                    // If sandbox blocked all external API calls, populate preview data cleanly
-                    if (liveRecordsFound === 0) {
-                        state.usingSamplePreview = true;
-                        dates.forEach(d => {
-                            state.dateCache.set(d.ddmmyyyy, buildFallbackRecordsForDate(d));
-                        });
-                    } else {
-                        state.usingSamplePreview = false;
-                    }
+                    state.usingSamplePreview = false;
                     loadingEl.classList.add('hidden');
                     rebuildDropdownOptions();
                     renderAnalyticsAndChart();
