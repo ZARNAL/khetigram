@@ -777,7 +777,7 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
             }
 
             const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 6500);
+            const timer = setTimeout(() => controller.abort(), 4500);
             const url = dateObj.daysAgo === 0
                 ? DAILY_URL
                 : `${HIST_BASE}&filters[State]=Gujarat&filters[Arrival_Date]=${encodeURIComponent(dateObj.ddmmyyyy)}`;
@@ -810,6 +810,7 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
             const dates = getPastDatesDDMMYYYY(state.daysWindow);
             let index = 0;
             let liveRecordsFound = 0;
+            const BATCH_SIZE = 12; // Parallel date requests for faster long-range charts
 
             function stepQueue() {
                 if (token !== state.loadToken) return;
@@ -817,22 +818,33 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
                 if (index >= dates.length) {
                     state.usingSamplePreview = false;
                     loadingEl.classList.add('hidden');
+                    progressEl.textContent = 'પૂર્ણ';
                     rebuildDropdownOptions();
                     renderAnalyticsAndChart();
                     return;
                 }
 
-                const slice = dates.slice(index, index + 4);
+                const slice = dates.slice(index, index + BATCH_SIZE);
                 index += slice.length;
 
                 Promise.all(slice.map(fetchSingleDate)).then(results => {
                     if (token !== state.loadToken) return;
                     results.forEach(arr => { liveRecordsFound += arr.length; });
                     progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} દિવસ`;
-                    setTimeout(stepQueue, 16);
+
+                    // Show partial results while the rest of the history loads.
+                    state.usingSamplePreview = false;
+                    rebuildDropdownOptions();
+                    renderAnalyticsAndChart();
+                    setTimeout(stepQueue, 0);
+                }).catch(() => {
+                    if (token !== state.loadToken) return;
+                    progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} દિવસ`;
+                    setTimeout(stepQueue, 0);
                 });
             }
 
+            progressEl.textContent = `0/${dates.length} દિવસ`;
             setTimeout(stepQueue, 0);
         }
 
