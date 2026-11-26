@@ -618,6 +618,23 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
         const DAILY_URL = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${API_KEY}&format=json&limit=10000&offset=0&filters[state]=Gujarat`;
         const HIST_BASE = `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=${API_KEY}&format=json&limit=10000&offset=0`;
 
+        // Static GitHub cache: visitors share the same cached records instead of
+        // independently calling data.gov.in. Live API remains fallback only.
+        const GRAPH_CACHE_URL = 'https://raw.githubusercontent.com/ZARNAL/khetigram/main/data/graph-cache.json';
+        let graphCachePromise = null;
+        function loadGraphCache() {
+            if (!graphCachePromise) graphCachePromise = fetch(GRAPH_CACHE_URL, { cache: 'no-cache' })
+                .then(res => res.ok ? res.json() : null).catch(() => null);
+            return graphCachePromise;
+        }
+        function recordsForCacheDate(payload, dateKey) {
+            if (!payload || !Array.isArray(payload.records)) return [];
+            return payload.records.filter(row => {
+                const raw = row.arrival_date || row.Arrival_Date || '';
+                return String(raw).trim() === dateKey;
+            }).map(row => normalizeRecord(row, dateKey)).filter(r => r.modal_price > 0 || r.max_price > 0);
+        }
+
         const CROP_CATALOG = [
             { key: 'Groundnut', gu: 'મગફળી', emoji: '🥜', baseModal: 6150 },
             { key: 'Cotton', gu: 'કપાસ', emoji: '🌱', baseModal: 7450 },
@@ -811,7 +828,18 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
             if (state.dateCache.has(dateObj.ddmmyyyy)) {
                 return Promise.resolve(state.dateCache.get(dateObj.ddmmyyyy));
             }
+            // Cache-first. When the static cache contains this date, do not contact the API.
+            return loadGraphCache().then(payload => {
+                const cached = recordsForCacheDate(payload, dateObj.ddmmyyyy);
+                if (cached.length) {
+                    state.dateCache.set(dateObj.ddmmyyyy, cached);
+                    return cached;
+                }
+                return fetchSingleDateLive(dateObj);
+            });
+        }
 
+        function fetchSingleDateLive(dateObj) {
             const url = dateObj.daysAgo === 0
                 ? DAILY_URL
                 : `${HIST_BASE}&filters[State]=Gujarat&filters[Arrival_Date]=${encodeURIComponent(dateObj.ddmmyyyy)}`;
