@@ -710,19 +710,28 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
 
         function getPastDatesDDMMYYYY(days) {
             const list = [];
-            const now = Date.now();
+            const now = new Date();
             const dayMs = 86400000;
-            for (let i = days - 1; i >= 0; i--) {
-                const d = new Date(now - i * dayMs);
+            // For 6 months and longer, request one representative date per week.
+            // Keep daily resolution for short ranges; include today as the final sample.
+            const weekly = days >= 180;
+            const step = weekly ? 7 : 1;
+            const offsets = [];
+            for (let i = days - 1; i >= 0; i -= step) offsets.push(i);
+            if (!offsets.includes(0)) offsets.push(0);
+            offsets.sort((a, b) => b - a);
+            offsets.forEach(i => {
+                const d = new Date(now.getTime() - i * dayMs);
                 const dd = String(d.getDate()).padStart(2, '0');
                 const mm = String(d.getMonth() + 1).padStart(2, '0');
                 const yyyy = d.getFullYear();
                 list.push({
                     ddmmyyyy: `${dd}/${mm}/${yyyy}`,
                     shortLabel: `${dd}/${mm}`,
-                    daysAgo: i
+                    daysAgo: i,
+                    weeklySample: weekly
                 });
-            }
+            });
             return list;
         }
 
@@ -830,7 +839,7 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
                 Promise.all(slice.map(fetchSingleDate)).then(results => {
                     if (token !== state.loadToken) return;
                     results.forEach(arr => { liveRecordsFound += arr.length; });
-                    progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} દિવસ`;
+                    progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} ${dates.some(d => d.weeklySample) ? 'અઠવાડિયા' : 'દિવસ'}`;
 
                     // Show partial results while the rest of the history loads.
                     state.usingSamplePreview = false;
@@ -844,7 +853,7 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
                 });
             }
 
-            progressEl.textContent = `0/${dates.length} દિવસ`;
+            progressEl.textContent = `0/${dates.length} ${dates.some(d => d.weeklySample) ? 'અઠવાડિયા' : 'દિવસ'}`;
             setTimeout(stepQueue, 0);
         }
 
