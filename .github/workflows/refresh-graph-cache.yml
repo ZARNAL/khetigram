@@ -27,6 +27,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if [ ! -f data/graph-cache.json ]; then
+            echo "No cache file exists yet; API was unavailable and nothing will be committed."
+            echo "⚠️ Cache file not created: API unavailable; no previous cache exists." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
           git add data/graph-cache.json
           if git diff --cached --quiet; then
             echo "Cache unchanged; no commit needed."
