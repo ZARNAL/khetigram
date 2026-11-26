@@ -778,6 +778,31 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
             return records;
         }
 
+        // Weekly samples use the nearest real trading day within +/- 3 days.
+        // Try the anchor first, then nearby days only when no records are returned.
+        function fetchWeeklyTradingSample(anchorDate) {
+            const offsets = [0, -1, 1, -2, 2, -3, 3];
+            const base = new Date(anchorDate.ddmmyyyy.split('/').reverse().join('-') + 'T12:00:00');
+            const tryOffset = (index) => {
+                if (index >= offsets.length) return Promise.resolve([]);
+                const d = new Date(base.getTime());
+                d.setDate(d.getDate() + offsets[index]);
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                const candidate = {
+                    ddmmyyyy: `${dd}/${mm}/${yyyy}`,
+                    shortLabel: `${dd}/${mm}`,
+                    daysAgo: anchorDate.daysAgo - offsets[index],
+                    weeklySample: true
+                };
+                // Don't search dates beyond today.
+                if (candidate.daysAgo < 0) return tryOffset(index + 1);
+                return fetchSingleDate(candidate).then(records => records.length ? records : tryOffset(index + 1));
+            };
+            return tryOffset(0);
+        }
+
         // ==========================================
         // 3. NON-BLOCKING ASYNC DATA LOADER
         // ==========================================
@@ -843,8 +868,9 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
 
                 const slice = dates.slice(index, index + BATCH_SIZE);
                 index += slice.length;
+                const fetchSample = dateObj => dateObj.weeklySample ? fetchWeeklyTradingSample(dateObj) : fetchSingleDate(dateObj);
 
-                Promise.all(slice.map(fetchSingleDate)).then(results => {
+                Promise.all(slice.map(fetchSample)).then(results => {
                     if (token !== state.loadToken) return;
                     results.forEach(arr => { liveRecordsFound += arr.length; });
                     progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} ${dates.some(d => d.weeklySample) ? 'અઠવાડિયા' : 'દિવસ'}`;
@@ -962,8 +988,8 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
                     if (validVals.length > 0) {
                         const avgRaw = validVals.reduce((a, b) => a + b, 0) / validVals.length;
                         seriesPoints.push({
-                            date: d.ddmmyyyy,
-                            shortLabel: d.shortLabel,
+                            date: (chartRecs[0].arrival_date || d.ddmmyyyy),
+                            shortLabel: (chartRecs[0].arrival_date || d.ddmmyyyy).slice(0, 5),
                             value: convertPriceNum(avgRaw),
                             sampleCount: chartRecs.length
                         });
