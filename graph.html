@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ખેતીગ્રામ | પાક ભાવ ગ્રાફ અને વિશ્લેષણ</title>
+
+    <!-- Google Fonts: Inter & Noto Sans Gujarati -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Gujarati:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --apple-bg: #F2F2F7;
+            --apple-card: #FFFFFF;
+            --apple-text: #1C1C1E;
+            --apple-secondary: #8E8E93;
+            --apple-blue: #007AFF;
+            --apple-green: #28A745;
+            --apple-red: #FF3B30;
+            --apple-orange: #FF9500;
+            --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Noto Sans Gujarati', 'Inter', sans-serif;
+            background-color: var(--apple-bg);
+            color: var(--apple-text);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-tap-highlight-color: transparent;
+            min-height: 100vh;
+            padding-bottom: 36px;
+            line-height: 1.4;
+        }
+
+        button, select {
+            font-family: inherit;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: inherit;
+        }
+
+        .hidden { display: none !important; }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .min-w-0 { min-width: 0; }
+        .shrink-0 { flex-shrink: 0; }
+
+        /* ==========================================
+           STICKY FROSTED GLASS HEADER
+           ========================================== */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .header-inner {
+            max-width: 768px;
+            margin: 0 auto;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .main-container {
+            max-width: 768px;
+            margin: 0 auto;
+            padding: 12px 14px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .apple-card {
+            background: var(--apple-card);
+            border-radius: 20px;
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.03), 0 0.5px 1px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .card-padded { padding: 12px; }
+        .card-padded-lg { padding: 16px; }
+        .stack-sm { display: flex; flex-direction: column; gap: 10px; }
+
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .brand-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: linear-gradient(180deg, #38BDF8 0%, #0284C7 100%);
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 900;
+            flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .brand-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1C1C1E;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+
+        .brand-subtitle {
+            font-size: 10.5px;
+            font-weight: 500;
+            color: #8E8E93;
+            line-height: 1.2;
+        }
+
+        .segmented-control {
+            display: flex;
+            align-items: center;
+            background: rgba(118, 118, 128, 0.12);
+            padding: 2px;
+            border-radius: 9px;
+        }
+
+        .seg-btn-active {
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 700;
+            background: #FFFFFF;
+            color: #1C1C1E;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .seg-btn-inactive {
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #636366;
+        }
+
+        .nav-link-pill {
+            padding: 5px 10px;
+            border-radius: 9999px;
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        /* ==========================================
+           CONTROLS & SELECTORS
+           ========================================== */
+        .selector-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+        @media (min-width: 540px) {
+            .selector-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .apple-select-box {
+            background: #F2F2F7;
+            border-radius: 14px;
+            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .apple-select-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #8E8E93;
+            letter-spacing: 0.02em;
+        }
+
+        .apple-select {
+            width: 100%;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #1C1C1E;
+            outline: none;
+            background: transparent;
+            padding: 2px 0;
+        }
+
+        .range-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .range-pills {
+            display: flex;
+            align-items: center;
+            background: rgba(118, 118, 128, 0.12);
+            padding: 2px;
+            border-radius: 10px;
+        }
+
+        .range-btn {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #636366;
+            transition: all 0.15s ease;
+        }
+
+        .range-btn.active {
+            background: #FFFFFF;
+            color: #1C1C1E;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ==========================================
+           HERO PRICE HEADER & INTERACTIVE SVG CHART
+           ========================================== */
+        .price-hero {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .hero-crop-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #636366;
+        }
+
+        .hero-price-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: #1C1C1E;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            margin-top: 2px;
+        }
+
+        .hero-price-unit {
+            font-size: 13px;
+            font-weight: 600;
+            color: #8E8E93;
+            margin-left: 4px;
+        }
+
+        .delta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11.5px;
+            font-weight: 800;
+        }
+
+        .delta-up {
+            background: rgba(52, 199, 89, 0.14);
+            color: #1E7E34;
+        }
+
+        .delta-down {
+            background: rgba(255, 59, 48, 0.12);
+            color: #C92A2A;
+        }
+
+        .delta-flat {
+            background: #F2F2F7;
+            color: #636366;
+        }
+
+        .chart-stage {
+            position: relative;
+            width: 100%;
+            height: 235px;
+            margin-top: 6px;
+            touch-action: pan-y;
+            user-select: none;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            display: block;
+        }
+
+        .chart-tooltip-pill {
+            position: absolute;
+            top: 2px;
+            transform: translateX(-50%);
+            background: #1C1C1E;
+            color: #FFFFFF;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            pointer-events: none;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+            z-index: 5;
+        }
+
+        /* ==========================================
+           KPI METRICS & YARD COMPARISON LIST
+           ========================================== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        @media (min-width: 540px) {
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .kpi-card {
+            background: #F9F9FB;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
+            padding: 10px 12px;
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #8E8E93;
+        }
+
+        .kpi-val {
+            font-size: 17px;
+            font-weight: 800;
+            color: #1C1C1E;
+            margin-top: 2px;
+        }
+
+        .kpi-sub {
+            font-size: 10px;
+            font-weight: 600;
+            color: #636366;
+            margin-top: 2px;
+        }
+
+        .yard-bar-row {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+        .yard-bar-row:hover { background: #F6F9FC; }
+        .yard-bar-row:last-child { border-bottom: none; }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            border-radius: 9999px;
+            background: #F2F2F7;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 9999px;
+            background: linear-gradient(90deg, #38BDF8 0%, #007AFF 100%);
+            transition: width 0.35s var(--spring-ease);
+        }
+
+        .loading-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: rgba(0, 122, 255, 0.1);
+            color: #007AFF;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .spinner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #007AFF;
+            animation: pulse 1s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .tap-spring {
+            transition: transform 0.2s var(--spring-ease);
+        }
+        .tap-spring:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY APPLE FROSTED GLASS HEADER -->
+    <header class="sticky-header">
+        <div class="header-inner">
+            <div class="brand-wrap">
+                <div class="brand-logo">ખ</div>
+                <div class="min-w-0">
+                    <h1 class="brand-title truncate">ખેતીગ્રામ ગ્રાફ</h1>
+                    <p id="headerSubtitle" class="brand-subtitle truncate">પાક ભાવની વધઘટ • ૨૦ કિલો (મણ)</p>
+                </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div class="segmented-control">
+                    <button type="button" id="btnUnitMann" class="tap-spring seg-btn-active" style="font-size:10px; padding:3px 8px;">૨૦ કિલો</button>
+                    <button type="button" id="btnUnitQuintal" class="tap-spring seg-btn-inactive" style="font-size:10px; padding:3px 8px;">૧૦૦ કિલો</button>
+                </div>
+
+                <a href="index.html" class="tap-spring nav-link-pill">
+                    ‹ આજના ભાવ
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-container">
+
+        <!-- FILTER & TIMEFRAME CONTROL CARD -->
+        <section class="apple-card card-padded stack-sm">
+            <div class="selector-grid">
+                <label class="apple-select-box">
+                    <span class="apple-select-label">🌱 પાક પસંદ કરો</span>
+                    <select id="cropSelect" class="apple-select"></select>
+                </label>
+
+                <label class="apple-select-box">
+                    <span class="apple-select-label">🏛️ માર્કેટ યાર્ડ</span>
+                    <select id="yardSelect" class="apple-select">
+                        <option value="ALL">બધા યાર્ડ (ગુજરાત સરેરાશ)</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="range-bar">
+                <div class="range-pills">
+                    <button type="button" data-days="7" class="range-btn active">૭ દિવસ</button>
+                    <button type="button" data-days="15" class="range-btn">૧૫ દિવસ</button>
+                    <button type="button" data-days="30" class="range-btn">૩૦ દિવસ</button>
+                </div>
+
+                <div class="range-pills">
+                    <button type="button" data-series="modal" class="series-btn range-btn active">સરેરાશ</button>
+                    <button type="button" data-series="max" class="series-btn range-btn">ઊંચો</button>
+                    <button type="button" data-series="min" class="series-btn range-btn">ઓછો</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN INTERACTIVE APPLE STOCKS-STYLE GRAPH CARD -->
+        <section class="apple-card card-padded-lg stack-sm">
+            <div class="price-hero">
+                <div class="min-w-0">
+                    <div class="hero-crop-badge">
+                        <span id="heroCropEmoji">🥜</span>
+                        <span id="heroCropTitle" class="truncate">મગફળી • ગુજરાત સરેરાશ</span>
+                    </div>
+                    <div class="tabular-nums">
+                        <span id="heroPriceMain" class="hero-price-value">₹--</span>
+                        <span id="heroPriceUnit" class="hero-price-unit">/ ૨૦ કિલો</span>
+                    </div>
+                    <p id="heroDateSub" style="font-size:11.5px; font-weight:600; color:#8E8E93; margin-top:2px;">
+                        ડેટા તૈયાર થઈ રહ્યો છે...
+                    </p>
+                </div>
+
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0;">
+                    <span id="heroDeltaBadge" class="delta-badge delta-flat tabular-nums">--</span>
+                    <span id="loadingIndicator" class="loading-pill hidden">
+                        <span class="spinner-dot"></span>
+                        <span id="loadingProgressText">લોડિંગ...</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Interactive SVG Chart Container -->
+            <div id="chartStage" class="chart-stage">
+                <div id="chartTooltip" class="chart-tooltip-pill hidden tabular-nums"></div>
+                <svg id="priceChartSvg" class="chart-svg" viewBox="0 0 680 235" preserveAspectRatio="none"></svg>
+            </div>
+
+            <!-- X-Axis Date Labels -->
+            <div id="chartXAxisLabels" style="display:flex; justify-content:space-between; font-size:10.5px; font-weight:700; color:#8E8E93; padding:0 4px;" class="tabular-nums">
+                <span>--</span>
+                <span>--</span>
+                <span>--</span>
+            </div>
+
+            <!-- Summary KPIs -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">સૌથી ઊંચો ભાવ</div>
+                    <div id="kpiHighVal" class="kpi-val tabular-nums" style="color:#28A745;">₹--</div>
+                    <div id="kpiHighDate" class="kpi-sub truncate">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">સૌથી ઓછો ભાવ</div>
+                    <div id="kpiLowVal" class="kpi-val tabular-nums" style="color:#636366;">₹--</div>
+                    <div id="kpiLowDate" class="kpi-sub truncate">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">સમયગાળાની સરેરાશ</div>
+                    <div id="kpiAvgVal" class="kpi-val tabular-nums" style="color:#007AFF;">₹--</div>
+                    <div id="kpiDaysCount" class="kpi-sub">૦ દિવસનો ડેટા</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">વધઘટ (Spread)</div>
+                    <div id="kpiSpreadVal" class="kpi-val tabular-nums">₹--</div>
+                    <div class="kpi-sub">ઊંચા અને ઓછાનો તફાવત</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOP PAYING YARDS RANKING FOR SELECTED CROP -->
+        <section class="apple-card" style="overflow:hidden;">
+            <div style="padding:12px 16px; background:#F9F9FB; border-bottom:1px solid rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:space-between;">
+                <div>
+                    <h2 style="font-size:14px; font-weight:800; color:#1C1C1E;">🏛️ ટોચના માર્કેટ યાર્ડ (સરેરાશ ભાવ મુજબ)</h2>
+                    <p style="font-size:11px; font-weight:500; color:#8E8E93;">યાર્ડ પર ટેપ કરીને તેનો અલગ ગ્રાફ જુઓ</p>
+                </div>
+                <span id="yardCountBadge" style="padding:2px 10px; border-radius:9999px; background:#F2F2F7; font-size:11px; font-weight:700; color:#636366;" class="tabular-nums">૦ યાર્ડ</span>
+            </div>
+            <div id="topYardsContainer"></div>
+        </section>
+
+    </main>
+
+    <script>
+        // ==========================================
+        // 1. API & SHARED GUJARATI DICTIONARIES
+        // ==========================================
+        const API_KEY = '579b464db66ec23bdd0000017185aa4a01fb494e47104dff02edf1ba';
+        const DAILY_URL = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${API_KEY}&format=json&limit=10000&offset=0&filters[state]=Gujarat`;
+        const HIST_BASE = `https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=${API_KEY}&format=json&limit=10000&offset=0`;
+
+        const CROP_CATALOG = [
+            { key: 'Groundnut', gu: 'મગફળી', emoji: '🥜', baseModal: 6150 },
+            { key: 'Cotton', gu: 'કપાસ', emoji: '🌱', baseModal: 7450 },
+            { key: 'Cummin Seed', gu: 'જીરું', emoji: '🌿', baseModal: 24200 },
+            { key: 'Castor Seed', gu: 'એરંડા', emoji: '🌱', baseModal: 6250 },
+            { key: 'Sesamum', gu: 'તલ', emoji: '🌱', baseModal: 12400 },
+            { key: 'Coriander seed', gu: 'ધાણા', emoji: '🌿', baseModal: 7100 },
+            { key: 'Wheat', gu: 'ઘઉં', emoji: '🌾', baseModal: 2680 },
+            { key: 'Bengal Gram', gu: 'ચણા', emoji: '🫘', baseModal: 5900 },
+            { key: 'Onion', gu: 'ડુંગળી', emoji: '🧅', baseModal: 1650 },
+            { key: 'Garlic', gu: 'લસણ', emoji: '🧄', baseModal: 9800 },
+            { key: 'Potato', gu: 'બટાટા', emoji: '🥔', baseModal: 1450 },
+            { key: 'Tomato', gu: 'ટામેટા', emoji: '🍅', baseModal: 1900 },
+            { key: 'Soyabean', gu: 'સોયાબિન', emoji: '🌱', baseModal: 4450 },
+            { key: 'Mustard', gu: 'રાયડો', emoji: '🌻', baseModal: 5650 },
+            { key: 'Fennel', gu: 'વરિયાળી', emoji: '🌿', baseModal: 8400 },
+            { key: 'Isabgul', gu: 'ઈસબગુલ', emoji: '🌾', baseModal: 13200 },
+            { key: 'Bajra', gu: 'બાજરી', emoji: '🌾', baseModal: 2450 },
+            { key: 'Arhar', gu: 'તુવેર', emoji: '🫘', baseModal: 8900 },
+            { key: 'Green Gram', gu: 'મગ', emoji: '🫘', baseModal: 7600 },
+            { key: 'Black Gram', gu: 'અડદ', emoji: '🫘', baseModal: 7400 },
+            { key: 'Dry Chillies', gu: 'સૂકા મરચાં', emoji: '🌶️', baseModal: 14500 },
+            { key: 'Lemon', gu: 'લીંબુ', emoji: '🍋', baseModal: 4200 }
+        ];
+
+        const GUJARATI_PLACES = {
+            'Rajkot': 'રાજકોટ', 'Gondal': 'ગોંડલ', 'Jasdan': 'જસદણ', 'Jetpur': 'જેતપુર', 'Dhoraji': 'ધોરાજી', 'Upleta': 'ઉપલેટા', 'Wankaner': 'વાંકાનેર',
+            'Morbi': 'મોરબી', 'Halvad': 'હળવદ', 'Jamnagar': 'જામનગર', 'Kalavad': 'કાલાવડ', 'Dhrol': 'ધ્રોલ', 'Jamjodhpur': 'જામજોધપુર',
+            'Devbhumi Dwarka': 'દેવભૂમિ દ્વારકા', 'Khambhalia': 'ખંભાળિયા', 'Junagadh': 'જૂનાગઢ', 'Visavadar': 'વિસાવદર', 'Keshod': 'કેશોદ', 'Mangrol': 'માંગરોળ', 'Manavadar': 'માણાવદર',
+            'Gir Somnath': 'ગીર સોમનાથ', 'Veraval': 'વેરાવળ', 'Kodinar': 'કોડીનાર', 'Una': 'ઉના', 'Talala': 'તાલાલા',
+            'Porbandar': 'પોરબંદર', 'Amreli': 'અમરેલી', 'Bagasara': 'બગસરા', 'Babra': 'બાબરા', 'Savarkundla': 'સાવરકુંડલા', 'Rajula': 'રાજુલા',
+            'Bhavnagar': 'ભાવનગર', 'Mahuva': 'મહુવા', 'Talaja': 'તળાજા', 'Palitana': 'પાલીતાણા', 'Botad': 'બોટાદ', 'Gadhada': 'ગઢડા',
+            'Surendranagar': 'સુરેન્દ્રનગર', 'Wadhwan': 'વઢવાણ', 'Dhrangadhra': 'ધ્રાંગધ્રા', 'Limbdi': 'લીંબડી',
+            'Kutch': 'કચ્છ', 'Bhuj': 'ભુજ', 'Anjar': 'અંજાર', 'Rapar': 'રાપર', 'Bhachau': 'ભચાઉ', 'Mandvi': 'માંડવી',
+            'Mehsana': 'મહેસાણા', 'Unjha': 'ઊંઝા', 'Visnagar': 'વિસનગર', 'Kadi': 'કડી', 'Vijapur': 'વિજાપુર',
+            'Banaskantha': 'બનાસકાંઠા', 'Deesa': 'ડીસા', 'Palanpur': 'પાલનપુર', 'Dhanera': 'ધાનેરા', 'Tharad': 'થરાદ',
+            'Sabarkantha': 'સાબરકાંઠા', 'Himatnagar': 'હિંમતનગર', 'Idar': 'ઈડર', 'Talod': 'તલોદ', 'Modasa': 'મોડાસા',
+            'Patan': 'પાટણ', 'Siddhpur': 'સિદ્ધપુર', 'Harij': 'હારીજ', 'Radhanpur': 'રાધનપુર',
+            'Gandhinagar': 'ગાંધીનગર', 'Mansa': 'માણસા', 'Kalol': 'કલોલ', 'Dehgam': 'દહેગામ',
+            'Ahmedabad': 'અમદાવાદ', 'Dholka': 'ધોળકા', 'Bavla': 'બાવળા', 'Viramgam': 'વિરમગામ', 'Sanand': 'સાણંદ',
+            'Anand': 'આણંદ', 'Khambhat': 'ખંભાત', 'Petlad': 'પેટલાદ', 'Borsad': 'બોરસદ',
+            'Kheda': 'ખેડા', 'Nadiad': 'નડિયાદ', 'Kapadvanj': 'કપડવંજ', 'Vadodara': 'વડોદરા', 'Padra': 'પાદરા', 'Karjan': 'કરજણ', 'Dabhoi': 'ડભોઈ', 'Bodeli': 'બોડેલી',
+            'Panchmahal': 'પંચમહાલ', 'Godhra': 'ગોધરા', 'Halol': 'હાલોલ', 'Dahod': 'દાહોદ', 'Jhalod': 'ઝાલોદ',
+            'Surat': 'સુરત', 'Bardoli': 'બારડોલી', 'Vyara': 'વ્યારા', 'Bharuch': 'ભરૂચ', 'Ankleshwar': 'અંકલેશ્વર', 'Rajpipla': 'રાજપીપળા', 'Navsari': 'નવસારી', 'Valsad': 'વલસાડ'
+        };
+
+        const state = {
+            priceDivisor: 5,
+            daysWindow: 7,
+            seriesType: 'modal',
+            selectedCrop: 'Groundnut',
+            selectedYard: 'ALL',
+            dateCache: new Map(),
+            availableCrops: new Map(),
+            usingSamplePreview: false,
+            loadToken: 0
+        };
+
+        // ==========================================
+        // 2. HELPERS
+        // ==========================================
+        function getGujaratiPlace(raw) {
+            if (!raw) return '';
+            const cleaned = raw.replace(/\b(APMC|Market|Mandi|Yard|Sub\s*Yard)\b/gi, '').replace(/\s+/g, ' ').trim();
+            if (GUJARATI_PLACES[cleaned]) return GUJARATI_PLACES[cleaned];
+            const lower = cleaned.toLowerCase();
+            const entries = Object.entries(GUJARATI_PLACES);
+            for (let i = 0; i < entries.length; i++) {
+                if (lower.includes(entries[i][0].toLowerCase())) return entries[i][1];
+            }
+            return cleaned;
+        }
+
+        function matchCropCatalog(rawCommodity) {
+            const lower = (rawCommodity || '').toLowerCase().trim();
+            for (let i = 0; i < CROP_CATALOG.length; i++) {
+                const item = CROP_CATALOG[i];
+                if (lower === item.key.toLowerCase() || lower.includes(item.key.toLowerCase())) {
+                    return item;
+                }
+            }
+            return { key: rawCommodity, gu: rawCommodity, emoji: '🌱', baseModal: 5000 };
+        }
+
+        function convertPriceNum(val) {
+            const num = parseFloat(val);
+            if (isNaN(num) || num <= 0) return 0;
+            return Math.round(num / state.priceDivisor);
+        }
+
+        function getPastDatesDDMMYYYY(days) {
+            const list = [];
+            const now = Date.now();
+            const dayMs = 86400000;
+            for (let i = days - 1; i >= 0; i--) {
+                const d = new Date(now - i * dayMs);
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const yyyy = d.getFullYear();
+                list.push({
+                    ddmmyyyy: `${dd}/${mm}/${yyyy}`,
+                    shortLabel: `${dd}/${mm}`,
+                    daysAgo: i
+                });
+            }
+            return list;
+        }
+
+        function normalizeRecord(r, fallbackDate) {
+            const cleanNum = v => parseFloat(String(v ?? '0').replace(/,/g, '').trim()) || 0;
+            return {
+                district: r.district || r.District || '',
+                market: r.market || r.Market || '',
+                commodity: r.commodity || r.Commodity || '',
+                arrival_date: r.arrival_date || r.Arrival_Date || fallbackDate,
+                min_price: cleanNum(r.min_price ?? r.Min_Price),
+                max_price: cleanNum(r.max_price ?? r.Max_Price),
+                modal_price: cleanNum(r.modal_price ?? r.Modal_Price)
+            };
+        }
+
+        // Deterministic fallback records if preview sandbox blocks external API
+        function buildFallbackRecordsForDate(dateObj) {
+            const sampleYards = [
+                { market: 'Gondal', district: 'Rajkot', mult: 1.04 },
+                { market: 'Rajkot', district: 'Rajkot', mult: 1.02 },
+                { market: 'Unjha', district: 'Mehsana', mult: 1.05 },
+                { market: 'Mahuva', district: 'Bhavnagar', mult: 0.99 },
+                { market: 'Junagadh', district: 'Junagadh', mult: 1.01 },
+                { market: 'Jasdan', district: 'Rajkot', mult: 0.98 }
+            ];
+            const records = [];
+            CROP_CATALOG.forEach((crop, cIdx) => {
+                const wave = Math.sin((dateObj.daysAgo + cIdx) * 0.7) * 0.035;
+                sampleYards.forEach(y => {
+                    const modal = Math.round(crop.baseModal * y.mult * (1 + wave));
+                    records.push({
+                        district: y.district,
+                        market: y.market,
+                        commodity: crop.key,
+                        arrival_date: dateObj.ddmmyyyy,
+                        min_price: Math.round(modal * 0.88),
+                        max_price: Math.round(modal * 1.09),
+                        modal_price: modal
+                    });
+                });
+            });
+            return records;
+        }
+
+        // ==========================================
+        // 3. NON-BLOCKING ASYNC DATA LOADER
+        // ==========================================
+        function fetchSingleDate(dateObj) {
+            if (state.dateCache.has(dateObj.ddmmyyyy)) {
+                return Promise.resolve(state.dateCache.get(dateObj.ddmmyyyy));
+            }
+
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 6500);
+            const url = dateObj.daysAgo === 0
+                ? DAILY_URL
+                : `${HIST_BASE}&filters[State]=Gujarat&filters[Arrival_Date]=${encodeURIComponent(dateObj.ddmmyyyy)}`;
+
+            return fetch(url, { signal: controller.signal })
+                .then(res => {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                })
+                .then(json => {
+                    const records = (Array.isArray(json.records) ? json.records : [])
+                        .map(r => normalizeRecord(r, dateObj.ddmmyyyy))
+                        .filter(r => r.modal_price > 0 || r.max_price > 0);
+                    state.dateCache.set(dateObj.ddmmyyyy, records);
+                    return records;
+                })
+                .catch(() => {
+                    state.dateCache.set(dateObj.ddmmyyyy, []);
+                    return [];
+                })
+                .finally(() => clearTimeout(timer));
+        }
+
+        function startHistoryLoad() {
+            const token = ++state.loadToken;
+            const loadingEl = document.getElementById('loadingIndicator');
+            const progressEl = document.getElementById('loadingProgressText');
+            loadingEl.classList.remove('hidden');
+
+            const dates = getPastDatesDDMMYYYY(state.daysWindow);
+            let index = 0;
+            let liveRecordsFound = 0;
+
+            function stepQueue() {
+                if (token !== state.loadToken) return;
+
+                if (index >= dates.length) {
+                    // If sandbox blocked all external API calls, populate preview data cleanly
+                    if (liveRecordsFound === 0) {
+                        state.usingSamplePreview = true;
+                        dates.forEach(d => {
+                            state.dateCache.set(d.ddmmyyyy, buildFallbackRecordsForDate(d));
+                        });
+                    } else {
+                        state.usingSamplePreview = false;
+                    }
+                    loadingEl.classList.add('hidden');
+                    rebuildDropdownOptions();
+                    renderAnalyticsAndChart();
+                    return;
+                }
+
+                const slice = dates.slice(index, index + 4);
+                index += slice.length;
+
+                Promise.all(slice.map(fetchSingleDate)).then(results => {
+                    if (token !== state.loadToken) return;
+                    results.forEach(arr => { liveRecordsFound += arr.length; });
+                    progressEl.textContent = `${Math.min(index, dates.length)}/${dates.length} દિવસ`;
+                    setTimeout(stepQueue, 16);
+                });
+            }
+
+            setTimeout(stepQueue, 0);
+        }
+
+        // ==========================================
+        // 4. POPULATE CROP & YARD SELECTORS
+        // ==========================================
+        function rebuildDropdownOptions() {
+            const dates = getPastDatesDDMMYYYY(state.daysWindow);
+            const cropMap = new Map();
+            CROP_CATALOG.forEach(c => cropMap.set(c.key, c));
+
+            dates.forEach(d => {
+                const recs = state.dateCache.get(d.ddmmyyyy) || [];
+                recs.forEach(r => {
+                    const matched = matchCropCatalog(r.commodity);
+                    if (!cropMap.has(matched.key)) cropMap.set(matched.key, matched);
+                });
+            });
+
+            state.availableCrops = cropMap;
+            const cropSelect = document.getElementById('cropSelect');
+            const prevCrop = state.selectedCrop;
+
+            cropSelect.innerHTML = Array.from(cropMap.values())
+                .map(c => `<option value="${c.key}">${c.emoji} ${c.gu}</option>`)
+                .join('');
+
+            if (cropMap.has(prevCrop)) {
+                cropSelect.value = prevCrop;
+            } else {
+                state.selectedCrop = cropSelect.value;
+            }
+
+            updateYardOptionsForSelectedCrop();
+        }
+
+        function updateYardOptionsForSelectedCrop() {
+            const dates = getPastDatesDDMMYYYY(state.daysWindow);
+            const yardSet = new Set();
+
+            dates.forEach(d => {
+                const recs = state.dateCache.get(d.ddmmyyyy) || [];
+                recs.forEach(r => {
+                    if (matchCropCatalog(r.commodity).key !== state.selectedCrop) return;
+                    const yardGu = getGujaratiPlace(r.market) || getGujaratiPlace(r.district);
+                    if (yardGu) yardSet.add(yardGu);
+                });
+            });
+
+            const yardSelect = document.getElementById('yardSelect');
+            const prevYard = state.selectedYard;
+            const sortedYards = Array.from(yardSet).sort((a, b) => a.localeCompare(b, 'gu'));
+
+            yardSelect.innerHTML = `<option value="ALL">બધા યાર્ડ (ગુજરાત સરેરાશ)</option>` +
+                sortedYards.map(y => `<option value="${y}">${y} માર્કેટ યાર્ડ</option>`).join('');
+
+            if (prevYard === 'ALL' || yardSet.has(prevYard)) {
+                yardSelect.value = prevYard;
+            } else {
+                state.selectedYard = 'ALL';
+                yardSelect.value = 'ALL';
+            }
+        }
+
+        // ==========================================
+        // 5. AGGREGATE SERIES & RENDER APPLE SVG GRAPH
+        // ==========================================
+        function renderAnalyticsAndChart() {
+            const dates = getPastDatesDDMMYYYY(state.daysWindow);
+            const cropMeta = state.availableCrops.get(state.selectedCrop) || { gu: state.selectedCrop, emoji: '🌱' };
+
+            const seriesPoints = [];
+            const yardAggMap = new Map();
+
+            dates.forEach(d => {
+                const recs = state.dateCache.get(d.ddmmyyyy) || [];
+                const matchingRecs = recs.filter(r => matchCropCatalog(r.commodity).key === state.selectedCrop);
+
+                matchingRecs.forEach(r => {
+                    const yardGu = getGujaratiPlace(r.market) || getGujaratiPlace(r.district);
+                    if (!yardGu) return;
+                    if (!yardAggMap.has(yardGu)) {
+                        yardAggMap.set(yardGu, { name: yardGu, sumModal: 0, maxPeak: 0, count: 0 });
+                    }
+                    const yEntry = yardAggMap.get(yardGu);
+                    yEntry.sumModal += r.modal_price;
+                    if (r.max_price > yEntry.maxPeak) yEntry.maxPeak = r.max_price;
+                    yEntry.count += 1;
+                });
+
+                const chartRecs = state.selectedYard === 'ALL'
+                    ? matchingRecs
+                    : matchingRecs.filter(r => (getGujaratiPlace(r.market) || getGujaratiPlace(r.district)) === state.selectedYard);
+
+                if (chartRecs.length > 0) {
+                    const field = state.seriesType === 'max' ? 'max_price' : (state.seriesType === 'min' ? 'min_price' : 'modal_price');
+                    const validVals = chartRecs.map(r => r[field]).filter(v => v > 0);
+                    if (validVals.length > 0) {
+                        const avgRaw = validVals.reduce((a, b) => a + b, 0) / validVals.length;
+                        seriesPoints.push({
+                            date: d.ddmmyyyy,
+                            shortLabel: d.shortLabel,
+                            value: convertPriceNum(avgRaw),
+                            sampleCount: chartRecs.length
+                        });
+                    }
+                }
+            });
+
+            document.getElementById('heroCropEmoji').textContent = cropMeta.emoji;
+            document.getElementById('heroCropTitle').textContent = `${cropMeta.gu} • ${state.selectedYard === 'ALL' ? 'ગુજરાત સરેરાશ' : state.selectedYard + ' યાર્ડ'}`;
+            document.getElementById('heroPriceUnit').textContent = state.priceDivisor === 5 ? '/ ૨૦ કિલો' : '/ ૧૦૦ કિલો';
+            document.getElementById('headerSubtitle').textContent = `પાક ભાવની વધઘટ • ${state.priceDivisor === 5 ? '૨૦ કિલો (મણ)' : '૧૦૦ કિલો (ક્વિન્ટલ)'}`;
+
+            updateHeroReadout(seriesPoints[seriesPoints.length - 1] || null, seriesPoints);
+            drawSmoothSvgChart(seriesPoints);
+            renderKpis(seriesPoints);
+            renderTopYards(yardAggMap);
+        }
+
+        function updateHeroReadout(activePoint, allPoints) {
+            const priceEl = document.getElementById('heroPriceMain');
+            const subEl = document.getElementById('heroDateSub');
+            const deltaEl = document.getElementById('heroDeltaBadge');
+
+            if (!activePoint || allPoints.length === 0) {
+                priceEl.textContent = '₹--';
+                subEl.textContent = 'આ સમયગાળા માટે ડેટા ઉપલબ્ધ નથી';
+                deltaEl.className = 'delta-badge delta-flat tabular-nums';
+                deltaEl.textContent = '૦%';
+                return;
+            }
+
+            priceEl.textContent = `₹${activePoint.value.toLocaleString('en-IN')}`;
+            const modeTag = state.usingSamplePreview ? ' • નમૂના ગ્રાફ' : '';
+            subEl.textContent = `તારીખ: ${activePoint.date} (${activePoint.sampleCount} નોંધ)${modeTag}`;
+
+            const firstVal = allPoints[0].value;
+            const diff = activePoint.value - firstVal;
+            const pct = firstVal > 0 ? ((diff / firstVal) * 100).toFixed(1) : '0.0';
+
+            if (diff > 0) {
+                deltaEl.className = 'delta-badge delta-up tabular-nums';
+                deltaEl.textContent = `▲ +₹${diff.toLocaleString('en-IN')} (+${pct}%)`;
+            } else if (diff < 0) {
+                deltaEl.className = 'delta-badge delta-down tabular-nums';
+                deltaEl.textContent = `▼ -₹${Math.abs(diff).toLocaleString('en-IN')} (${pct}%)`;
+            } else {
+                deltaEl.className = 'delta-badge delta-flat tabular-nums';
+                deltaEl.textContent = `• સ્થિર (0%)`;
+            }
+        }
+
+        function drawSmoothSvgChart(points) {
+            const svg = document.getElementById('priceChartSvg');
+            const xAxisEl = document.getElementById('chartXAxisLabels');
+            const tooltip = document.getElementById('chartTooltip');
+            tooltip.classList.add('hidden');
+
+            const W = 680;
+            const H = 235;
+            const padTop = 24;
+            const padBottom = 20;
+            const padLeft = 10;
+            const padRight = 10;
+
+            if (points.length === 0) {
+                svg.innerHTML = `<text x="340" y="120" text-anchor="middle" fill="#8E8E93" font-size="14" font-weight="700">આ પસંદગી માટે કોઈ ગ્રાફ ડેટા ઉપલબ્ધ નથી</text>`;
+                xAxisEl.innerHTML = `<span>--</span><span>--</span><span>--</span>`;
+                return;
+            }
+
+            const values = points.map(p => p.value);
+            const minVal = Math.min(...values);
+            const maxVal = Math.max(...values);
+            const span = Math.max(maxVal - minVal, 10);
+
+            const coords = points.map((p, idx) => {
+                const x = points.length === 1
+                    ? W / 2
+                    : padLeft + (idx / (points.length - 1)) * (W - padLeft - padRight);
+                const normY = (p.value - minVal) / span;
+                const y = (H - padBottom) - normY * (H - padTop - padBottom);
+                return { x, y, point: p };
+            });
+
+            let pathD = `M ${coords[0].x.toFixed(1)} ${coords[0].y.toFixed(1)}`;
+            for (let i = 0; i < coords.length - 1; i++) {
+                const p0 = coords[i];
+                const p1 = coords[i + 1];
+                const midX = ((p0.x + p1.x) / 2).toFixed(1);
+                pathD += ` C ${midX} ${p0.y.toFixed(1)}, ${midX} ${p1.y.toFixed(1)}, ${p1.x.toFixed(1)} ${p1.y.toFixed(1)}`;
+            }
+
+            const areaD = coords.length > 1
+                ? `${pathD} L ${coords[coords.length - 1].x.toFixed(1)} ${H} L ${coords[0].x.toFixed(1)} ${H} Z`
+                : '';
+
+            const lineColor = state.seriesType === 'max' ? '#28A745' : (state.seriesType === 'min' ? '#FF9500' : '#007AFF');
+
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="appleAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.24" />
+                        <stop offset="100%" stop-color="${lineColor}" stop-opacity="0.0" />
+                    </linearGradient>
+                </defs>
+
+                <line x1="0" y1="${padTop}" x2="${W}" y2="${padTop}" stroke="rgba(0,0,0,0.06)" stroke-dasharray="4 4" />
+                <line x1="0" y1="${H / 2}" x2="${W}" y2="${H / 2}" stroke="rgba(0,0,0,0.06)" stroke-dasharray="4 4" />
+                <line x1="0" y1="${H - padBottom}" x2="${W}" y2="${H - padBottom}" stroke="rgba(0,0,0,0.06)" />
+
+                ${areaD ? `<path d="${areaD}" fill="url(#appleAreaGrad)" />` : ''}
+                ${coords.length > 1 ? `<path d="${pathD}" fill="none" stroke="${lineColor}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />` : ''}
+
+                <line id="scrubLine" x1="0" y1="0" x2="0" y2="${H}" stroke="#1C1C1E" stroke-width="1.2" stroke-dasharray="3 3" opacity="0" />
+
+                ${coords.map((c, idx) => `
+                    <circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${idx === coords.length - 1 ? 5 : 3}" fill="${lineColor}" stroke="#FFFFFF" stroke-width="2" />
+                `).join('')}
+
+                <circle id="scrubDot" cx="0" cy="0" r="6.5" fill="${lineColor}" stroke="#FFFFFF" stroke-width="2.5" opacity="0" />
+            `;
+
+            const firstLabel = points[0].shortLabel;
+            const midLabel = points[Math.floor(points.length / 2)].shortLabel;
+            const lastLabel = points[points.length - 1].shortLabel;
+            xAxisEl.innerHTML = `<span>${firstLabel}</span><span>${midLabel}</span><span>${lastLabel}</span>`;
+
+            const stage = document.getElementById('chartStage');
+            const handleScrub = (clientX) => {
+                const rect = stage.getBoundingClientRect();
+                const relX = Math.max(0, Math.min(rect.width, clientX - rect.left));
+                const svgX = (relX / rect.width) * W;
+
+                let nearest = coords[0];
+                let minDist = Infinity;
+                for (let i = 0; i < coords.length; i++) {
+                    const dist = Math.abs(coords[i].x - svgX);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        nearest = coords[i];
+                    }
+                }
+
+                const scrubLine = document.getElementById('scrubLine');
+                const scrubDot = document.getElementById('scrubDot');
+                if (scrubLine && scrubDot) {
+                    scrubLine.setAttribute('x1', nearest.x);
+                    scrubLine.setAttribute('x2', nearest.x);
+                    scrubLine.setAttribute('opacity', '0.45');
+                    scrubDot.setAttribute('cx', nearest.x);
+                    scrubDot.setAttribute('cy', nearest.y);
+                    scrubDot.setAttribute('opacity', '1');
+                }
+
+                const pctLeft = Math.max(14, Math.min(86, (nearest.x / W) * 100));
+                tooltip.style.left = `${pctLeft}%`;
+                tooltip.textContent = `${nearest.point.shortLabel} • ₹${nearest.point.value.toLocaleString('en-IN')}`;
+                tooltip.classList.remove('hidden');
+
+                updateHeroReadout(nearest.point, points);
+            };
+
+            const resetScrub = () => {
+                const scrubLine = document.getElementById('scrubLine');
+                const scrubDot = document.getElementById('scrubDot');
+                if (scrubLine) scrubLine.setAttribute('opacity', '0');
+                if (scrubDot) scrubDot.setAttribute('opacity', '0');
+                tooltip.classList.add('hidden');
+                updateHeroReadout(points[points.length - 1], points);
+            };
+
+            stage.onmousemove = (e) => handleScrub(e.clientX);
+            stage.ontouchmove = (e) => {
+                if (e.touches[0]) handleScrub(e.touches[0].clientX);
+            };
+            stage.onmouseleave = resetScrub;
+            stage.ontouchend = resetScrub;
+        }
+
+        function renderKpis(points) {
+            if (points.length === 0) {
+                document.getElementById('kpiHighVal').textContent = '₹--';
+                document.getElementById('kpiHighDate').textContent = '--';
+                document.getElementById('kpiLowVal').textContent = '₹--';
+                document.getElementById('kpiLowDate').textContent = '--';
+                document.getElementById('kpiAvgVal').textContent = '₹--';
+                document.getElementById('kpiDaysCount').textContent = '૦ દિવસનો ડેટા';
+                document.getElementById('kpiSpreadVal').textContent = '₹--';
+                return;
+            }
+
+            let high = points[0];
+            let low = points[0];
+            let sum = 0;
+
+            points.forEach(p => {
+                if (p.value > high.value) high = p;
+                if (p.value < low.value) low = p;
+                sum += p.value;
+            });
+
+            const avg = Math.round(sum / points.length);
+            const spread = high.value - low.value;
+
+            document.getElementById('kpiHighVal').textContent = `₹${high.value.toLocaleString('en-IN')}`;
+            document.getElementById('kpiHighDate').textContent = `તારીખ: ${high.date}`;
+            document.getElementById('kpiLowVal').textContent = `₹${low.value.toLocaleString('en-IN')}`;
+            document.getElementById('kpiLowDate').textContent = `તારીખ: ${low.date}`;
+            document.getElementById('kpiAvgVal').textContent = `₹${avg.toLocaleString('en-IN')}`;
+            document.getElementById('kpiDaysCount').textContent = `${points.length} દિવસનો ડેટા`;
+            document.getElementById('kpiSpreadVal').textContent = `₹${spread.toLocaleString('en-IN')}`;
+        }
+
+        function renderTopYards(yardAggMap) {
+            const container = document.getElementById('topYardsContainer');
+            const badge = document.getElementById('yardCountBadge');
+
+            const yards = Array.from(yardAggMap.values())
+                .map(y => ({
+                    name: y.name,
+                    avgPrice: convertPriceNum(y.sumModal / y.count),
+                    maxPeak: convertPriceNum(y.maxPeak)
+                }))
+                .filter(y => y.avgPrice > 0)
+                .sort((a, b) => b.avgPrice - a.avgPrice);
+
+            badge.textContent = `${yards.length} યાર્ડ`;
+
+            if (yards.length === 0) {
+                container.innerHTML = `<div style="padding:32px 16px; text-align:center; font-size:12px; font-weight:700; color:#8E8E93;">કોઈ યાર્ડ ડેટા ઉપલબ્ધ નથી</div>`;
+                return;
+            }
+
+            const topPrice = yards[0].avgPrice;
+
+            container.innerHTML = yards.slice(0, 12).map((y, idx) => {
+                const widthPct = Math.max(15, Math.round((y.avgPrice / topPrice) * 100));
+                const isSelected = state.selectedYard === y.name;
+                return `
+                    <div data-yard="${y.name}" class="yard-bar-row" style="${isSelected ? 'background:#EAF3FB;' : ''}">
+                        <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                            <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+                                <span class="tabular-nums" style="font-size:11px; font-weight:800; color:#8E8E93; width:18px;">${idx + 1}.</span>
+                                <span class="truncate" style="font-size:13.5px; font-weight:800; color:#1C1C1E;">${y.name} માર્કેટ યાર્ડ</span>
+                            </div>
+                            <div class="tabular-nums shrink-0" style="text-align:right;">
+                                <span style="font-size:14px; font-weight:800; color:#007AFF;">₹${y.avgPrice.toLocaleString('en-IN')}</span>
+                                <span style="font-size:10.5px; font-weight:600; color:#28A745; margin-left:6px;">(ઊંચો ₹${y.maxPeak.toLocaleString('en-IN')})</span>
+                            </div>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width:${widthPct}%;"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('.yard-bar-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const yName = row.dataset.yard;
+                    state.selectedYard = state.selectedYard === yName ? 'ALL' : yName;
+                    document.getElementById('yardSelect').value = state.selectedYard;
+                    renderAnalyticsAndChart();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        }
+
+        // ==========================================
+        // 6. EVENT LISTENERS & INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnUnitMann').addEventListener('click', () => {
+                state.priceDivisor = 5;
+                document.getElementById('btnUnitMann').className = 'tap-spring seg-btn-active';
+                document.getElementById('btnUnitQuintal').className = 'tap-spring seg-btn-inactive';
+                renderAnalyticsAndChart();
+            });
+
+            document.getElementById('btnUnitQuintal').addEventListener('click', () => {
+                state.priceDivisor = 1;
+                document.getElementById('btnUnitQuintal').className = 'tap-spring seg-btn-active';
+                document.getElementById('btnUnitMann').className = 'tap-spring seg-btn-inactive';
+                renderAnalyticsAndChart();
+            });
+
+            document.getElementById('cropSelect').addEventListener('change', (e) => {
+                state.selectedCrop = e.target.value;
+                updateYardOptionsForSelectedCrop();
+                renderAnalyticsAndChart();
+            });
+
+            document.getElementById('yardSelect').addEventListener('change', (e) => {
+                state.selectedYard = e.target.value;
+                renderAnalyticsAndChart();
+            });
+
+            document.querySelectorAll('.range-btn[data-days]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.range-btn[data-days]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.daysWindow = parseInt(btn.dataset.days, 10);
+                    startHistoryLoad();
+                });
+            });
+
+            document.querySelectorAll('.series-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.series-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    state.seriesType = btn.dataset.series;
+                    renderAnalyticsAndChart();
+                });
+            });
+
+            rebuildDropdownOptions();
+            startHistoryLoad();
+        });
+    </script>
+</body>
+</html>
