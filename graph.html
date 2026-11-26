@@ -713,10 +713,10 @@ body{background:#f5f5f7;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFo
             const now = new Date();
             now.setHours(12, 0, 0, 0); // Anchor to local noon so date keys stay stable across renders
             const dayMs = 86400000;
-            // Adaptive sampling: daily for 3 months, weekly for 6 months,
-            // every 10 days for 1 year, and every 15 days for 2 years.
+            // Adaptive resolution requested: daily (7/15), every 2 days (30),
+            // weekly (3 months), every 10 days (6 months), every 15 days (1/2 years).
             // Include today in every range.
-            const step = days >= 730 ? 15 : (days >= 365 ? 10 : (days >= 180 ? 7 : 1));
+            const step = days >= 365 ? 15 : (days >= 180 ? 10 : (days >= 90 ? 7 : (days >= 30 ? 2 : 1)));
             const sampled = step > 1;
             const offsets = [];
             for (let i = days - 1; i >= 0; i -= step) offsets.push(i);
