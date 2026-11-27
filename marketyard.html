@@ -365,6 +365,30 @@
             gap: 8px;
         }
 
+        .api-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(242, 242, 247, 0.28);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        .api-loading-spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid rgba(0, 122, 255, 0.16);
+            border-top-color: #007AFF;
+            border-radius: 50%;
+            animation: api-buffer-spin 0.75s linear infinite;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+        @keyframes api-buffer-spin {
+            to { transform: rotate(360deg); }
+        }
+
         .skeleton-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -841,6 +865,10 @@
             <button type="button" onclick="document.getElementById('statusBanner').classList.add('hidden')" class="tap-spring" style="font-weight:700; padding:2px 6px;">✕</button>
         </div>
 
+        <div id="apiLoadingOverlay" class="api-loading-overlay hidden" role="status" aria-label="માહિતી લોડ થઈ રહી છે">
+            <div class="api-loading-spinner"></div>
+        </div>
+
         <!-- VIEW 1: CATEGORIZED CROP COLLAGE & CROP RATE SHEET (પાક મુજબ) -->
         <section id="dashboardListView" class="stack-md">
             <!-- Loading Skeleton -->
@@ -1110,6 +1138,7 @@
 
             statusBanner: document.getElementById('statusBanner'),
             statusBannerText: document.getElementById('statusBannerText'),
+            apiLoadingOverlay: document.getElementById('apiLoadingOverlay'),
             listLoadingSkeleton: document.getElementById('listLoadingSkeleton'),
             selectedCropHeroBanner: document.getElementById('selectedCropHeroBanner'),
             selectedCropHeroIcon: document.getElementById('selectedCropHeroIcon'),
@@ -1630,6 +1659,7 @@
             const requestId = ++state.requestSequence;
             const fetchStart = performance.now();
             const isFirstLoad = state.rawRecords.length === 0;
+            if (els.apiLoadingOverlay) els.apiLoadingOverlay.classList.remove('hidden');
             if (isFirstLoad && els.listLoadingSkeleton) els.listLoadingSkeleton.classList.remove('hidden');
             if (els.statusBanner) els.statusBanner.classList.add('hidden');
 
@@ -1731,6 +1761,7 @@
             if (els.statsModalOverlay && !els.statsModalOverlay.classList.contains('hidden')) renderStatsModal();
 
             if (els.listLoadingSkeleton) els.listLoadingSkeleton.classList.add('hidden');
+            if (els.apiLoadingOverlay) els.apiLoadingOverlay.classList.add('hidden');
             if (state.uiViewMode === 'khetigram') renderKhetiGramView();
         }
         // ==========================================
