@@ -365,6 +365,30 @@
             gap: 8px;
         }
 
+        /* API request loading ring */
+        .api-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(242, 242, 247, 0.42);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        .api-loading-spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid rgba(0, 122, 255, 0.18);
+            border-top-color: #007AFF;
+            border-radius: 50%;
+            animation: api-buffer-spin 0.75s linear infinite;
+        }
+        @keyframes api-buffer-spin {
+            to { transform: rotate(360deg); }
+        }
+
         .skeleton-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -841,6 +865,10 @@
             <button type="button" onclick="document.getElementById('statusBanner').classList.add('hidden')" class="tap-spring" style="font-weight:700; padding:2px 6px;">✕</button>
         </div>
 
+        <div id="apiLoadingOverlay" class="api-loading-overlay hidden" role="status" aria-label="ડેટા લોડ થઈ રહ્યો છે">
+            <div class="api-loading-spinner" aria-hidden="true"></div>
+        </div>
+
         <!-- VIEW 1: CATEGORIZED CROP COLLAGE & CROP RATE SHEET (પાક મુજબ) -->
         <section id="dashboardListView" class="stack-md">
             <!-- Loading Skeleton -->
@@ -1108,6 +1136,7 @@
             cropFilterFavBtn: document.getElementById('cropFilterFavBtn'),
             selectedCropDetailView: document.getElementById('selectedCropDetailView'),
 
+            apiLoadingOverlay: document.getElementById('apiLoadingOverlay'),
             statusBanner: document.getElementById('statusBanner'),
             statusBannerText: document.getElementById('statusBannerText'),
             listLoadingSkeleton: document.getElementById('listLoadingSkeleton'),
@@ -1629,6 +1658,7 @@
         async function loadMandiData(mode = 'latest', customISO = '') {
             const requestId = ++state.requestSequence;
             const fetchStart = performance.now();
+            if (els.apiLoadingOverlay) els.apiLoadingOverlay.classList.remove('hidden');
             const isFirstLoad = state.rawRecords.length === 0;
             if (isFirstLoad && els.listLoadingSkeleton) els.listLoadingSkeleton.classList.remove('hidden');
             if (els.statusBanner) els.statusBanner.classList.add('hidden');
@@ -1732,6 +1762,7 @@
 
             if (els.listLoadingSkeleton) els.listLoadingSkeleton.classList.add('hidden');
             if (state.uiViewMode === 'khetigram') renderKhetiGramView();
+            if (els.apiLoadingOverlay) els.apiLoadingOverlay.classList.add('hidden');
         }
         // ==========================================
         // 8. RENDERING CATEGORIES, CROP COLLAGE & LIST
